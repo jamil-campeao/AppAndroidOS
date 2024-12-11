@@ -41,7 +41,6 @@ object frmInicial: TfrmInicial
       Size.PlatformDefault = False
       StyleLookup = ''
       TabOrder = 0
-      Text = 'TabItem1'
       ExplicitSize.cx = 8.000000000000000000
       ExplicitSize.cy = 8.000000000000000000
       object Layout1: TLayout
@@ -2583,6 +2582,20 @@ object frmInicial: TfrmInicial
           TextSettings.FontColor = claWhite
           TextSettings.HorzAlign = Center
           Text = 'FarolTI OS'
+          TabOrder = 2
+        end
+        object Label8: TLabel
+          Align = Top
+          StyledSettings = [Family]
+          Position.Y = 163.000000000000000000
+          Size.Width = 177.000000000000000000
+          Size.Height = 23.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 11.000000000000000000
+          TextSettings.Font.StyleExt = {00060000000000000004000000}
+          TextSettings.FontColor = claWhite
+          TextSettings.HorzAlign = Center
+          Text = 'Vers'#227'o 1.0'
           TabOrder = 1
         end
       end
@@ -2608,7 +2621,7 @@ object frmInicial: TfrmInicial
           Text = 'CRIAR MINHA CONTA'
           TextSettings.Font.Size = 16.000000000000000000
           TextSettings.FontColor = xFF585F5A
-          OnClick = btAcessarClick
+          OnClick = btCriarClick
         end
         object btAcessar: TSpeedButton
           Align = Bottom

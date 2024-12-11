@@ -41,9 +41,11 @@ type
     Layout8: TLayout;
     btCriar: TSpeedButton;
     btAcessar: TSpeedButton;
+    Label8: TLabel;
     procedure btProximo1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btAcessarClick(Sender: TObject);
+    procedure btCriarClick(Sender: TObject);
   private
     procedure fAbrirAba(pIndex: Integer);
     { Private declarations }
@@ -65,8 +67,18 @@ begin
   if not Assigned(frmLogin) then
     Application.CreateForm(TFrmLogin, frmLogin);
 
+  frmLogin.TabControl.ActiveTab := FrmLogin.TabLogin;
   frmLogin.Show;
 
+end;
+
+procedure TfrmInicial.btCriarClick(Sender: TObject);
+begin
+  if not Assigned(frmLogin) then
+    Application.CreateForm(TFrmLogin, frmLogin);
+
+  frmLogin.TabControl.ActiveTab := FrmLogin.TabCriarConta;
+  frmLogin.Show;
 end;
 
 procedure TfrmInicial.btProximo1Click(Sender: TObject);
