@@ -24,5 +24,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TfrmInicial, frmInicial);
   Application.CreateForm(TDM, DM);
+  Application.CreateForm(TDmUsuario, DmUsuario);
   Application.Run;
 end.

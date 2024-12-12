@@ -21,13 +21,13 @@ type
     procedure fEditarUsuario(pNome, pLogin: string);
     procedure fListarUsuarios;
     procedure fInserirUsuario(pCodUsuario: integer;
-                                    pLogin, pSenha, pTokenJWT: string);
+                                    pNome, pLogin, pSenha, pTokenJWT: string);
     procedure fExcluirUsuario;
     procedure fEditarSenha(pSenha: string);
     procedure fLogout;
     procedure fDesativarOnboarding;
-    procedure fLoginWeb(pCodUsuario: Integer; pSenha: string);
-    procedure fNovaContaWeb(nome, email, senha: string);
+    procedure fLoginWeb(pLogin, pSenha: string);
+    procedure fNovaContaWeb(pNome, pLogin, pSenha: string);
     procedure fEditarUsuarioWeb(nome, email: string);
     procedure fEditarSenhaWeb(senha: string);
     function fObterDataServidor: string;
@@ -54,14 +54,15 @@ begin
 end;
 
 procedure TDmUsuario.fInserirUsuario(pCodUsuario: integer;
-                                    pLogin, pSenha, pTokenJWT: string);
+                                    pNome, pLogin, pSenha, pTokenJWT: string);
 begin
     qryUsuario.Active := false;
     qryUsuario.SQL.Clear;
-    qryUsuario.SQL.Text := ' insert into USUARIO(USU_CODIGO, USU_LOGIN, USU_SENHA, USU_TOKENJWT, IND_LOGIN, IND_ONBOARDING) '+
-                           ' values(:USU_CODIGO, :USU_LOGIN, :USU_SENHA, :USU_TOKENJWT, :IND_LOGIN, :IND_ONBOARDING)       ';
+    qryUsuario.SQL.Text := ' insert into USUARIO(USU_CODIGO, USU_NOME, USU_LOGIN, USU_SENHA, USU_TOKENJWT, IND_LOGIN, IND_ONBOARDING) '+
+                           ' values(:USU_CODIGO, :USU_NOME, :USU_LOGIN, :USU_SENHA, :USU_TOKENJWT, :IND_LOGIN, :IND_ONBOARDING)       ';
 
     qryUsuario.ParamByName('USU_CODIGO').Value     := pCodUsuario;
+    qryUsuario.ParamByName('USU_NOME').Value       := pNome;
     qryUsuario.ParamByName('USU_LOGIN').Value      := pLogin;
     qryUsuario.ParamByName('USU_SENHA').Value      := pSenha;
     qryUsuario.ParamByName('USU_TOKENJWT').Value   := pTokenJWT;
@@ -162,7 +163,7 @@ begin
     qryUsuario.ExecSQL;
 end;
 
-procedure TDmUsuario.fLoginWeb(pCodUsuario: Integer; pSenha: string);
+procedure TDmUsuario.fLoginWeb(pLogin, pSenha: string);
 var
     vResp: IResponse;
     vJson: TJsonObject;
@@ -171,7 +172,7 @@ begin
 
     try
         vJson := TJsonObject.Create;
-        vJson.AddPair('cod_usuario', pCodUsuario);
+        vJson.AddPair('login', pLogin);
         vJson.AddPair('senha', pSenha);
 
         vResp := TRequest.New.BaseURL(BASE_URL)
@@ -189,7 +190,7 @@ begin
     end;
 end;
 
-procedure TDmUsuario.fNovaContaWeb(nome, email, senha: string);
+procedure TDmUsuario.fNovaContaWeb(pNome, pLogin, pSenha: string);
 var
     resp: IResponse;
     json: TJsonObject;
@@ -198,9 +199,9 @@ begin
 
     try
         json := TJsonObject.Create;
-        json.AddPair('nome', nome);
-        json.AddPair('email', email);
-        json.AddPair('senha', senha);
+        json.AddPair('nome_usuario', pNome);
+        json.AddPair('login', pLogin);
+        json.AddPair('senha', pSenha);
 
         resp := TRequest.New.BaseURL(BASE_URL)
                 .Resource('usuarios')

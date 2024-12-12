@@ -21,7 +21,7 @@ type
     lbCriar: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    edCodigo: TEdit;
+    edLogin: TEdit;
     edSenha: TEdit;
     StyleBook1: TStyleBook;
     btLogin: TSpeedButton;
@@ -36,11 +36,14 @@ type
     Image1: TImage;
     Label8: TLabel;
     edContaNome: TEdit;
+    edContaLogin: TEdit;
+    Label1: TLabel;
     procedure lbCriarClick(Sender: TObject);
     procedure lbLoginClick(Sender: TObject);
     procedure btLoginClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btCriarContaClick(Sender: TObject);
   private
     aFancy: TFancyDialog;
     procedure fThreadLoginTerminated(Sender: TObject);
@@ -66,6 +69,7 @@ begin
 
     //Sessão
     TSession.COD_USUARIO := DmUsuario.TabUsuario.FieldByName('usu_codigo').AsInteger;
+    TSession.NOME        := DmUsuario.TabUsuario.FieldByName('usu_nome').AsString;
     TSession.LOGIN       := DmUsuario.TabUsuario.FieldByName('usu_login').AsString;
     TSession.TOKEN_JWT   := DmUsuario.TabUsuario.FieldByName('token').AsString;
 
@@ -92,11 +96,38 @@ begin
   if Sender is TThread then
     if Assigned(TThread(Sender).FatalException) then
     begin
-      aFancy.Show(TIconDialog.Error, 'Erro no login', Exception(TThread(sender).FatalException).Message, 'OK');
+      aFancy.Show(TIconDialog.Error, '', Exception(TThread(sender).FatalException).Message, 'OK');
       Exit;
     end;
 
     fOpenFormPrincipal;
+end;
+
+procedure TfrmLogin.btCriarContaClick(Sender: TObject);
+var
+  T: TThread;
+begin
+  TLoading.Show(FrmLogin, '');
+
+  t := TThread.CreateAnonymousThread(procedure
+  begin
+    DmUsuario.fNovaContaWeb(Trim(edContaNome.Text), Trim(edContaLogin.Text), edContaSenha.Text);
+
+    with DmUsuario.TabUsuario do
+    begin
+      DMUsuario.fLogout;
+      DmUsuario.fExcluirUsuario;
+
+      DmUsuario.fInserirUsuario(FieldByName('usu_codigo').AsInteger,
+                                FieldByName('usu_nome').AsString,
+                                FieldByName('usu_login').AsString,
+                                edContaSenha.Text,
+                                FieldByName('token').AsString);
+    end;
+  end);
+
+  t.OnTerminate := fThreadLoginTerminated;
+  t.Start;
 end;
 
 procedure TfrmLogin.btLoginClick(Sender: TObject);
@@ -107,7 +138,7 @@ begin
 
   t := TThread.CreateAnonymousThread(procedure
   begin
-    DmUsuario.fLoginWeb(Trim(edCodigo.Text).ToInteger, edSenha.Text);
+    DmUsuario.fLoginWeb(Trim(edLogin.Text), edSenha.Text);
 
     with DmUsuario.TabUsuario do
     begin
@@ -115,6 +146,7 @@ begin
       DmUsuario.fExcluirUsuario;
 
       DmUsuario.fInserirUsuario(FieldByName('usu_codigo').AsInteger,
+                                FieldByName('usu_nome').AsString,
                                 FieldByName('usu_login').AsString,
                                 edSenha.Text,
                                 FieldByName('token').AsString);
@@ -123,8 +155,6 @@ begin
 
   t.OnTerminate := fThreadLoginTerminated;
   t.Start;
-
-
 end;
 
 procedure TfrmLogin.lbCriarClick(Sender: TObject);
