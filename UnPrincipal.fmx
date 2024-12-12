@@ -1,0 +1,21 @@
+object frmPrincipal: TfrmPrincipal
+  Left = 0
+  Top = 0
+  Caption = 'Farol OS'
+  ClientHeight = 480
+  ClientWidth = 298
+  Position = MainFormCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 3
+  object Label1: TLabel
+    Position.X = 56.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 194.000000000000000000
+    Size.Height = 23.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'TELA PRINCIPAL'
+    TabOrder = 0
+  end
+end
