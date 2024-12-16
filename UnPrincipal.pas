@@ -43,8 +43,8 @@ type
     Layout3: TLayout;
     rectBuscaOS: TRectangle;
     StyleBook1: TStyleBook;
-    edLogin: TEdit;
-    btLogin: TSpeedButton;
+    edBuscaOS: TEdit;
+    btBuscaOS: TSpeedButton;
     lvOS: TListView;
     btnAdicionarOS: TSpeedButton;
     Image1: TImage;
@@ -86,6 +86,7 @@ type
     imgIconeSincronizar: TImage;
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure btBuscaOSClick(Sender: TObject);
   private
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
@@ -104,6 +105,11 @@ implementation
 {$R *.fmx}
 
 uses DataModule.OS;
+
+procedure TfrmPrincipal.btBuscaOSClick(Sender: TObject);
+begin
+  fListarOS(0, Trim(edBuscaOS.Text), True);
+end;
 
 procedure TfrmPrincipal.fAbrirAba(pImg: TImage);
 begin
@@ -187,6 +193,11 @@ end;
 
 procedure TfrmPrincipal.fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
 begin
+  lvOS.BeginUpdate;
+
+  if pIndClear then
+    lvOS.Items.Clear;
+
   DMOS.fListarOS(pPagina, pBusca);
 
   while not DMOS.QryConsOS.Eof do
@@ -200,6 +211,8 @@ begin
 
     DMOS.QryConsOS.Next;
   end;
+
+  lvOS.EndUpdate;
 end;
 
 
