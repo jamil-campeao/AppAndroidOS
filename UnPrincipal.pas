@@ -93,6 +93,7 @@ type
     procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
     procedure fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
+    procedure fThreadOSTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -206,6 +207,8 @@ begin
 end;
 
 procedure TfrmPrincipal.fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
+var
+  vThread: TThread;
 begin
   //Evito processamento concorrente
   if lvOS.TagString = 'S' then
@@ -234,7 +237,21 @@ begin
   lvOs.Tag := pPagina;
 
   //Faço a requisição por mais dados
-  DMOS.fListarOS(pPagina, pBusca);
+  vThread := TThread.CreateAnonymousThread(procedure
+  begin
+    DMOS.fListarOS(pPagina, pBusca);
+  end);
+
+  vThread.OnTerminate := fThreadOSTerminate;
+  vThread.Start;
+
+end;
+
+procedure TfrmPrincipal.fThreadOSTerminate(Sender: TObject);
+begin
+  // Não carregar mais dados..
+  if DMOS.QryConsOS.RecordCount < cQTD_REG_PAGINA_OS then
+    lvOS.Tag := -1;
 
   while not DMOS.QryConsOS.Eof do
   begin
@@ -250,13 +267,18 @@ begin
 
   lvOS.EndUpdate;
 
-  // Não carregar mais dados..
-  if DMOS.QryConsOS.RecordCount < cQTD_REG_PAGINA_OS then
-    lvOS.Tag := -1;
-
   // Marco que o processo terminou
   lvOS.TagString := '';
 
+  //Caso e algum erro na Thread
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      exit;
+    end;
+  end;
 end;
 
 
