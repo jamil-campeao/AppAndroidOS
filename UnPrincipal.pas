@@ -90,6 +90,7 @@ type
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
+    procedure fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
     { Private declarations }
   public
     { Public declarations }
@@ -101,6 +102,8 @@ var
 implementation
 
 {$R *.fmx}
+
+uses DataModule.OS;
 
 procedure TfrmPrincipal.fAbrirAba(pImg: TImage);
 begin
@@ -119,9 +122,7 @@ procedure TfrmPrincipal.FormShow(Sender: TObject);
 begin
   fAbrirAba(imgAbaDashBoard);
 
-  fAdicionaPedidoListView('12345', '', 'Teste', '15/11/2024', 'S', 500);
-  fAdicionaPedidoListView('2312', '', 'Teste', '15/11/2024', 'S', 500);
-  fAdicionaPedidoListView('3425', '', 'Teste', '15/11/2024', 'N', 500);
+  fListarOS(0, '', True);
 end;
 
 procedure TfrmPrincipal.imgAbaDashBoardClick(Sender: TObject);
@@ -182,6 +183,23 @@ begin
 
   end;
 
+end;
+
+procedure TfrmPrincipal.fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
+begin
+  DMOS.fListarOS(pPagina, pBusca);
+
+  while not DMOS.QryConsOS.Eof do
+  begin
+    fAdicionaPedidoListView(DMOS.QryConsOS.FieldByName('OS_CODIGOLOCAL').AsString,
+                            DMOS.QryConsOS.FieldByName('OS_CODIGO').AsString,
+                            DMOS.QryConsOS.FieldByName('CLI_NOME').AsString,
+                            FormatDateTime('dd/mm/yyyy', DMOS.QryConsOS.FieldByName('OS_DATAABERTURA').AsDateTime),
+                            DMOS.QryConsOS.FieldByName('OS_IND_SINCRONIZAR').AsString,
+                            DMOS.QryConsOS.FieldByName('OS_TOTALGERAL').AsFloat);
+
+    DMOS.QryConsOS.Next;
+  end;
 end;
 
 

@@ -16,7 +16,8 @@ uses
   uLoading in 'Units\uLoading.pas',
   uSession in 'Units\uSession.pas',
   uSuperChart in 'Units\uSuperChart.pas',
-  DataModule.Usuario in 'DataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule};
+  DataModule.Usuario in 'DataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule},
+  DataModule.OS in 'DataModule\DataModule.OS.pas' {DMOS: TDataModule};
 
 {$R *.res}
 
@@ -26,5 +27,6 @@ begin
   Application.CreateForm(TfrmInicial, frmInicial);
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TDmUsuario, DmUsuario);
+  Application.CreateForm(TDMOS, DMOS);
   Application.Run;
 end.
