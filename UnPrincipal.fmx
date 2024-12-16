@@ -132,9 +132,9 @@ object frmPrincipal: TfrmPrincipal
           FileName = 'C:\Temp\ws-Delphi\images\Images\aba1.png'
         end>
       Align = Scale
-      Position.X = 0.997143268585205100
+      Position.X = 0.997143387794494600
       Position.Y = 5.000000000000000000
-      Size.Width = 70.797004699707030000
+      Size.Width = 70.797019958496090000
       Size.Height = 40.000000000000000000
       Size.PlatformDefault = False
       OnClick = imgAbaDashBoardClick
@@ -225,7 +225,7 @@ object frmPrincipal: TfrmPrincipal
       Align = Scale
       Position.X = 72.433921813964840000
       Position.Y = 5.000000000000000000
-      Size.Width = 64.751625061035160000
+      Size.Width = 64.751594543457030000
       Size.Height = 40.000000000000000000
       Size.PlatformDefault = False
       OnClick = imgAbaDashBoardClick
@@ -345,9 +345,9 @@ object frmPrincipal: TfrmPrincipal
           FileName = 'C:\Temp\ws-Delphi\images\Images\aba3.png'
         end>
       Align = Scale
-      Position.X = 136.608657836914100000
+      Position.X = 136.608673095703100000
       Position.Y = 5.000000000000000000
-      Size.Width = 62.819869995117190000
+      Size.Width = 62.819854736328130000
       Size.Height = 40.000000000000000000
       Size.PlatformDefault = False
       OnClick = imgAbaDashBoardClick
@@ -505,7 +505,7 @@ object frmPrincipal: TfrmPrincipal
           FileName = 'C:\Temp\ws-Delphi\images\Images\aba5.png'
         end>
       Align = Scale
-      Position.X = 271.444610595703100000
+      Position.X = 271.444702148437500000
       Position.Y = 5.000000000000000000
       Size.Width = 75.567169189453130000
       Size.Height = 40.000000000000000000
@@ -514,9 +514,9 @@ object frmPrincipal: TfrmPrincipal
     end
     object Layout1: TLayout
       Align = Scale
-      Position.X = 200.839691162109400000
+      Position.X = 200.839752197265600000
       Position.Y = 5.000000000000000000
-      Size.Width = 71.336456298828130000
+      Size.Width = 71.336425781250000000
       Size.Height = 40.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
@@ -644,7 +644,7 @@ object frmPrincipal: TfrmPrincipal
             FileName = 'C:\Temp\ws-Delphi\images\Images\aba4.png'
           end>
         Align = Client
-        Size.Width = 71.336456298828130000
+        Size.Width = 71.336425781250000000
         Size.Height = 40.000000000000000000
         Size.PlatformDefault = False
         OnClick = imgAbaDashBoardClick
@@ -669,7 +669,7 @@ object frmPrincipal: TfrmPrincipal
     Size.Height = 453.000000000000000000
     Size.PlatformDefault = False
     TabHeight = 49.000000000000000000
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 1
     TabPosition = None
     Sizes = (
@@ -690,7 +690,7 @@ object frmPrincipal: TfrmPrincipal
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -788,7 +788,7 @@ object frmPrincipal: TfrmPrincipal
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -973,10 +973,51 @@ object frmPrincipal: TfrmPrincipal
         Size.Height = 348.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
+        ItemAppearance.ItemHeight = 80
         ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
           item
-            AppearanceObjectName = 'Text1'
+            AppearanceObjectName = 'txtOS'
             AppearanceClassName = 'TTextObjectAppearance'
+            Appearance.Font.Size = 13.000000000000000000
+            Appearance.TextAlign = Leading
+            Appearance.TextColor = xFF232323
+            Appearance.Width = 121.000000000000000000
+            Appearance.Height = 22.000000000000000000
+            Appearance.PlaceOffset.X = 5.000000000000000000
+          end
+          item
+            AppearanceObjectName = 'txtCliente'
+            AppearanceClassName = 'TTextObjectAppearance'
+            Appearance.Font.Size = 13.000000000000000000
+            Appearance.TextAlign = Leading
+            Appearance.TextVertAlign = Leading
+            Appearance.TextColor = xFF404040
+            Appearance.Width = 172.000000000000000000
+            Appearance.Height = 22.000000000000000000
+            Appearance.PlaceOffset.X = 13.000000000000000000
+            Appearance.PlaceOffset.Y = 24.000000000000000000
+          end
+          item
+            AppearanceObjectName = 'txtData'
+            AppearanceClassName = 'TTextObjectAppearance'
+            Appearance.Font.Size = 13.000000000000000000
+            Appearance.TextAlign = Leading
+            Appearance.TextVertAlign = Leading
+            Appearance.TextColor = xFF404040
+            Appearance.Width = 172.000000000000000000
+            Appearance.Height = 22.000000000000000000
+            Appearance.PlaceOffset.X = 13.000000000000000000
+            Appearance.PlaceOffset.Y = 46.000000000000000000
+          end
+          item
+            AppearanceObjectName = 'txtValor'
+            AppearanceClassName = 'TTextObjectAppearance'
+            Appearance.Font.Size = 13.000000000000000000
+            Appearance.TextAlign = Trailing
+            Appearance.Width = 89.000000000000000000
+            Appearance.Height = 25.000000000000000000
+            Appearance.Align = Trailing
+            Appearance.PlaceOffset.X = -6.000000000000000000
           end>
         ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
           item

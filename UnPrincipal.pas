@@ -85,6 +85,8 @@ type
     procedure FormShow(Sender: TObject);
   private
     procedure fAbrirAba(pImg: TImage);
+    procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
+pDataOS, pIndSincronizar: String; pValor: Double);
     { Private declarations }
   public
     { Public declarations }
@@ -113,11 +115,55 @@ end;
 procedure TfrmPrincipal.FormShow(Sender: TObject);
 begin
   fAbrirAba(imgAbaDashBoard);
+
+  fAdicionaPedidoListView('12345', '', 'Teste', '15/11/2024', 'S', 500);
+  fAdicionaPedidoListView('2312', '', 'Teste', '15/11/2024', 'S', 500);
+  fAdicionaPedidoListView('3425', '', 'Teste', '15/11/2024', 'N', 500);
 end;
 
 procedure TfrmPrincipal.imgAbaDashBoardClick(Sender: TObject);
 begin
   fAbrirAba(TImage(Sender));
 end;
+
+
+procedure TfrmPrincipal.fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
+pDataOS, pIndSincronizar: String; pValor: Double);
+var
+  vItem: TListViewItem;
+  vTxt:  TListItemText;
+begin
+  try
+    vItem := lvOS.Items.Add;
+
+    vItem.TagString := pOSLocal;
+
+    //Numero da OS
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtOS'));
+    if pOSOficial <> '' then
+      vTxt.Text := '#' + pOSOficial
+    else
+      vTxt.Text := '#' + pOSLocal;
+
+    //Cliente
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtCliente'));
+    vTxt.Text := pCliente;
+
+    //DataOS
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtData'));
+    vTxt.Text := pDataOS;
+
+    //Valor
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtValor'));
+    vTxt.Text := FormatFloat('R$#,##0.00', pValor);
+
+  except on e:Exception do
+    ShowMessage('Erro ao inserir pedido na lista: ' + e.Message);
+
+  end;
+
+end;
+
+
 
 end.
