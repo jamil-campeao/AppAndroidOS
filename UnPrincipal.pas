@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
-  FMX.Layouts;
+  FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
+  FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
   TfrmPrincipal = class(TForm)
@@ -40,6 +41,13 @@ type
     VertScrollBox1: TVertScrollBox;
     Label7: TLabel;
     Layout3: TLayout;
+    rectBuscaOS: TRectangle;
+    StyleBook1: TStyleBook;
+    edLogin: TEdit;
+    btLogin: TSpeedButton;
+    lvOS: TListView;
+    btnAdicionarOS: TSpeedButton;
+    Image1: TImage;
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
