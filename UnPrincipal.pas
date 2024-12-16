@@ -7,7 +7,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
   FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.ListView;
+  FMX.ListView.Adapters.Base, FMX.ListView, FMX.ListBox;
 
 type
   TfrmPrincipal = class(TForm)
@@ -48,6 +48,39 @@ type
     lvOS: TListView;
     btnAdicionarOS: TSpeedButton;
     Image1: TImage;
+    btAdicionarCliente: TSpeedButton;
+    Image2: TImage;
+    lvNotificacao: TListView;
+    Rectangle6: TRectangle;
+    Edit1: TEdit;
+    SpeedButton1: TSpeedButton;
+    lvCliente: TListView;
+    ListBox1: TListBox;
+    lbiProdutos: TListBoxItem;
+    lbiPerfil: TListBoxItem;
+    lbiSenha: TListBoxItem;
+    lbiSincronizar: TListBoxItem;
+    lbiLogout: TListBoxItem;
+    Image3: TImage;
+    Label8: TLabel;
+    Image4: TImage;
+    Image5: TImage;
+    Image6: TImage;
+    Image7: TImage;
+    Label10: TLabel;
+    Image8: TImage;
+    Image9: TImage;
+    Label11: TLabel;
+    Image10: TImage;
+    Image11: TImage;
+    Label12: TLabel;
+    Image12: TImage;
+    Line1: TLine;
+    Label9: TLabel;
+    Line2: TLine;
+    Line3: TLine;
+    Line4: TLine;
+    Line5: TLine;
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
