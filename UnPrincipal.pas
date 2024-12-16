@@ -81,6 +81,9 @@ type
     Line3: TLine;
     Line4: TLine;
     Line5: TLine;
+    imgIconeCliente: TImage;
+    imgIconeData: TImage;
+    imgIconeSincronizar: TImage;
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -131,7 +134,8 @@ procedure TfrmPrincipal.fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
 var
   vItem: TListViewItem;
-  vTxt:  TListItemText;
+  vTxt : TListItemText;
+  vImg : TListItemImage;
 begin
   try
     vItem := lvOS.Items.Add;
@@ -141,9 +145,9 @@ begin
     //Numero da OS
     vTxt := TListItemText(vItem.Objects.FindDrawable('txtOS'));
     if pOSOficial <> '' then
-      vTxt.Text := '#' + pOSOficial
+      vTxt.Text := 'OS #' + pOSOficial
     else
-      vTxt.Text := '#' + pOSLocal;
+      vTxt.Text := 'Orçamento #' + pOSLocal;
 
     //Cliente
     vTxt := TListItemText(vItem.Objects.FindDrawable('txtCliente'));
@@ -156,6 +160,22 @@ begin
     //Valor
     vTxt := TListItemText(vItem.Objects.FindDrawable('txtValor'));
     vTxt.Text := FormatFloat('R$#,##0.00', pValor);
+
+    //Icone Cliente
+    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgCliente'));
+    vImg.Bitmap := imgIconeCliente.Bitmap;
+
+    //Icone Data
+    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgData'));
+    vImg.Bitmap := imgIconeData.Bitmap;
+
+    //Icone Sincronização
+    if pIndSincronizar = 'S' then
+    begin
+      vImg        := TListItemImage(vItem.Objects.FindDrawable('imgSincronizar'));
+      vImg.Bitmap := imgIconeSincronizar.Bitmap;
+    end;
+
 
   except on e:Exception do
     ShowMessage('Erro ao inserir pedido na lista: ' + e.Message);
