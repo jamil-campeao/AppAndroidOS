@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
+  FMX.Layouts;
 
 type
   TfrmPrincipal = class(TForm)
@@ -33,7 +34,14 @@ type
     Label4: TLabel;
     Rectangle5: TRectangle;
     Label5: TLabel;
+    Layout1: TLayout;
+    Label6: TLabel;
+    Layout2: TLayout;
+    VertScrollBox1: TVertScrollBox;
+    Label7: TLabel;
+    Layout3: TLayout;
     procedure imgAbaDashBoardClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     procedure fAbrirAba(pImg: TImage);
     { Private declarations }
@@ -50,7 +58,20 @@ implementation
 
 procedure TfrmPrincipal.fAbrirAba(pImg: TImage);
 begin
+  imgAbaDashBoard.Opacity    := 0.5;
+  imgAbaOS.Opacity           := 0.5;
+  imgAbaCliente.Opacity      := 0.5;
+  imgAbaNotificacao.Opacity  := 0.5;
+  imgAbaMais.Opacity         := 0.5;
+
+  pImg.Opacity := 1;
+
   TabControl.GotoVisibleTab(pImg.Tag);
+end;
+
+procedure TfrmPrincipal.FormShow(Sender: TObject);
+begin
+  fAbrirAba(imgAbaDashBoard);
 end;
 
 procedure TfrmPrincipal.imgAbaDashBoardClick(Sender: TObject);
