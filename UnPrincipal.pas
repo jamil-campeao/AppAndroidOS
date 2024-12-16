@@ -87,6 +87,7 @@ type
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btBuscaOSClick(Sender: TObject);
+    procedure lvOSPaint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
   private
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
@@ -104,11 +105,11 @@ implementation
 
 {$R *.fmx}
 
-uses DataModule.OS;
+uses DataModule.OS, uConstantes;
 
 procedure TfrmPrincipal.btBuscaOSClick(Sender: TObject);
 begin
-  fListarOS(0, Trim(edBuscaOS.Text), True);
+  fListarOS(1, Trim(edBuscaOS.Text), True);
 end;
 
 procedure TfrmPrincipal.fAbrirAba(pImg: TImage);
@@ -128,7 +129,7 @@ procedure TfrmPrincipal.FormShow(Sender: TObject);
 begin
   fAbrirAba(imgAbaDashBoard);
 
-  fListarOS(0, '', True);
+  fListarOS(1, '', True);
 end;
 
 procedure TfrmPrincipal.imgAbaDashBoardClick(Sender: TObject);
@@ -136,6 +137,19 @@ begin
   fAbrirAba(TImage(Sender));
 end;
 
+
+procedure TfrmPrincipal.lvOSPaint(Sender: TObject; Canvas: TCanvas;
+  const ARect: TRectF);
+begin
+  //Verifico se a rolagem atingiu o limite para uma nova carga de registros
+  if (lvOS.Items.Count >= cQTD_REG_PAGINA_OS) and
+  (lvOS.Tag >= 0) then
+    if lvOS.GetItemRect(lvOS.Items.Count - 5).Bottom <= lvOS.Height then
+      fListarOS(lvOS.Tag + 1, edBuscaOS.Text, False);
+
+
+
+end;
 
 procedure TfrmPrincipal.fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
@@ -193,11 +207,33 @@ end;
 
 procedure TfrmPrincipal.fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
 begin
+  //Evito processamento concorrente
+  if lvOS.TagString = 'S' then
+    exit;
+
+  // Em processamento..
+  lvOS.TagString := 'S';
+
   lvOS.BeginUpdate;
 
+  //limpo a lista
   if pIndClear then
+  begin
+    pPagina := 1;
+    lvOS.ScrollTo(0);
     lvOS.Items.Clear;
+  end;
 
+  {
+    Tag: contém a página atual solicitada ao servidor
+    Quando a Tag for >= 1: faz o request para buscar mais dados
+                      -1 : Indica que não tem mais dados
+  }
+
+  //Salvo a página atual a ser exibida
+  lvOs.Tag := pPagina;
+
+  //Faço a requisição por mais dados
   DMOS.fListarOS(pPagina, pBusca);
 
   while not DMOS.QryConsOS.Eof do
@@ -213,6 +249,14 @@ begin
   end;
 
   lvOS.EndUpdate;
+
+  // Não carregar mais dados..
+  if DMOS.QryConsOS.RecordCount < cQTD_REG_PAGINA_OS then
+    lvOS.Tag := -1;
+
+  // Marco que o processo terminou
+  lvOS.TagString := '';
+
 end;
 
 

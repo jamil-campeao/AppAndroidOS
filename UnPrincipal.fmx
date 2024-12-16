@@ -974,6 +974,7 @@ object frmPrincipal: TfrmPrincipal
         Size.Height = 348.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
+        OnPaint = lvOSPaint
         ItemAppearance.ItemHeight = 80
         ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
           item

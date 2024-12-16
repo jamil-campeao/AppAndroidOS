@@ -175,7 +175,7 @@ begin
         vJson.AddPair('login', pLogin);
         vJson.AddPair('senha', pSenha);
 
-        vResp := TRequest.New.BaseURL(BASE_URL)
+        vResp := TRequest.New.BaseURL(cBASE_URL)
                 .Resource('usuarios/login')
                 .AddBody(vJson.ToJSON)
                 .Accept('application/json')
@@ -203,7 +203,7 @@ begin
         json.AddPair('login', pLogin);
         json.AddPair('senha', pSenha);
 
-        resp := TRequest.New.BaseURL(BASE_URL)
+        resp := TRequest.New.BaseURL(cBASE_URL)
                 .Resource('usuarios')
                 .AddBody(json.ToJSON)
                 .Accept('application/json')
@@ -230,7 +230,7 @@ begin
         json.AddPair('nome', nome);
         json.AddPair('email', email);
 
-        resp := TRequest.New.BaseURL(BASE_URL)
+        resp := TRequest.New.BaseURL(cBASE_URL)
                 .Resource('usuarios')
                 .TokenBearer(TSession.TOKEN_JWT)
                 .AddBody(json.ToJSON)
@@ -257,7 +257,7 @@ begin
         json := TJsonObject.Create;
         json.AddPair('senha', senha);
 
-        resp := TRequest.New.BaseURL(BASE_URL)
+        resp := TRequest.New.BaseURL(cBASE_URL)
                 .Resource('usuarios/senha')
                 .TokenBearer(TSession.TOKEN_JWT)
                 .AddBody(json.ToJSON)
@@ -277,7 +277,7 @@ var
     resp: IResponse;
 begin
 
-    resp := TRequest.New.BaseURL(BASE_URL)
+    resp := TRequest.New.BaseURL(cBASE_URL)
             .Resource('usuarios/horario')
             .TokenBearer(TSession.TOKEN_JWT)
             .Accept('application/json')
@@ -293,7 +293,7 @@ procedure TDmUsuario.fExcluirContaWeb;
 var
     vResp: IResponse;
 begin
-    vResp := TRequest.New.BaseURL(BASE_URL)
+    vResp := TRequest.New.BaseURL(cBASE_URL)
             .Resource('usuarios')  // Horse
             .ResourceSuffix(TSession.COD_USUARIO.ToString) // Horse
 

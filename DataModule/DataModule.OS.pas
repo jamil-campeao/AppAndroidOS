@@ -12,7 +12,7 @@ type
   TDMOS = class(TDataModule)
     QryConsOS: TFDQuery;
   private
-    function fFiltraCodigo(pBusca: String) : String;
+    function fFiltros(pBusca: String) : String;
 
     { Private declarations }
   public
@@ -27,18 +27,14 @@ implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
-uses DMGlobal;
+uses DMGlobal, uConstantes;
 
 {$R *.dfm}
 
 procedure TDMOS.fListarOS(pPagina: Integer; pBusca: String);
-var
-  vSQLAndCodigo: String;
 begin
   QryConsOS.Active := False;
   QryConsOS.SQL.Clear;
-
-  vSQLAndCodigo := fFiltraCodigo(pBusca);
 
   QryConsOS.SQL.Text :=
     ' SELECT O.*, C.CLI_NOME FROM OS O                     ' +
@@ -63,8 +59,15 @@ begin
     ' LEFT JOIN OSSTATUS OSS                               ' +
     '  ON O.OSS_CODIGO = OSS.OSS_CODIGO                    ' +
     ' WHERE O.OS_CODIGO > 0                                ' +
-    vSQLAndCodigo                                            +
+    fFiltros(pBusca)                                         +
     ' ORDER BY OS_CODIGOLOCAL DESC                         ';
+
+  if pPagina > 0 then
+  begin
+    QryConsOS.SQL.Add('LIMIT :PAGINA, :QTD_REG');
+    QryConsOS.ParamByName('PAGINA').AsInteger  := (pPagina - 1) * cQTD_REG_PAGINA_OS;
+    QryConsOS.ParamByName('QTD_REG').AsInteger := cQTD_REG_PAGINA_OS;
+  end;
 
   if pBusca <> '' then
   begin
@@ -83,11 +86,10 @@ begin
     end;
   end;
 
-
   QryConsOS.Open;
 end;
 
-function TDMOS.fFiltraCodigo(pBusca: String): String;
+function TDMOS.fFiltros(pBusca: String): String;
 begin
   Result := '';
   if pBusca <> '' then
