@@ -52,7 +52,7 @@ type
     Image2: TImage;
     lvNotificacao: TListView;
     Rectangle6: TRectangle;
-    Edit1: TEdit;
+    edBuscaCliente: TEdit;
     SpeedButton1: TSpeedButton;
     lvCliente: TListView;
     ListBox1: TListBox;
@@ -84,6 +84,8 @@ type
     imgIconeCliente: TImage;
     imgIconeData: TImage;
     imgIconeSincronizar: TImage;
+    imgIconeEndereco: TImage;
+    imgIconeFone: TImage;
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btBuscaOSClick(Sender: TObject);
@@ -94,6 +96,10 @@ type
 pDataOS, pIndSincronizar: String; pValor: Double);
     procedure fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
     procedure fThreadOSTerminate(Sender: TObject);
+    procedure fAdicionaClienteListView(pCodClienteLocal, pNome, pEndereco, pNumero, pCompl, pBairro,
+pCidade, pUF, pFone, pIndSincronizar: String);
+    procedure fListarClientes(pPagina: Integer; pBusca: String;
+      pIndClear: Boolean);
     { Private declarations }
   public
     { Public declarations }
@@ -124,6 +130,10 @@ begin
   pImg.Opacity := 1;
 
   TabControl.GotoVisibleTab(pImg.Tag);
+
+  //Aba Cliente
+  if pImg.Name = 'imgAbaCliente' then
+    fListarClientes(1, Trim(edBuscaCliente.Text), True);
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
@@ -161,6 +171,7 @@ var
 begin
   try
     vItem := lvOS.Items.Add;
+    vItem.Height := 80;
 
     vItem.TagString := pOSLocal;
 
@@ -279,6 +290,121 @@ begin
       exit;
     end;
   end;
+end;
+
+procedure TfrmPrincipal.fAdicionaClienteListView(pCodClienteLocal, pNome, pEndereco, pNumero, pCompl, pBairro,
+pCidade, pUF, pFone, pIndSincronizar: String);
+var
+  vItem: TListViewItem;
+  vTxt : TListItemText;
+  vImg : TListItemImage;
+begin
+  try
+    vItem := lvCliente.Items.Add;
+    vItem.Height := 85;
+
+    vItem.TagString := pCodClienteLocal;
+
+    //Nome Cliente
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtNome'));
+    vTxt.Text := pNome;
+
+    //Endereco Completo
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtEndereco'));
+    vTxt.Text := pEndereco;
+
+    if pNumero <> '' then
+      vTxt.Text := vTxt.Text + ', ' + pNumero;
+
+    if pCompl <> '' then
+      vTxt.Text := vTxt.Text + ', ' + pCompl;
+
+    if pBairro <> '' then
+      vTxt.Text := vTxt.Text + ', ' + pBairro;
+
+    if pCidade <> '' then
+      vTxt.Text := vTxt.Text + ', ' + pCidade;
+
+    if pUF <> '' then
+      vTxt.Text := vTxt.Text + ', ' + pUF;
+
+    //Fone
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtFone'));
+    vTxt.Text := pFone;
+
+    //Icone Endereco
+    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgEndereco'));
+    vImg.Bitmap := imgIconeEndereco.Bitmap;
+
+    //Icone Fone
+    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgFone'));
+    vImg.Bitmap := imgIconeFone.Bitmap;
+
+    //Icone Sincronização
+    if pIndSincronizar = 'S' then
+    begin
+      vImg        := TListItemImage(vItem.Objects.FindDrawable('imgSincronizar'));
+      vImg.Bitmap := imgIconeSincronizar.Bitmap;
+    end;
+
+
+  except on e:Exception do
+    ShowMessage('Erro ao inserir cliente na lista: ' + e.Message);
+
+  end;
+
+end;
+
+
+procedure TfrmPrincipal.fListarClientes(pPagina: Integer; pBusca: String; pIndClear: Boolean);
+var
+  vThread: TThread;
+begin
+
+  fAdicionaClienteListView('1233', 'Pop Move', 'Av. Paulista', '500', 'Apt 302',
+  'Jardins', 'São Paulo', 'SP', '(11) 9929843', 'S');
+
+  fAdicionaClienteListView('1233', 'Seara', 'Av. Paulista', '500', 'Apt 302',
+  'Jardins', 'São Paulo', 'SP', '(11) 9929843', 'N');
+
+  {
+  //Evito processamento concorrente
+  if lvOS.TagString = 'S' then
+    exit;
+
+  // Em processamento..
+  lvOS.TagString := 'S';
+
+  lvOS.BeginUpdate;
+
+  //limpo a lista
+  if pIndClear then
+  begin
+    pPagina := 1;
+    lvOS.ScrollTo(0);
+    lvOS.Items.Clear;
+  end;
+  }
+
+  {
+    Tag: contém a página atual solicitada ao servidor
+    Quando a Tag for >= 1: faz o request para buscar mais dados
+                      -1 : Indica que não tem mais dados
+  }
+  {
+  //Salvo a página atual a ser exibida
+  lvOs.Tag := pPagina;
+
+  //Faço a requisição por mais dados
+  vThread := TThread.CreateAnonymousThread(procedure
+  begin
+    DMOS.fListarOS(pPagina, pBusca);
+  end);
+
+  vThread.OnTerminate := fThreadOSTerminate;
+  vThread.Start;
+  }
+
 end;
 
 
