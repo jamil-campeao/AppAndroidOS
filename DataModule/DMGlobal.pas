@@ -86,7 +86,7 @@ begin
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS CLIENTE (                                                                                  '+
-          '     CLI_CODIGO              INTEGER NOT NULL PRIMARY KEY,                                                             '+
+          '     CLI_CODIGO_LOCAL        INTEGER NOT NULL PRIMARY KEY,                                                             '+
           '     CID_CODIGO              INTEGER,                                                                                  '+
           '     CLI_NOME                VARCHAR(50),                                                                              '+
           '     CLI_ENDERECO            VARCHAR(50),                                                                              '+
@@ -122,6 +122,7 @@ begin
           '     CLI_REGIMETRIBUTARIO    CHAR(1),                                                                                  '+
           '     CLI_OBS                 VARCHAR(5000),                                                                            '+
           '     CLI_SEXO                CHAR(1),                                                                                  '+
+          '     CLI_CODIGO_OFICIAL      INTEGER,                                                                                  '+
           ' FOREIGN KEY (CID_CODIGO) REFERENCES CIDADE (CID_CODIGO),                                                              '+
           ' FOREIGN KEY (CID_EMPRESA) REFERENCES CIDADE (CID_CODIGO),                                                             '+
           ' FOREIGN KEY (USU_CODIGO_CADASTRO) REFERENCES USUARIO (USU_CODIGO)                                                     '+
@@ -156,9 +157,9 @@ begin
           '                                                                                                                       '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OS (                                                                                       '+
-          '     OS_CODIGO                      INTEGER NOT NULL PRIMARY KEY,                                                      '+
+          '     OS_CODIGO_LOCAL                INTEGER NOT NULL PRIMARY KEY,                                                      '+
           '     FUNC_CODIGO                    INTEGER,                                                                           '+
-          '     CLI_CODIGO                     INTEGER,                                                                           '+
+          '     CLI_CODIGO_LOCAL               INTEGER,                                                                           '+
           '     OS_DATAABERTURA                DATE,                                                                              '+
           '     OS_HORAABERTURA                TIME,                                                                              '+
           '     OS_SOLICITACAO                 VARCHAR(5000),                                                                     '+
@@ -184,6 +185,7 @@ begin
           '     CLAS_CODIGO                    INTEGER,                                                                           '+
           '     OSS_CODIGO                     INTEGER,                                                                           '+
           '     OS_DATAULTIMAALTERACAO         DATE,                                                                              '+
+          '     OS_CODIGO_OFICIAL              INTEGER,                                                                           '+
           ' FOREIGN KEY (FPG_CODIGO) REFERENCES FORMAPAGAMENTO (FPG_CODIGO),                                                      '+
           ' FOREIGN KEY (USU_CODIGO_ENCERRA) REFERENCES USUARIO (USU_CODIGO),                                                     '+
           ' FOREIGN KEY (OS_CODRESPONSAVELABERTURA) REFERENCES FUNCIONARIO (FUNC_CODIGO),                                         '+
@@ -192,7 +194,7 @@ begin
           ' FOREIGN KEY (OSS_CODIGO) REFERENCES OSSTATUS (OSS_CODIGO),                                                            '+
           ' FOREIGN KEY (FUNC_CODIGO) REFERENCES FUNCIONARIO (FUNC_CODIGO),                                                       '+
           ' FOREIGN KEY (USU_CODIGO) REFERENCES USUARIO (USU_CODIGO),                                                             '+
-          ' FOREIGN KEY (CLI_CODIGO) REFERENCES CLIENTE (CLI_CODIGO),                                                             '+
+          ' FOREIGN KEY (CLI_CODIGO_LOCAL) REFERENCES CLIENTE (CLI_CODIGO_LOCAL),                                                 '+
           ' FOREIGN KEY (EMP_CODIGO) REFERENCES EMPRESA (EMP_CODIGO)                                                              '+
           ' );                                                                                                                    '+
           '                                                                                                                       '+
@@ -264,7 +266,7 @@ begin
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OSPRODUTO (                                                                                '+
-          '     OS_CODIGO            INTEGER NOT NULL,                                                                            '+
+          '     OS_CODIGO_LOCAL      INTEGER NOT NULL,                                                                            '+
           '     PROD_CODIGO          INTEGER NOT NULL,                                                                            '+
           '     PROD_CODIGO_BARRA    VARCHAR(50),                                                                                 '+
           '     PROD_DESCRICAO       VARCHAR(150),                                                                                '+
@@ -284,13 +286,13 @@ begin
           '     OSP_DESCONTOTOTAL    DECIMAL(18,2),                                                                               '+
           '     OSP_ACRESCIMOTOTAL   DECIMAL(18,2),                                                                               '+
           '     OSP_TOTAL            DECIMAL(18,2),                                                                               '+
-          '     PRIMARY KEY (OS_CODIGO, PROD_CODIGO, OSP_CODIGO),                                                                 '+
-          '     FOREIGN KEY (OS_CODIGO) REFERENCES OS (OS_CODIGO)                                                                 '+
+          '     PRIMARY KEY (OS_CODIGO_LOCAL, PROD_CODIGO, OSP_CODIGO),                                                           '+
+          '     FOREIGN KEY (OS_CODIGO_LOCAL) REFERENCES OS (OS_CODIGO_LOCAL)                                                     '+
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OSSERVICO (                                                                                '+
           '     OSS_CODIGO                  INTEGER NOT NULL,                                                                     '+
-          '     OS_CODIGO                   INTEGER NOT NULL,                                                                     '+
+          '     OS_CODIGO_LOCAL             INTEGER NOT NULL,                                                                     '+
           '     SE_CODIGO                   INTEGER,                                                                              '+
           '     OSS_DESCRICAO               VARCHAR(150),                                                                         '+
           '     OSS_VALOR                   DECIMAL(18,2),                                                                        '+
@@ -303,14 +305,14 @@ begin
           '     OSS_DESCONTOTOTAL           DECIMAL(18,2),                                                                        '+
           '     OSS_TOTAL                   DECIMAL(18,2),                                                                        '+
           '     OSS_NOMETECNICORESPONSAVEL  VARCHAR(50),                                                                          '+
-          '     PRIMARY KEY (OSS_CODIGO, OS_CODIGO),                                                                              '+
-          '     FOREIGN KEY (OS_CODIGO) REFERENCES OS (OS_CODIGO),                                                                '+
+          '     PRIMARY KEY (OSS_CODIGO, OS_CODIGO_LOCAL),                                                                        '+
+          '     FOREIGN KEY (OS_CODIGO_LOCAL) REFERENCES OS (OS_CODIGO_LOCAL),                                                    '+
           '     FOREIGN KEY (FUNC_CODIGO) REFERENCES FUNCIONARIO (FUNC_CODIGO)                                                    '+
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OSSERVICOTERCEIROS (                                                                       '+
           '     OSST_CODIGO                 INTEGER NOT NULL,                                                                     '+
-          '     OS_CODIGO                   INTEGER NOT NULL,                                                                     '+
+          '     OS_CODIGO_LOCAL             INTEGER NOT NULL,                                                                     '+
           '     SE_CODIGO                   INTEGER,                                                                              '+
           '     OSST_DESCRICAO              VARCHAR(150),                                                                         '+
           '     OSST_VALOR                  DECIMAL(18,2),                                                                        '+
@@ -324,19 +326,17 @@ begin
           '     OSST_DESCONTOTOTAL          DECIMAL(18,2),                                                                        '+
           '     OSST_TOTAL                  DECIMAL(18,2),                                                                        '+
           '     OSS_NOMETECNICORESPONSAVEL  VARCHAR(50),                                                                          '+
-          '     PRIMARY KEY (OSST_CODIGO, OS_CODIGO),                                                                             '+
-          '     FOREIGN KEY (OS_CODIGO) REFERENCES OS (OS_CODIGO),                                                                '+
+          '     PRIMARY KEY (OSST_CODIGO, OS_CODIGO_LOCAL),                                                                       '+
+          '     FOREIGN KEY (OS_CODIGO_LOCAL) REFERENCES OS (OS_CODIGO_LOCAL),                                                    '+
           '     FOREIGN KEY (FUNC_CODIGO) REFERENCES FUNCIONARIO (FUNC_CODIGO)                                                    '+
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS NOTIFICACAO (                                                                              '+
           '     NOT_CODIGO    INTEGER NOT NULL PRIMARY KEY,                                                                       '+
-          '     USU_CODIGO    INTEGER,                                                                                            '+
           '     NOT_DATA      TIMESTAMP,                                                                                          '+
           '     NOT_TITULO    VARCHAR(100),                                                                                       '+
           '     NOT_TEXTO     VARCHAR(500),                                                                                       '+
-          '     NOT_IND_LIDO  CHAR(1),                                                                                            '+
-          '     FOREIGN KEY (USU_CODIGO) REFERENCES USUARIO (USU_CODIGO)                                                          '+
+          '     NOT_IND_LIDO  CHAR(1)                                                                                            '+
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           '     CREATE TABLE IF NOT EXISTS TAB_CONFIG (                                                                           '+

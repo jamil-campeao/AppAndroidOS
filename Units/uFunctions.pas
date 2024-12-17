@@ -7,21 +7,21 @@ uses FMX.TextLayout, FMX.ListView.Types, System.Types, FMX.Graphics, Data.DB,
      System.Net.HttpClientComponent, System.IOUtils, System.NetEncoding,
      DateUtils;
 
-function GetTextHeight(const D: TListItemText; const Width: single; const Text: string): Integer;
-procedure LoadBitmapFromBlob(Bitmap: TBitmap; Blob: TBlobField);
-function StringToFloat(vl : string) : double;
-function ObterUF(uf : string) : string;
-function FormatarSenha(senha: string): string;
-function StringToDate(str: string): TDate;
-function FormataData(dt: string): string;
-procedure LoadImageFromURL(img: TBitmap; url: string; token: string = '');
-function SaveBlobToFile(field: TField; cod_produto_local: integer): string;
-function StreamToBase64(FotoStream: TStream): string;
-function StringUTCToDate(str: string): TDate;
+function fGetTextHeight(const D: TListItemText; const Width: single; const Text: string): Integer;
+procedure fLoadBitmapFromBlob(Bitmap: TBitmap; Blob: TBlobField);
+function fStringToFloat(vl : string) : double;
+function fObterUF(uf : string) : string;
+function fFormatarSenha(senha: string): string;
+function fStringToDate(str: string): TDate;
+function fFormataData(dt: string): string;
+procedure fLoadImageFromURL(img: TBitmap; url: string; token: string = '');
+function fSaveBlobToFile(field: TField; cod_produto_local: integer): string;
+function fStreamToBase64(FotoStream: TStream): string;
+function fStringUTCToDate(str: string): TDate;
 
 implementation
 
-function GetTextHeight(const D: TListItemText; const Width: single; const Text: string): Integer;
+function fGetTextHeight(const D: TListItemText; const Width: single; const Text: string): Integer;
 var
   Layout: TTextLayout;
 begin
@@ -51,7 +51,7 @@ begin
   end;
 end;
 
-procedure LoadBitmapFromBlob(Bitmap: TBitmap; Blob: TBlobField);
+procedure fLoadBitmapFromBlob(Bitmap: TBitmap; Blob: TBlobField);
 var
   ms: TMemoryStream;
 begin
@@ -65,7 +65,7 @@ begin
   end;
 end;
 
-function StringToFloat(vl : string) : double;
+function fStringToFloat(vl : string) : double;
 begin
     // R$ 5.800,00
     vl := StringReplace(vl, ',', '', [rfReplaceAll]); // R$ 5.80000
@@ -80,7 +80,7 @@ begin
     end;
 end;
 
-function ObterUF(uf : string) : string;
+function fObterUF(uf : string) : string;
 begin
     uf := LowerCase(uf);
 
@@ -115,7 +115,7 @@ begin
     Result := uf;
 end;
 
-function FormatarSenha(senha: string): string;
+function fFormatarSenha(senha: string): string;
 var
     i : integer;
 begin
@@ -125,7 +125,7 @@ begin
         Result := Result + '*';
 end;
 
-function StringToDate(str: string): TDate;
+function fStringToDate(str: string): TDate;
 var
     dia, mes, ano: integer;
 begin
@@ -138,7 +138,7 @@ begin
 end;
 
 // Formato: 2021-10-09T14:11:28.877Z  -->  Date
-function StringUTCToDate(str: string): TDate;
+function fStringUTCToDate(str: string): TDate;
 var
     ano, mes, dia, hora, minuto, seg: integer;
 begin
@@ -157,12 +157,12 @@ begin
 end;
 
 // Formato: 2021-10-09T14:11:28.877Z  -->  2021-10-09 14:11:28
-function FormataData(dt: string): string;
+function fFormataData(dt: string): string;
 begin
     Result := Copy(dt, 1, 10) + ' ' + Copy(dt, 12, 8);
 end;
 
-procedure LoadImageFromURL(img: TBitmap; url: string; token: string = '');
+procedure fLoadImageFromURL(img: TBitmap; url: string; token: string = '');
 var
     http : TNetHTTPClient;
     vStream : TMemoryStream;
@@ -196,7 +196,7 @@ begin
     end;
 end;
 
-function SaveBlobToFile(field: TField; cod_produto_local: integer): string;
+function fSaveBlobToFile(field: TField; cod_produto_local: integer): string;
 var
     arq: string;
 begin
@@ -219,7 +219,7 @@ begin
     Result := arq;
 end;
 
-function StreamToBase64(FotoStream: TStream): string;
+function fStreamToBase64(FotoStream: TStream): string;
 var
     StreamOut: TStringStream;
 begin

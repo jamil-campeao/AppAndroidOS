@@ -674,7 +674,7 @@ object frmPrincipal: TfrmPrincipal
     Size.Height = 453.000000000000000000
     Size.PlatformDefault = False
     TabHeight = 49.000000000000000000
-    TabIndex = 3
+    TabIndex = 2
     TabOrder = 1
     TabPosition = None
     Sizes = (
@@ -1065,7 +1065,7 @@ object frmPrincipal: TfrmPrincipal
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -1244,6 +1244,7 @@ object frmPrincipal: TfrmPrincipal
         ItemEditAppearanceClassName = 'TDynamicAppearance'
         HeaderAppearanceClassName = 'TListHeaderObjects'
         FooterAppearanceClassName = 'TListHeaderObjects'
+        OnUpdateObjects = lvClienteUpdateObjects
         ItemSpaces.Left = 0.000000000000000000
         ItemSpaces.Right = 0.000000000000000000
         Align = Client
@@ -1327,7 +1328,7 @@ object frmPrincipal: TfrmPrincipal
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -1361,6 +1362,7 @@ object frmPrincipal: TfrmPrincipal
         ItemEditAppearanceClassName = 'TDynamicAppearance'
         HeaderAppearanceClassName = 'TListHeaderObjects'
         FooterAppearanceClassName = 'TListHeaderObjects'
+        OnUpdateObjects = lvNotificacaoUpdateObjects
         ItemSpaces.Left = 0.000000000000000000
         ItemSpaces.Right = 0.000000000000000000
         Align = Client
@@ -1368,13 +1370,13 @@ object frmPrincipal: TfrmPrincipal
         Size.Height = 403.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
+        OnPaint = lvNotificacaoPaint
         ItemAppearance.ItemHeight = 90
         ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
           item
             AppearanceObjectName = 'txtTitulo'
             AppearanceClassName = 'TTextObjectAppearance'
             Appearance.Font.Size = 13.000000000000000000
-            Appearance.Font.StyleExt = {00060000000000000004000000}
             Appearance.TextAlign = Leading
             Appearance.TextColor = xFF232323
             Appearance.Width = 241.000000000000000000
@@ -1400,7 +1402,7 @@ object frmPrincipal: TfrmPrincipal
             Appearance.TextVertAlign = Leading
             Appearance.WordWrap = True
             Appearance.TextColor = xFF404040
-            Appearance.Width = 238.000000000000000000
+            Appearance.Width = 318.000000000000000000
             Appearance.Height = 32.000000000000000000
             Appearance.PlaceOffset.X = 11.000000000000000000
             Appearance.PlaceOffset.Y = 54.000000000000000000

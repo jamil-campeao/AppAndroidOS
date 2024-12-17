@@ -45,7 +45,7 @@ begin
     ' LEFT JOIN USUARIO U                                    ' +
     '  ON C.USU_CODIGO_CADASTRO = U.USU_CODIGO               ' +
     ' WHERE C.CLI_CODIGO_LOCAL > 0                           ' +
-    fFiltros(pBusca)                               +
+    fFiltros(pBusca)                                           +
     ' ORDER BY C.CLI_CODIGO_LOCAL DESC           ';
 
   if pPagina > 0 then

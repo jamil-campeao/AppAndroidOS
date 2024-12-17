@@ -7,7 +7,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
   FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.ListView, FMX.ListBox;
+  FMX.ListView.Adapters.Base, FMX.ListView, FMX.ListBox, FMX.TextLayout;
 
 type
   TfrmPrincipal = class(TForm)
@@ -94,6 +94,12 @@ type
     procedure btBuscaClienteClick(Sender: TObject);
     procedure lvClientePaint(Sender: TObject; Canvas: TCanvas;
       const ARect: TRectF);
+    procedure lvNotificacaoPaint(Sender: TObject; Canvas: TCanvas;
+      const ARect: TRectF);
+    procedure lvNotificacaoUpdateObjects(const Sender: TObject;
+      const AItem: TListViewItem);
+    procedure lvClienteUpdateObjects(const Sender: TObject;
+      const AItem: TListViewItem);
   private
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
@@ -108,6 +114,9 @@ pCidade, pUF, pFone, pIndSincronizar: String);
     procedure fAdicionaNotificacaoListView(pCodNotificacao, pData, pTitulo,
       pTexto, pIndLido: String);
     procedure fListarNotificacoes(pPagina: Integer; pIndClear: Boolean);
+    procedure fThreadNotificacoesTerminate(Sender: TObject);
+    procedure fLayoutListViewNotificacao(pAItem: TListViewItem);
+    procedure fLayoutListViewCliente(pAItem: TListViewItem);
     { Private declarations }
   public
     { Public declarations }
@@ -120,7 +129,8 @@ implementation
 
 {$R *.fmx}
 
-uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao;
+uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao,
+  uFunctions;
 
 procedure TfrmPrincipal.btBuscaClienteClick(Sender: TObject);
 begin
@@ -174,6 +184,28 @@ begin
   (lvCliente.Tag >= 0) then
     if lvCliente.GetItemRect(lvCliente.Items.Count - 5).Bottom <= lvCliente.Height then
       fListarClientes(lvCliente.Tag + 1, edBuscaCliente.Text, False);
+end;
+
+procedure TfrmPrincipal.lvClienteUpdateObjects(const Sender: TObject;
+  const AItem: TListViewItem);
+begin
+  fLayoutListViewCliente(AItem);
+end;
+
+procedure TfrmPrincipal.lvNotificacaoPaint(Sender: TObject; Canvas: TCanvas;
+  const ARect: TRectF);
+begin
+  //Verifico se a rolagem atingiu o limite para uma nova carga de registros
+  if (lvNotificacao.Items.Count >= cQTD_REG_PAGINA_NOTIFICACAO) and
+  (lvNotificacao.Tag >= 0) then
+    if lvNotificacao.GetItemRect(lvNotificacao.Items.Count - 5).Bottom <= lvNotificacao.Height then
+      fListarNotificacoes(lvNotificacao.Tag + 1, False);
+end;
+
+procedure TfrmPrincipal.lvNotificacaoUpdateObjects(const Sender: TObject;
+  const AItem: TListViewItem);
+begin
+  fLayoutListViewNotificacao(AItem);
 end;
 
 procedure TfrmPrincipal.lvOSPaint(Sender: TObject; Canvas: TCanvas;
@@ -374,6 +406,7 @@ begin
       vImg.Bitmap := imgIconeSincronizar.Bitmap;
     end;
 
+    fLayoutListViewCliente(vItem);
 
   except on e:Exception do
     ShowMessage('Erro ao inserir cliente na lista: ' + e.Message);
@@ -480,6 +513,7 @@ begin
     //Titulo
     vTxt := TListItemText(vItem.Objects.FindDrawable('txtTitulo'));
     vTxt.Text := pTitulo;
+    vTxt.TagString := pIndLido;
 
     //Data
     vTxt := TListItemText(vItem.Objects.FindDrawable('txtData'));
@@ -497,6 +531,8 @@ begin
     vImg        := TListItemImage(vItem.Objects.FindDrawable('imgMenu'));
     vImg.Bitmap := imgIconeMenu.Bitmap;
 
+    fLayoutListViewNotificacao(vItem);
+
   except on e:Exception do
     ShowMessage('Erro ao inserir notificação na lista: ' + e.Message);
 
@@ -508,25 +544,7 @@ procedure TfrmPrincipal.fListarNotificacoes(pPagina: Integer; pIndClear: Boolean
 var
   vThread: TThread;
 begin
-  if pIndClear then
-    lvNotificacao.Items.Clear;
 
-  DMNotificacao.fListarNotificacoes(pPagina);
-
-  while not DMNotificacao.QryConsNotificacao.Eof do
-  begin
-    fAdicionaNotificacaoListView(DMNotificacao.QryConsNotificacao.FieldByName('NOT_CODIGO').AsString,
-                                 FormatDateTime('dd/mm/yyyy hh:nn', DMNotificacao.QryConsNotificacao.FieldByName('NOT_DATA').AsDateTime),
-                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_TITULO').AsString,
-                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_TEXTO').AsString,
-                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_IND_LIDO').AsString
-                                 );
-
-    DMNotificacao.QryConsNotificacao.Next;
-  end;
-
-
-  {
   //Evito processamento concorrente
   if lvNotificacao.TagString = 'S' then
     exit;
@@ -549,23 +567,82 @@ begin
     Quando a Tag for >= 1: faz o request para buscar mais dados
                       -1 : Indica que não tem mais dados
   }
-  {
+
   //Salvo a página atual a ser exibida
   lvNotificacao.Tag := pPagina;
 
   //Faço a requisição por mais dados
   vThread := TThread.CreateAnonymousThread(procedure
   begin
-    DMCliente.fListarClientes(pPagina, pBusca);
+    DMNotificacao.fListarNotificacoes(pPagina);
   end);
 
-  vThread.OnTerminate := fThreadClientesTerminate;
+  vThread.OnTerminate := fThreadNotificacoesTerminate;
   vThread.Start;
-  }
 
 end;
 
+procedure TfrmPrincipal.fThreadNotificacoesTerminate(Sender: TObject);
+begin
+  // Não carregar mais dados..
+  if DMNotificacao.QryConsNotificacao.RecordCount < cQTD_REG_PAGINA_NOTIFICACAO then
+    lvNotificacao.Tag := -1;
 
+  while not DMNotificacao.QryConsNotificacao.Eof do
+  begin
+    fAdicionaNotificacaoListView(DMNotificacao.QryConsNotificacao.FieldByName('NOT_CODIGO').AsString,
+                                 FormatDateTime('dd/mm/yyyy hh:nn', DMNotificacao.QryConsNotificacao.FieldByName('NOT_DATA').AsDateTime),
+                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_TITULO').AsString,
+                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_TEXTO').AsString,
+                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_IND_LIDO').AsString
+                                 );
+
+    DMNotificacao.QryConsNotificacao.Next;
+  end;
+  lvNotificacao.EndUpdate;
+
+  // Marco que o processo terminou
+  lvNotificacao.TagString := '';
+
+  //Caso e algum erro na Thread
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      exit;
+    end;
+  end;
+end;
+
+procedure TfrmPrincipal.fLayoutListViewNotificacao(pAItem: TListViewItem);
+var
+  vTxt: TListItemText;
+begin
+  vtxt          := TListItemText(pAItem.Objects.FindDrawable('txtTitulo'));
+
+  if vtxt.TagString = 'N' then //IND_LIDO
+    vTxt.Font.Style := [TFontStyle.fsBold];
+
+  vTxt          := TListItemText(pAItem.Objects.FindDrawable('txtMensagem'));
+  vTxt.Width    := lvNotificacao.Width - 22;
+  vTxt.Height   := fGetTextHeight(vTxt, vTxt.Width, vTxt.Text) + 5;
+
+  pAItem.Height := Trunc(vTxt.PlaceOffset.Y + vTxt.Height);
+
+end;
+
+procedure TfrmPrincipal.fLayoutListViewCliente(pAItem: TListViewItem);
+var
+  vTxt: TListItemText;
+begin
+  vTxt          := TListItemText(pAItem.Objects.FindDrawable('txtEndereco'));
+  vTxt.Width    := lvCliente.Width - 100;
+  vTxt.Height   := fGetTextHeight(vTxt, vTxt.Width, vTxt.Text) + 5;
+
+  pAItem.Height := Trunc(vTxt.PlaceOffset.Y + vTxt.Height);
+
+end;
 
 
 end.
