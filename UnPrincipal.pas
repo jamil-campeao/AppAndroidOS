@@ -100,9 +100,10 @@ type
       const AItem: TListViewItem);
     procedure lvClienteUpdateObjects(const Sender: TObject;
       const AItem: TListViewItem);
+    procedure lbiProdutosClick(Sender: TObject);
   private
     procedure fAbrirAba(pImg: TImage);
-    procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
+    procedure fAdicionaOSListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
     procedure fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
     procedure fThreadOSTerminate(Sender: TObject);
@@ -130,7 +131,7 @@ implementation
 {$R *.fmx}
 
 uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao,
-  uFunctions;
+  uFunctions, UnProduto;
 
 procedure TfrmPrincipal.btBuscaClienteClick(Sender: TObject);
 begin
@@ -175,6 +176,14 @@ begin
   fAbrirAba(TImage(Sender));
 end;
 
+
+procedure TfrmPrincipal.lbiProdutosClick(Sender: TObject);
+begin
+  if not Assigned(FrmProduto) then
+    Application.CreateForm(TFrmProduto, frmProduto);
+
+    FrmProduto.Show;
+end;
 
 procedure TfrmPrincipal.lvClientePaint(Sender: TObject; Canvas: TCanvas;
   const ARect: TRectF);
@@ -221,7 +230,7 @@ begin
 
 end;
 
-procedure TfrmPrincipal.fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
+procedure TfrmPrincipal.fAdicionaOSListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
 var
   vItem: TListViewItem;
@@ -325,7 +334,7 @@ begin
 
   while not DMOS.QryConsOS.Eof do
   begin
-    fAdicionaPedidoListView(DMOS.QryConsOS.FieldByName('OS_CODIGO_LOCAL').AsString,
+    fAdicionaOSListView(DMOS.QryConsOS.FieldByName('OS_CODIGO_LOCAL').AsString,
                             DMOS.QryConsOS.FieldByName('OS_CODIGO_OFICIAL').AsString,
                             DMOS.QryConsOS.FieldByName('CLI_NOME').AsString,
                             FormatDateTime('dd/mm/yyyy', DMOS.QryConsOS.FieldByName('OS_DATAABERTURA').AsDateTime),
