@@ -86,6 +86,7 @@ type
     imgIconeSincronizar: TImage;
     imgIconeEndereco: TImage;
     imgIconeFone: TImage;
+    imgIconeMenu: TImage;
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btBuscaOSClick(Sender: TObject);
@@ -104,6 +105,9 @@ pCidade, pUF, pFone, pIndSincronizar: String);
     procedure fListarClientes(pPagina: Integer; pBusca: String;
       pIndClear: Boolean);
     procedure fThreadClientesTerminate(Sender: TObject);
+    procedure fAdicionaNotificacaoListView(pCodNotificacao, pData, pTitulo,
+      pTexto, pIndLido: String);
+    procedure fListarNotificacoes(pPagina: Integer; pIndClear: Boolean);
     { Private declarations }
   public
     { Public declarations }
@@ -116,7 +120,7 @@ implementation
 
 {$R *.fmx}
 
-uses DataModule.OS, uConstantes, DataModule.Cliente;
+uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao;
 
 procedure TfrmPrincipal.btBuscaClienteClick(Sender: TObject);
 begin
@@ -143,6 +147,10 @@ begin
   //Aba Cliente
   if pImg.Name = 'imgAbaCliente' then
     fListarClientes(1, Trim(edBuscaCliente.Text), True);
+
+  //Aba Notificacoes
+  if pImg.Name = 'imgAbaNotificacao' then
+    fListarNotificacoes(1, True);
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
@@ -456,6 +464,108 @@ begin
     end;
   end;
 end;
+
+procedure TfrmPrincipal.fAdicionaNotificacaoListView(pCodNotificacao, pData, pTitulo, pTexto, pIndLido: String);
+var
+  vItem: TListViewItem;
+  vTxt : TListItemText;
+  vImg : TListItemImage;
+begin
+  try
+    vItem := lvNotificacao.Items.Add;
+    vItem.Height := 90;
+
+    vItem.TagString := pCodNotificacao;
+
+    //Titulo
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtTitulo'));
+    vTxt.Text := pTitulo;
+
+    //Data
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtData'));
+    vTxt.Text := pData;
+
+    //Texto
+    vTxt := TListItemText(vItem.Objects.FindDrawable('txtMensagem'));
+    vTxt.Text := pTexto;
+
+    //Icone Data
+    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgData'));
+    vImg.Bitmap := imgIconeData.Bitmap;
+
+    //Icone Menu
+    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgMenu'));
+    vImg.Bitmap := imgIconeMenu.Bitmap;
+
+  except on e:Exception do
+    ShowMessage('Erro ao inserir notificação na lista: ' + e.Message);
+
+  end;
+
+end;
+
+procedure TfrmPrincipal.fListarNotificacoes(pPagina: Integer; pIndClear: Boolean);
+var
+  vThread: TThread;
+begin
+  if pIndClear then
+    lvNotificacao.Items.Clear;
+
+  DMNotificacao.fListarNotificacoes(pPagina);
+
+  while not DMNotificacao.QryConsNotificacao.Eof do
+  begin
+    fAdicionaNotificacaoListView(DMNotificacao.QryConsNotificacao.FieldByName('NOT_CODIGO').AsString,
+                                 FormatDateTime('dd/mm/yyyy hh:nn', DMNotificacao.QryConsNotificacao.FieldByName('NOT_DATA').AsDateTime),
+                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_TITULO').AsString,
+                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_TEXTO').AsString,
+                                 DMNotificacao.QryConsNotificacao.FieldByName('NOT_IND_LIDO').AsString
+                                 );
+
+    DMNotificacao.QryConsNotificacao.Next;
+  end;
+
+
+  {
+  //Evito processamento concorrente
+  if lvNotificacao.TagString = 'S' then
+    exit;
+
+  // Em processamento..
+  lvNotificacao.TagString := 'S';
+
+  lvNotificacao.BeginUpdate;
+
+  //limpo a lista
+  if pIndClear then
+  begin
+    pPagina := 1;
+    lvNotificacao.ScrollTo(0);
+    lvNotificacao.Items.Clear;
+  end;
+
+  {
+    Tag: contém a página atual solicitada ao servidor
+    Quando a Tag for >= 1: faz o request para buscar mais dados
+                      -1 : Indica que não tem mais dados
+  }
+  {
+  //Salvo a página atual a ser exibida
+  lvNotificacao.Tag := pPagina;
+
+  //Faço a requisição por mais dados
+  vThread := TThread.CreateAnonymousThread(procedure
+  begin
+    DMCliente.fListarClientes(pPagina, pBusca);
+  end);
+
+  vThread.OnTerminate := fThreadClientesTerminate;
+  vThread.Start;
+  }
+
+end;
+
+
 
 
 end.

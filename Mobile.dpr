@@ -18,7 +18,8 @@ uses
   uSuperChart in 'Units\uSuperChart.pas',
   DataModule.Usuario in 'DataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule},
   DataModule.OS in 'DataModule\DataModule.OS.pas' {DMOS: TDataModule},
-  DataModule.Cliente in 'DataModule\DataModule.Cliente.pas' {DMCliente: TDataModule};
+  DataModule.Cliente in 'DataModule\DataModule.Cliente.pas' {DMCliente: TDataModule},
+  DataModule.Notificacao in 'DataModule\DataModule.Notificacao.pas' {DMNotificacao: TDataModule};
 
 {$R *.res}
 
@@ -30,5 +31,6 @@ begin
   Application.CreateForm(TDmUsuario, DmUsuario);
   Application.CreateForm(TDMOS, DMOS);
   Application.CreateForm(TDMCliente, DMCliente);
+  Application.CreateForm(TDMNotificacao, DMNotificacao);
   Application.Run;
 end.
