@@ -91,6 +91,8 @@ type
     procedure btBuscaOSClick(Sender: TObject);
     procedure lvOSPaint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
     procedure btBuscaClienteClick(Sender: TObject);
+    procedure lvClientePaint(Sender: TObject; Canvas: TCanvas;
+      const ARect: TRectF);
   private
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
@@ -101,6 +103,7 @@ pDataOS, pIndSincronizar: String; pValor: Double);
 pCidade, pUF, pFone, pIndSincronizar: String);
     procedure fListarClientes(pPagina: Integer; pBusca: String;
       pIndClear: Boolean);
+    procedure fThreadClientesTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -154,6 +157,16 @@ begin
   fAbrirAba(TImage(Sender));
 end;
 
+
+procedure TfrmPrincipal.lvClientePaint(Sender: TObject; Canvas: TCanvas;
+  const ARect: TRectF);
+begin
+  //Verifico se a rolagem atingiu o limite para uma nova carga de registros
+  if (lvCliente.Items.Count >= cQTD_REG_PAGINA_CLIENTE) and
+  (lvCliente.Tag >= 0) then
+    if lvCliente.GetItemRect(lvCliente.Items.Count - 5).Bottom <= lvCliente.Height then
+      fListarClientes(lvCliente.Tag + 1, edBuscaCliente.Text, False);
+end;
 
 procedure TfrmPrincipal.lvOSPaint(Sender: TObject; Canvas: TCanvas;
   const ARect: TRectF);
@@ -366,10 +379,49 @@ procedure TfrmPrincipal.fListarClientes(pPagina: Integer; pBusca: String; pIndCl
 var
   vThread: TThread;
 begin
-  if pIndClear then
-    lvCliente.Items.Clear;
 
-  DMCliente.fListarClientes(pPagina, pBusca);
+  //Evito processamento concorrente
+  if lvCliente.TagString = 'S' then
+    exit;
+
+  // Em processamento..
+  lvCliente.TagString := 'S';
+
+  lvCliente.BeginUpdate;
+
+  //limpo a lista
+  if pIndClear then
+  begin
+    pPagina := 1;
+    lvCliente.ScrollTo(0);
+    lvCliente.Items.Clear;
+  end;
+
+  {
+    Tag: contém a página atual solicitada ao servidor
+    Quando a Tag for >= 1: faz o request para buscar mais dados
+                      -1 : Indica que não tem mais dados
+  }
+
+  //Salvo a página atual a ser exibida
+  lvCliente.Tag := pPagina;
+
+  //Faço a requisição por mais dados
+  vThread := TThread.CreateAnonymousThread(procedure
+  begin
+    DMCliente.fListarClientes(pPagina, pBusca);
+  end);
+
+  vThread.OnTerminate := fThreadClientesTerminate;
+  vThread.Start;
+
+end;
+
+procedure TfrmPrincipal.fThreadClientesTerminate(Sender: TObject);
+begin
+  // Não carregar mais dados..
+  if DMCliente.QryConsCliente.RecordCount < cQTD_REG_PAGINA_CLIENTE then
+    lvCliente.Tag := -1;
 
   while not DMCliente.QryConsCliente.Eof do
   begin
@@ -384,50 +436,26 @@ begin
                              DMCliente.QryConsCliente.FieldByName('CLI_CEL').AsString,
                              DMCliente.QryConsCliente.FieldByName('CLI_IND_SINCRONIZAR').AsString
                              );
+
     DMCliente.QryConsCliente.Next;
 
   end;
 
-  end;
-  {
-  //Evito processamento concorrente
-  if lvOS.TagString = 'S' then
-    exit;
+  lvCliente.EndUpdate;
 
-  // Em processamento..
-  lvOS.TagString := 'S';
+  // Marco que o processo terminou
+  lvCliente.TagString := '';
 
-  lvOS.BeginUpdate;
-
-  //limpo a lista
-  if pIndClear then
+  //Caso e algum erro na Thread
+  if Sender is TThread then
   begin
-    pPagina := 1;
-    lvOS.ScrollTo(0);
-    lvOS.Items.Clear;
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      exit;
+    end;
   end;
-  }
-
-  {
-    Tag: contém a página atual solicitada ao servidor
-    Quando a Tag for >= 1: faz o request para buscar mais dados
-                      -1 : Indica que não tem mais dados
-  }
-  {
-  //Salvo a página atual a ser exibida
-  lvOs.Tag := pPagina;
-
-  //Faço a requisição por mais dados
-  vThread := TThread.CreateAnonymousThread(procedure
-  begin
-    DMOS.fListarOS(pPagina, pBusca);
-  end);
-
-  vThread.OnTerminate := fThreadOSTerminate;
-  vThread.Start;
-  }
-
-
+end;
 
 
 end.

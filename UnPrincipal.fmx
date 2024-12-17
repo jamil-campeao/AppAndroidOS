@@ -1470,6 +1470,7 @@ object frmPrincipal: TfrmPrincipal
         Size.Height = 348.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
+        OnPaint = lvClientePaint
         ItemAppearance.ItemHeight = 90
         ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
           item
