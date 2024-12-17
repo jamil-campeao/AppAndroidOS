@@ -53,7 +53,7 @@ type
     lvNotificacao: TListView;
     Rectangle6: TRectangle;
     edBuscaCliente: TEdit;
-    SpeedButton1: TSpeedButton;
+    btBuscaCliente: TSpeedButton;
     lvCliente: TListView;
     ListBox1: TListBox;
     lbiProdutos: TListBoxItem;
@@ -90,6 +90,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure btBuscaOSClick(Sender: TObject);
     procedure lvOSPaint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
+    procedure btBuscaClienteClick(Sender: TObject);
   private
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaPedidoListView(pOSLocal, pOSOficial, pCliente,
@@ -112,7 +113,12 @@ implementation
 
 {$R *.fmx}
 
-uses DataModule.OS, uConstantes;
+uses DataModule.OS, uConstantes, DataModule.Cliente;
+
+procedure TfrmPrincipal.btBuscaClienteClick(Sender: TObject);
+begin
+  fListarClientes(1, Trim(edBuscaCliente.Text), True);
+end;
 
 procedure TfrmPrincipal.btBuscaOSClick(Sender: TObject);
 begin
@@ -266,8 +272,8 @@ begin
 
   while not DMOS.QryConsOS.Eof do
   begin
-    fAdicionaPedidoListView(DMOS.QryConsOS.FieldByName('OS_CODIGOLOCAL').AsString,
-                            DMOS.QryConsOS.FieldByName('OS_CODIGO').AsString,
+    fAdicionaPedidoListView(DMOS.QryConsOS.FieldByName('OS_CODIGO_LOCAL').AsString,
+                            DMOS.QryConsOS.FieldByName('OS_CODIGO_OFICIAL').AsString,
                             DMOS.QryConsOS.FieldByName('CLI_NOME').AsString,
                             FormatDateTime('dd/mm/yyyy', DMOS.QryConsOS.FieldByName('OS_DATAABERTURA').AsDateTime),
                             DMOS.QryConsOS.FieldByName('OS_IND_SINCRONIZAR').AsString,
@@ -360,13 +366,29 @@ procedure TfrmPrincipal.fListarClientes(pPagina: Integer; pBusca: String; pIndCl
 var
   vThread: TThread;
 begin
+  if pIndClear then
+    lvCliente.Items.Clear;
 
-  fAdicionaClienteListView('1233', 'Pop Move', 'Av. Paulista', '500', 'Apt 302',
-  'Jardins', 'São Paulo', 'SP', '(11) 9929843', 'S');
+  DMCliente.fListarClientes(pPagina, pBusca);
 
-  fAdicionaClienteListView('1233', 'Seara', 'Av. Paulista', '500', 'Apt 302',
-  'Jardins', 'São Paulo', 'SP', '(11) 9929843', 'N');
+  while not DMCliente.QryConsCliente.Eof do
+  begin
+    fAdicionaClienteListView(DMCliente.QryConsCliente.FieldByName('CLI_CODIGO_LOCAL').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CLI_NOME').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CLI_ENDERECO').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CLI_NUMERO').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CLI_COMPLEMENTO').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CLI_BAIRRO').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CID_NOME').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CID_UF').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CLI_CEL').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CLI_IND_SINCRONIZAR').AsString
+                             );
+    DMCliente.QryConsCliente.Next;
 
+  end;
+
+  end;
   {
   //Evito processamento concorrente
   if lvOS.TagString = 'S' then
@@ -405,7 +427,6 @@ begin
   vThread.Start;
   }
 
-end;
 
 
 

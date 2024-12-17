@@ -41,7 +41,7 @@ begin
     ' LEFT JOIN FUNCIONARIO F1                             ' +
     '  ON O.FUNC_CODIGO = F1.FUNC_CODIGO                   ' +
     ' LEFT JOIN CLIENTE C                                  ' +
-    '  ON O.CLI_CODIGO = C.CLI_CODIGO                      ' +
+    '  ON O.CLI_CODIGO_LOCAL = C.CLI_CODIGO_LOCAL          ' +
     ' LEFT JOIN FORMAPAGAMENTO FP                          ' +
     '  ON O.FPG_CODIGO = FP.FPG_CODIGO                     ' +
     ' LEFT JOIN USUARIO U1                                 ' +
@@ -58,9 +58,9 @@ begin
     '  ON O.CLAS_CODIGO = CLAS.CLAS_CODIGO                 ' +
     ' LEFT JOIN OSSTATUS OSS                               ' +
     '  ON O.OSS_CODIGO = OSS.OSS_CODIGO                    ' +
-    ' WHERE O.OS_CODIGO > 0                                ' +
+    ' WHERE O.OS_CODIGO_LOCAL > 0                          ' +
     fFiltros(pBusca)                                         +
-    ' ORDER BY OS_CODIGOLOCAL DESC                         ';
+    ' ORDER BY OS_CODIGO_LOCAL DESC                         ';
 
   if pPagina > 0 then
   begin
@@ -74,15 +74,15 @@ begin
     QryConsOS.ParamByName('CLI_NOME').AsString := '%' + pBusca + '%';
 
     try
-      QryConsOS.ParamByName('OS_CODIGOLOCAL').AsInteger := StrToInt(pBusca);
+      QryConsOS.ParamByName('OS_CODIGO_LOCAL').AsInteger := StrToInt(pBusca);
     except
-      QryConsOS.ParamByName('OS_CODIGOLOCAL').AsInteger := 0;
+      QryConsOS.ParamByName('OS_CODIGO_LOCAL').AsInteger := 0;
     end;
 
     try
-      QryConsOS.ParamByName('OS_CODIGO').AsInteger := StrToInt(pBusca);
+      QryConsOS.ParamByName('OS_CODIGO_OFICIAL').AsInteger := StrToInt(pBusca);
     except
-      QryConsOS.ParamByName('OS_CODIGO').AsInteger := 0;
+      QryConsOS.ParamByName('OS_CODIGO_OFICIAL').AsInteger := 0;
     end;
   end;
 
@@ -94,9 +94,9 @@ begin
   Result := '';
   if pBusca <> '' then
   begin
-    Result := ' AND (C.CLI_NOME LIKE :CLI_NOME         ' +
-              '  OR O.OS_CODIGOLOCAL = :OS_CODIGOLOCAL ' +
-              '  OR O.OS_CODIGO = :OS_CODIGO)          ';
+    Result := ' AND (C.CLI_NOME LIKE :CLI_NOME                ' +
+              '  OR O.OS_CODIGO_LOCAL = :OS_CODIGO_LOCAL      ' +
+              '  OR O.OS_CODIGO_OFICIAL = :OS_CODIGO_OFICIAL) ';
   end;
 end;
 

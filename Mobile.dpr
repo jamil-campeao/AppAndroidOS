@@ -17,7 +17,8 @@ uses
   uSession in 'Units\uSession.pas',
   uSuperChart in 'Units\uSuperChart.pas',
   DataModule.Usuario in 'DataModule\DataModule.Usuario.pas' {DmUsuario: TDataModule},
-  DataModule.OS in 'DataModule\DataModule.OS.pas' {DMOS: TDataModule};
+  DataModule.OS in 'DataModule\DataModule.OS.pas' {DMOS: TDataModule},
+  DataModule.Cliente in 'DataModule\DataModule.Cliente.pas' {DMCliente: TDataModule};
 
 {$R *.res}
 
@@ -28,5 +29,6 @@ begin
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TDmUsuario, DmUsuario);
   Application.CreateForm(TDMOS, DMOS);
+  Application.CreateForm(TDMCliente, DMCliente);
   Application.Run;
 end.

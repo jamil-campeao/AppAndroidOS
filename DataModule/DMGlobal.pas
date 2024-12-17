@@ -381,9 +381,9 @@ procedure TDM.ConnBeforeConnect(Sender: TObject);
 begin
   Conn.DriverName := 'SQLite';
   {$IFDEF MSWINDOWS}
-  Conn.Params.Values['Database'] := System.SysUtils.GetCurrentDir + '\OS.db';
+  Conn.Params.Values['Database'] := System.SysUtils.GetCurrentDir + '\APPOS.db';
   {$ELSE}
-  Conn.Params.Values['Database'] := TPath.Combine(TPath.GetDocumentsPath, 'OS.db');
+  Conn.Params.Values['Database'] := TPath.Combine(TPath.GetDocumentsPath, 'APPOS.db');
   {$ENDIF}
 end;
 

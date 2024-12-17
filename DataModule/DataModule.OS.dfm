@@ -1,6 +1,6 @@
 object DMOS: TDMOS
-  Height = 223
-  Width = 281
+  Height = 144
+  Width = 186
   object QryConsOS: TFDQuery
     Connection = DM.Conn
     Left = 32
