@@ -239,6 +239,7 @@ object frmProduto: TfrmProduto
     Size.Height = 396.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
+    OnPaint = lvProdutoPaint
     ItemAppearance.ItemHeight = 85
     ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
       item

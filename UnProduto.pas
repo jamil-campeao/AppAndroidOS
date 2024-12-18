@@ -25,11 +25,14 @@ type
     imgIconeSemFoto: TImage;
     procedure FormShow(Sender: TObject);
     procedure btBuscaProdutoClick(Sender: TObject);
+    procedure lvProdutoPaint(Sender: TObject; Canvas: TCanvas;
+      const ARect: TRectF);
   private
     procedure fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
       pValor, pEstoque: Double; pFoto: TStream);
     procedure fListarProdutos(pPagina: Integer; pBusca: String;
       pIndClear: Boolean);
+    procedure fThreadProdutosTerminate(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -42,7 +45,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnPrincipal, DataModule.Produto;
+uses UnPrincipal, DataModule.Produto, uConstantes;
 
 procedure TfrmProduto.btBuscaProdutoClick(Sender: TObject);
 begin
@@ -107,12 +110,50 @@ end;
 
 procedure TfrmProduto.fListarProdutos(pPagina: Integer; pBusca: String; pIndClear: Boolean);
 var
-  vFoto : TStream;
+  vThread : TThread;
 begin
-  if pIndClear then
-    lvProduto.Items.Clear;
 
-  DMProduto.fListarProdutos(pPagina, pBusca);
+  //Evito processamento concorrente
+  if lvProduto.TagString = 'S' then
+    exit;
+
+  // Em processamento..
+  lvProduto.TagString := 'S';
+
+  lvProduto.BeginUpdate;
+
+  {
+    Tag: contém a página atual solicitada ao servidor
+    Quando a Tag for >= 1: faz o request para buscar mais dados
+                      -1 : Indica que não tem mais dados
+  }
+
+  //Salvo a página atual a ser exibida
+  lvProduto.Tag := pPagina;
+
+  //Faço a requisição por mais dados
+  vThread := TThread.CreateAnonymousThread(procedure
+  begin
+    DMProduto.fListarProdutos(pPagina, pBusca);
+  end);
+
+  vThread.OnTerminate := fThreadProdutosTerminate;
+  vThread.Start;
+
+end;
+
+procedure TfrmProduto.FormShow(Sender: TObject);
+begin
+  fListarProdutos(1, '', True);
+end;
+
+procedure TfrmProduto.fThreadProdutosTerminate(Sender: TObject);
+var
+  vFoto   : TStream;
+begin
+  // Não carregar mais dados..
+  if DMProduto.QryConsProduto.RecordCount < cQTD_REG_PAGINA_PRODUTO then
+    lvProduto.Tag := -1;
 
   while not DMProduto.QryConsProduto.Eof do
   begin
@@ -131,11 +172,32 @@ begin
 
     DMProduto.QryConsProduto.Next;
   end;
+
+  lvProduto.EndUpdate;
+
+  // Marco que o processo terminou
+  lvProduto.TagString := '';
+
+  //Caso e algum erro na Thread
+  if Sender is TThread then
+  begin
+    if Assigned(TThread(Sender).FatalException) then
+    begin
+      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      exit;
+    end;
+  end;
 end;
 
-procedure TfrmProduto.FormShow(Sender: TObject);
+
+procedure TfrmProduto.lvProdutoPaint(Sender: TObject; Canvas: TCanvas;
+  const ARect: TRectF);
 begin
-  fListarProdutos(1, '', True);
+  //Verifico se a rolagem atingiu o limite para uma nova carga de registros
+  if (lvProduto.Items.Count >= cQTD_REG_PAGINA_PRODUTO) and
+  (lvProduto.Tag >= 0) then
+    if lvProduto.GetItemRect(lvProduto.Items.Count - 5).Bottom <= lvProduto.Height then
+      fListarProdutos(lvProduto.Tag + 1, Trim(edBuscaProduto.Text), False);
 end;
 
 end.

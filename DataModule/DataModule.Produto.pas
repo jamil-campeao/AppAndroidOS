@@ -41,7 +41,8 @@ begin
     ' P.PROD_CODIGO_LOCAL,                          '+
     ' P.PROD_DESCRICAO,                             '+
     ' P.PROD_VALORVENDA,                            '+
-    ' P.PROD_ESTOQUE                                '+
+    ' P.PROD_ESTOQUE,                               '+
+    ' P.FOTO                                        '+
     ' FROM PRODUTO P                                '+
     ' WHERE P.PROD_CODIGO_LOCAL > 0                 '+
     fFiltros(pBusca)                                 +

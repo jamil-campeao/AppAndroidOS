@@ -239,6 +239,7 @@ begin
           '     PROD_INFADICIONAIS      VARCHAR(5000),                                                                            '+
           '     PROD_OBS                VARCHAR(5000),                                                                            '+
           '     PROD_CEST               VARCHAR(7),                                                                               '+
+          '     FOTO                    BLOB,                                                                                     '+
           ' FOREIGN KEY (GRU_CODIGO) REFERENCES PRODUTOGRUPO (GRU_CODIGO),                                                        '+
           ' FOREIGN KEY (FAB_CODIGO) REFERENCES PRODUTOFABRICANTE (FAB_CODIGO),                                                   '+
           ' FOREIGN KEY (UNI_SIGLA) REFERENCES PRODUTOUNIDADE (UNI_SIGLA),                                                        '+
