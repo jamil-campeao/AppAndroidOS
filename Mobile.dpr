@@ -7,7 +7,6 @@ uses
   UnLogin in 'UnLogin.pas' {frmLogin},
   UnPrincipal in 'UnPrincipal.pas' {frmPrincipal},
   DMGlobal in 'DataModule\DMGlobal.pas' {DM: TDataModule},
-  uActionSheet in 'Units\uActionSheet.pas',
   uCombobox in 'Units\uCombobox.pas',
   uConstantes in 'Units\uConstantes.pas',
   uFancyDialog in 'Units\uFancyDialog.pas',
@@ -22,7 +21,8 @@ uses
   DataModule.Notificacao in 'DataModule\DataModule.Notificacao.pas' {DMNotificacao: TDataModule},
   UnProduto in 'UnProduto.pas' {frmProduto},
   DataModule.Produto in 'DataModule\DataModule.Produto.pas' {DMProduto: TDataModule},
-  UnProdutoCad in 'UnProdutoCad.pas' {frmProdutoCad};
+  UnProdutoCad in 'UnProdutoCad.pas' {frmProdutoCad},
+  uActionSheet in 'Units\uActionSheet.pas';
 
 {$R *.res}
 

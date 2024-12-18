@@ -21,11 +21,11 @@ type
     FBackgroundOpacity : Double;
   public
     constructor Create(Frm: TForm);
-    procedure ShowMenu();
-    procedure ClickBackground(Sender: TObject);
-    procedure HideMenu();
-    procedure FinishFade(Sender: TObject);
-    procedure AddItem(codItem: string; itemText: string;
+    procedure fShowMenu();
+    procedure fClickBackground(Sender: TObject);
+    procedure fHideMenu();
+    procedure fFinishFade(Sender: TObject);
+    procedure fAddItem(codItem: string; itemText: string;
                       ACallBack: TExecutaClick = nil;
                       fontTextColor: cardinal = $FF087AF7;
                       fontSize: integer = 17);
@@ -69,7 +69,7 @@ begin
         BringToFront;
         Visible := false;
         HitTest := true;
-        OnClick := ClickBackground;
+        OnClick := fClickBackground;
         Tag := 0; // Invisivel
     end;
     Frm.AddObject(rectFundo);
@@ -167,18 +167,18 @@ begin
         Font.Size := FCancelFontSize;
         FontColor := FCancelFontColor;
         HitTest := true;
-        OnClick := ClickBackground;
+        OnClick := fClickBackground;
     end;
     rectCancelar.AddObject(lblCanc);
 
 end;
 
-procedure TActionSheet.ClickBackground(Sender: TObject);
+procedure TActionSheet.fClickBackground(Sender: TObject);
 begin
-    HideMenu;
+    fHideMenu;
 end;
 
-procedure TActionSheet.ShowMenu();
+procedure TActionSheet.fShowMenu();
 begin
     // Acerta o fundo opaco...
     rectFundo.Opacity := 0;
@@ -217,7 +217,7 @@ begin
                           TInterpolationType.Circular);
 end;
 
-procedure TActionSheet.AddItem(codItem: string; itemText: string;
+procedure TActionSheet.fAddItem(codItem: string; itemText: string;
                                ACallBack: TExecutaClick = nil;
                                fontTextColor: cardinal = $FF087AF7;
                                fontSize: integer = 17);
@@ -257,13 +257,13 @@ begin
 end;
 
 
-procedure TActionSheet.FinishFade(Sender: TObject);
+procedure TActionSheet.fFinishFade(Sender: TObject);
 begin
     if rectFundo.Tag = 0 then
         rectFundo.Visible := false;
 end;
 
-procedure TActionSheet.HideMenu();
+procedure TActionSheet.fHideMenu();
 begin
     rectMenu.AnimateFloat('Margins.Bottom',
                           (rectMenu.Height + 100) * -1,

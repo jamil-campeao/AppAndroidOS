@@ -10,7 +10,9 @@ object frmProdutoCad: TfrmProdutoCad
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
   OnClose = FormClose
+  OnDestroy = FormDestroy
   DesignerMasterStyle = 3
   object rectToolBar: TRectangle
     Align = Top
@@ -431,6 +433,7 @@ object frmProdutoCad: TfrmProdutoCad
       Size.Width = 150.000000000000000000
       Size.Height = 150.000000000000000000
       Size.PlatformDefault = False
+      OnClick = imgFotoClick
       object Label1: TLabel
         StyledSettings = [Family, Style]
         Position.Y = 148.000000000000000000

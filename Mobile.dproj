@@ -280,7 +280,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Units\uActionSheet.pas"/>
         <DCCReference Include="Units\uCombobox.pas"/>
         <DCCReference Include="Units\uConstantes.pas"/>
         <DCCReference Include="Units\uFancyDialog.pas"/>
@@ -322,6 +321,7 @@
             <Form>frmProdutoCad</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="Units\uActionSheet.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
