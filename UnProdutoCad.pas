@@ -41,6 +41,9 @@ type
     procedure imgFotoClick(Sender: TObject);
     procedure ActBibliotecaFotosDidFinishTaking(Image: TBitmap);
     procedure ActCameraDidFinishTaking(Image: TBitmap);
+    procedure rectDescricaoClick(Sender: TObject);
+    procedure rectValorClick(Sender: TObject);
+    procedure rectEstoqueClick(Sender: TObject);
   private
     vMenu      : TActionSheet;
     vPermissao : T99Permissions;
@@ -59,7 +62,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnPrincipal;
+uses UnPrincipal, UnEdicaoPadrao;
 
 procedure TfrmProdutoCad.ActBibliotecaFotosDidFinishTaking(Image: TBitmap);
 begin
@@ -109,6 +112,42 @@ end;
 procedure TfrmProdutoCad.imgFotoClick(Sender: TObject);
 begin
   vMenu.fShowMenu;
+end;
+
+procedure TfrmProdutoCad.rectDescricaoClick(Sender: TObject);
+begin
+  FrmEdicaoPadrao.fEditar(lblDescricao,
+                          TTipoCampo.Memo,
+                          'Descrição do Produto',
+                          'Informe a descrição do produto',
+                          lblDescricao.Text,
+                          True,
+                          200
+                          );
+end;
+
+procedure TfrmProdutoCad.rectEstoqueClick(Sender: TObject);
+begin
+  FrmEdicaoPadrao.fEditar(lblEstoque,
+                          TTipoCampo.Inteiro,
+                          'Quantidade em estoque',
+                          '',
+                          lblEstoque.Text,
+                          True,
+                          0
+                          );
+end;
+
+procedure TfrmProdutoCad.rectValorClick(Sender: TObject);
+begin
+  FrmEdicaoPadrao.fEditar(lblValor,
+                          TTipoCampo.Valor,
+                          'Valor do Produto',
+                          '',
+                          lblValor.Text,
+                          True,
+                          0
+                          );
 end;
 
 procedure TfrmProdutoCad.fClickBibliotecaFotos(Sender: TObject);

@@ -23,7 +23,8 @@ uses
   DataModule.Produto in 'DataModule\DataModule.Produto.pas' {DMProduto: TDataModule},
   UnProdutoCad in 'UnProdutoCad.pas' {frmProdutoCad},
   uActionSheet in 'Units\uActionSheet.pas',
-  u99Permissions in 'Units\u99Permissions.pas';
+  u99Permissions in 'Units\u99Permissions.pas',
+  UnEdicaoPadrao in 'UnEdicaoPadrao.pas' {FrmEdicaoPadrao};
 
 {$R *.res}
 
@@ -37,5 +38,6 @@ begin
   Application.CreateForm(TDMCliente, DMCliente);
   Application.CreateForm(TDMNotificacao, DMNotificacao);
   Application.CreateForm(TDMProduto, DMProduto);
+  Application.CreateForm(TFrmEdicaoPadrao, FrmEdicaoPadrao);
   Application.Run;
 end.

@@ -5,7 +5,7 @@
         <FrameworkType>FMX</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Android</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>558099</TargetedPlatforms>
         <AppType>Application</AppType>
         <MainSource>Mobile.dpr</MainSource>
@@ -329,6 +329,10 @@
         </DCCReference>
         <DCCReference Include="Units\uActionSheet.pas"/>
         <DCCReference Include="Units\u99Permissions.pas"/>
+        <DCCReference Include="UnEdicaoPadrao.pas">
+            <Form>FrmEdicaoPadrao</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
