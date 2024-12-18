@@ -31,6 +31,8 @@ type
       const AItem: TListViewItem);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btAdicionarProdutoClick(Sender: TObject);
+    procedure lvProdutoItemClick(const Sender: TObject;
+      const AItem: TListViewItem);
   private
     procedure fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
       pValor, pEstoque: Double; pFoto: TStream);
@@ -57,6 +59,8 @@ begin
   if not Assigned(FrmProdutoCad) then
     Application.CreateForm(TFrmProdutoCad, FrmProdutoCad);
 
+  FrmProdutoCad.Modo := 'I';
+  FrmProdutoCad.Cod_Produto := 0;
   FrmProdutoCad.Show;
 end;
 
@@ -210,6 +214,17 @@ begin
   end;
 end;
 
+
+procedure TfrmProduto.lvProdutoItemClick(const Sender: TObject;
+  const AItem: TListViewItem);
+begin
+  if not Assigned(FrmProdutoCad) then
+    Application.CreateForm(TFrmProdutoCad, FrmProdutoCad);
+
+  FrmProdutoCad.Modo        := 'A';
+  FrmProdutoCad.Cod_Produto := AItem.TagString.ToInteger;
+  FrmProdutoCad.Show;
+end;
 
 procedure TfrmProduto.lvProdutoPaint(Sender: TObject; Canvas: TCanvas;
   const ARect: TRectF);

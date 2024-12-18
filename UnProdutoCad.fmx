@@ -13,6 +13,7 @@ object frmProdutoCad: TfrmProdutoCad
   OnCreate = FormCreate
   OnClose = FormClose
   OnDestroy = FormDestroy
+  OnShow = FormShow
   DesignerMasterStyle = 3
   object rectToolBar: TRectangle
     Align = Top
@@ -532,7 +533,6 @@ object frmProdutoCad: TfrmProdutoCad
       TextSettings.Font.Size = 13.000000000000000000
       TextSettings.Font.StyleExt = {00060000000000000004000000}
       TextSettings.FontColor = xFF404040
-      Text = 'teste'
       TabOrder = 3
     end
   end

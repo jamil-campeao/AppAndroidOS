@@ -44,14 +44,19 @@ type
     procedure rectDescricaoClick(Sender: TObject);
     procedure rectValorClick(Sender: TObject);
     procedure rectEstoqueClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     vMenu      : TActionSheet;
     vPermissao : T99Permissions;
+    FCod_produto: Integer;
+    FModo: String;
     procedure fClickBibliotecaFotos(Sender: TObject);
     procedure fClickTirarFoto(Sender: TObject);
     procedure fErroPermissaoFotos(Sender: TObject);
     { Private declarations }
   public
+  property Modo: String read FModo write FModo;
+  property Cod_Produto: Integer read FCod_produto write FCod_produto;
     { Public declarations }
   end;
 
@@ -62,7 +67,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnPrincipal, UnEdicaoPadrao;
+uses UnPrincipal, UnEdicaoPadrao, DataModule.Produto, uFunctions, Data.DB;
 
 procedure TfrmProdutoCad.ActBibliotecaFotosDidFinishTaking(Image: TBitmap);
 begin
@@ -107,6 +112,28 @@ procedure TfrmProdutoCad.FormDestroy(Sender: TObject);
 begin
   vMenu.DisposeOf;
   vPermissao.DisposeOf;
+end;
+
+procedure TfrmProdutoCad.FormShow(Sender: TObject);
+begin
+  try
+    if Modo = 'A' then
+    begin
+      DMProduto.fListarProdutoId(Cod_Produto);
+
+      if DMProduto.QryProduto.FieldByName('FOTO').AsString <> '' then
+        fLoadBitmapFromBlob(imgFoto.Bitmap, TBlobField(DMProduto.QryProduto.FieldByName('FOTO')));
+
+
+      lblDescricao.Text := DMProduto.QryProduto.FieldByName('PROD_DESCRICAO').AsString;
+      lblValor.Text     := FormatFloat('#,##0.00', DMProduto.QryProduto.FieldByName('PROD_VALORVENDA').AsFloat);
+      lblEstoque.Text   := FormatFloat('#,##0', DMProduto.QryProduto.FieldByName('PROD_ESTOQUE').AsFloat);
+      lblTitulo.Text    := 'Editar Produto';
+    end;
+  except on E:Exception do
+    ShowMessage('Erro ao carregar dados do produto: ' + e.Message);
+
+  end;
 end;
 
 procedure TfrmProdutoCad.imgFotoClick(Sender: TObject);
