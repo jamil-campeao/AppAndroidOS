@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, uActionSheet, u99Permissions,
-  FMX.MediaLibrary.Actions, System.Actions, FMX.ActnList, FMX.StdActns;
+  FMX.MediaLibrary.Actions, System.Actions, FMX.ActnList, FMX.StdActns, FMX.DialogService;
 
 type
   TExecuteOnClose = procedure of Object;
@@ -36,6 +36,9 @@ type
     ActionList1: TActionList;
     ActCamera: TTakePhotoFromCameraAction;
     ActBibliotecaFotos: TTakePhotoFromLibraryAction;
+    Layout2: TLayout;
+    btExcluir: TSpeedButton;
+    Image6: TImage;
     procedure btVoltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -48,6 +51,7 @@ type
     procedure rectEstoqueClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btSalvarClick(Sender: TObject);
+    procedure btExcluirClick(Sender: TObject);
   private
     vMenu      : TActionSheet;
     vPermissao : T99Permissions;
@@ -82,6 +86,32 @@ end;
 procedure TfrmProdutoCad.ActCameraDidFinishTaking(Image: TBitmap);
 begin
   imgFoto.Bitmap := Image;
+end;
+
+procedure TfrmProdutoCad.btExcluirClick(Sender: TObject);
+begin
+  TDialogService.MessageDialog('Deseja excluir o produto?',
+                               TMsgDlgType.mtConfirmation,
+                               [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
+                               TMsgDlgBtn.mbNo,
+                               0,
+                               procedure(const AResult: TModalResult)
+                               begin
+                                if aResult = mrYes then
+                                begin
+                                  try
+                                    DMProduto.fExcluirProduto(Cod_Produto);
+                                  except on E:Exception do
+                                    ShowMessage(e.Message);
+                                  end;
+
+                                  if Assigned(ExecuteOnClose) then
+                                    ExecuteOnClose;
+
+                                  Close;
+
+                                end;
+                               end);
 end;
 
 procedure TfrmProdutoCad.btSalvarClick(Sender: TObject);
@@ -155,6 +185,8 @@ end;
 procedure TfrmProdutoCad.FormShow(Sender: TObject);
 begin
   try
+    btExcluir.Visible := Modo = 'A';
+
     if Modo = 'A' then
     begin
       DMProduto.fListarProdutoId(Cod_Produto);

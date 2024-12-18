@@ -22,6 +22,7 @@ type
       pFoto: TBitmap);
     procedure fEditarProduto(pCodProdutoLocal: Integer; pDescricao: String;
       pValor, pQtdEstoque: Double; pFoto: TBitmap);
+    procedure fExcluirProduto(pCodProdutoLocal: Integer);
 
     { Public declarations }
   end;
@@ -132,6 +133,28 @@ begin
   QryProduto.ParamByName('PROD_ESTOQUE').AsFloat          := pQtdEstoque;
   QryProduto.ParamByName('FOTO').Assign(pFoto);
   QryProduto.ParamByName('PROD_IND_SINCRONIZAR').AsString := 'S';
+
+  QryProduto.ExecSQL;
+end;
+
+procedure TDMProduto.fExcluirProduto(pCodProdutoLocal: Integer);
+begin
+  {$REGION 'VALIDAÇÕES'}
+  QryProduto.SQL.Clear;
+
+  QryProduto.SQL.Text := ' SELECT PROD_CODIGO FROM OSPRODUTO WHERE PROD_CODIGO = :PROD_CODIGO ';
+  QryProduto.ParamByName('PROD_CODIGO').AsInteger   := pCodProdutoLocal;
+  QryProduto.Open;
+
+  if not QryProduto.IsEmpty then
+    raise Exception.Create('Produto já um uso no banco de dados, não é possível realizar a exclusão');
+  {$ENDREGION}
+
+  QryProduto.SQL.Clear;
+
+  QryProduto.SQL.Text := ' DELETE FROM PRODUTO WHERE PROD_CODIGO_LOCAL = :PROD_CODIGO_LOCAL ';
+
+  QryProduto.ParamByName('PROD_CODIGO_LOCAL').AsInteger   := pCodProdutoLocal;
 
   QryProduto.ExecSQL;
 end;
