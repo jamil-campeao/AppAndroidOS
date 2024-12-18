@@ -5,6 +5,7 @@ object frmProduto: TfrmProduto
   ClientHeight = 501
   ClientWidth = 349
   Fill.Kind = Solid
+  Position = Designed
   StyleBook = frmPrincipal.StyleBook1
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -232,6 +233,7 @@ object frmProduto: TfrmProduto
     ItemEditAppearanceClassName = 'TDynamicAppearance'
     HeaderAppearanceClassName = 'TListHeaderObjects'
     FooterAppearanceClassName = 'TListHeaderObjects'
+    OnUpdateObjects = lvProdutoUpdateObjects
     ItemSpaces.Left = 0.000000000000000000
     ItemSpaces.Right = 0.000000000000000000
     Align = Client
@@ -248,6 +250,8 @@ object frmProduto: TfrmProduto
         Appearance.Font.Size = 13.000000000000000000
         Appearance.Font.StyleExt = {00060000000000000004000000}
         Appearance.TextAlign = Leading
+        Appearance.TextVertAlign = Leading
+        Appearance.WordWrap = True
         Appearance.TextColor = xFF404040
         Appearance.Width = 247.000000000000000000
         Appearance.Height = 25.000000000000000000

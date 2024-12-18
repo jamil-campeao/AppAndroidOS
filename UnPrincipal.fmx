@@ -674,7 +674,7 @@ object frmPrincipal: TfrmPrincipal
     Size.Height = 453.000000000000000000
     Size.PlatformDefault = False
     TabHeight = 49.000000000000000000
-    TabIndex = 2
+    TabIndex = 3
     TabOrder = 1
     TabPosition = None
     Sizes = (
@@ -1065,7 +1065,7 @@ object frmPrincipal: TfrmPrincipal
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False
@@ -1328,7 +1328,7 @@ object frmPrincipal: TfrmPrincipal
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 8.000000000000000000
       Size.Height = 8.000000000000000000
       Size.PlatformDefault = False

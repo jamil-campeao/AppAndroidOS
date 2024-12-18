@@ -27,12 +27,15 @@ type
     procedure btBuscaProdutoClick(Sender: TObject);
     procedure lvProdutoPaint(Sender: TObject; Canvas: TCanvas;
       const ARect: TRectF);
+    procedure lvProdutoUpdateObjects(const Sender: TObject;
+      const AItem: TListViewItem);
   private
     procedure fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
       pValor, pEstoque: Double; pFoto: TStream);
     procedure fListarProdutos(pPagina: Integer; pBusca: String;
       pIndClear: Boolean);
     procedure fThreadProdutosTerminate(Sender: TObject);
+    procedure fLayoutListViewProduto(pAItem: TListViewItem);
     { Private declarations }
   public
     { Public declarations }
@@ -45,7 +48,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnPrincipal, DataModule.Produto, uConstantes;
+uses UnPrincipal, DataModule.Produto, uConstantes, uFunctions;
 
 procedure TfrmProduto.btBuscaProdutoClick(Sender: TObject);
 begin
@@ -99,6 +102,8 @@ begin
     end
     else
       vImg.Bitmap := imgIconeSemFoto.Bitmap;
+
+    fLayoutListViewProduto(vItem);
 
   except on e:Exception do
     ShowMessage('Erro ao inserir produto na lista: ' + e.Message);
@@ -199,5 +204,33 @@ begin
     if lvProduto.GetItemRect(lvProduto.Items.Count - 5).Bottom <= lvProduto.Height then
       fListarProdutos(lvProduto.Tag + 1, Trim(edBuscaProduto.Text), False);
 end;
+
+procedure TfrmProduto.lvProdutoUpdateObjects(const Sender: TObject;
+  const AItem: TListViewItem);
+begin
+  fLayoutListViewProduto(AItem);
+end;
+
+procedure TfrmProduto.fLayoutListViewProduto(pAItem: TListViewItem);
+var
+  vTxt      : TListItemText;
+  vImg      : TListItemImage;
+  vPosicaoY : Extended;
+begin
+  vTxt         := TListItemText(pAItem.Objects.FindDrawable('txtDescricao'));
+  vTxt.Width   := lvProduto.Width - 84;
+  vTxt.Height  := fGetTextHeight(vTxt, vTxt.Width, vTxt.Text) + 3;
+
+  vPosicaoY    := vTxt.PlaceOffset.Y + vTxt.Height;
+
+  TListItemText(pAItem.Objects.FindDrawable('txtValor')).PlaceOffset.Y   := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('txtEstoque')).PlaceOffset.Y := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('imgEstoque')).PlaceOffset.Y := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('imgValor')).PlaceOffset.Y   := vPosicaoY;
+
+  pAItem.Height := Trunc(vPosicaoY + 30);
+
+end;
+
 
 end.
