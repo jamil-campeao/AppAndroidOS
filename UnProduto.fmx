@@ -5,11 +5,12 @@ object frmProduto: TfrmProduto
   ClientHeight = 501
   ClientWidth = 349
   Fill.Kind = Solid
-  Position = Designed
+  Position = MainFormCenter
   StyleBook = frmPrincipal.StyleBook1
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnClose = FormClose
   OnShow = FormShow
   DesignerMasterStyle = 3
   object rectToolBar: TRectangle
@@ -89,6 +90,7 @@ object frmProduto: TfrmProduto
       Size.Width = 60.000000000000000000
       Size.Height = 48.000000000000000000
       Size.PlatformDefault = False
+      OnClick = btAdicionarProdutoClick
       object Image1: TImage
         MultiResBitmap.Height = 512
         MultiResBitmap.Width = 512

@@ -29,6 +29,8 @@ type
       const ARect: TRectF);
     procedure lvProdutoUpdateObjects(const Sender: TObject;
       const AItem: TListViewItem);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btAdicionarProdutoClick(Sender: TObject);
   private
     procedure fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
       pValor, pEstoque: Double; pFoto: TStream);
@@ -48,7 +50,15 @@ implementation
 
 {$R *.fmx}
 
-uses UnPrincipal, DataModule.Produto, uConstantes, uFunctions;
+uses UnPrincipal, DataModule.Produto, uConstantes, uFunctions, UnProdutoCad;
+
+procedure TfrmProduto.btAdicionarProdutoClick(Sender: TObject);
+begin
+  if not Assigned(FrmProdutoCad) then
+    Application.CreateForm(TFrmProdutoCad, FrmProdutoCad);
+
+  FrmProdutoCad.Show;
+end;
 
 procedure TfrmProduto.btBuscaProdutoClick(Sender: TObject);
 begin
@@ -145,6 +155,12 @@ begin
   vThread.OnTerminate := fThreadProdutosTerminate;
   vThread.Start;
 
+end;
+
+procedure TfrmProduto.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action     := TCloseAction.caFree;
+  FrmProduto := nil;
 end;
 
 procedure TfrmProduto.FormShow(Sender: TObject);
