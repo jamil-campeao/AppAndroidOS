@@ -30,6 +30,15 @@
         android:hardwareAccelerated="true"
         android:resizeableActivity="false"
         android:requestLegacyExternalStorage="true">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.embarcadero.Mobile.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
 
 

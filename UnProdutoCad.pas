@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, uActionSheet;
+  FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, uActionSheet, u99Permissions,
+  FMX.MediaLibrary.Actions, System.Actions, FMX.ActnList, FMX.StdActns;
 
 type
   TfrmProdutoCad = class(TForm)
@@ -30,15 +31,22 @@ type
     Label4: TLabel;
     Image5: TImage;
     lblEstoque: TLabel;
+    ActionList1: TActionList;
+    ActCamera: TTakePhotoFromCameraAction;
+    ActBibliotecaFotos: TTakePhotoFromLibraryAction;
     procedure btVoltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure imgFotoClick(Sender: TObject);
+    procedure ActBibliotecaFotosDidFinishTaking(Image: TBitmap);
+    procedure ActCameraDidFinishTaking(Image: TBitmap);
   private
-    vMenu: TActionSheet;
+    vMenu      : TActionSheet;
+    vPermissao : T99Permissions;
     procedure fClickBibliotecaFotos(Sender: TObject);
     procedure fClickTirarFoto(Sender: TObject);
+    procedure fErroPermissaoFotos(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -53,6 +61,16 @@ implementation
 
 uses UnPrincipal;
 
+procedure TfrmProdutoCad.ActBibliotecaFotosDidFinishTaking(Image: TBitmap);
+begin
+  imgFoto.Bitmap := Image;
+end;
+
+procedure TfrmProdutoCad.ActCameraDidFinishTaking(Image: TBitmap);
+begin
+  imgFoto.Bitmap := Image;
+end;
+
 procedure TfrmProdutoCad.btVoltarClick(Sender: TObject);
 begin
   Close;
@@ -66,7 +84,8 @@ end;
 
 procedure TfrmProdutoCad.FormCreate(Sender: TObject);
 begin
-  vMenu := TActionSheet.Create(frmProdutoCad);
+  vMenu      := TActionSheet.Create(frmProdutoCad);
+  vPermissao := T99Permissions.Create;
 
   vMenu.TitleFontSize     := 12;
   vMenu.TitleMenuText     := 'O que deseja fazer?';
@@ -84,6 +103,7 @@ end;
 procedure TfrmProdutoCad.FormDestroy(Sender: TObject);
 begin
   vMenu.DisposeOf;
+  vPermissao.DisposeOf;
 end;
 
 procedure TfrmProdutoCad.imgFotoClick(Sender: TObject);
@@ -94,11 +114,20 @@ end;
 procedure TfrmProdutoCad.fClickBibliotecaFotos(Sender: TObject);
 begin
   vMenu.fHideMenu;
+
+  vPermissao.fPhotoLibrary(ActBibliotecaFotos, fErroPermissaoFotos)
 end;
 
 procedure TfrmProdutoCad.fClickTirarFoto(Sender: TObject);
 begin
   vMenu.fHideMenu;
+
+  vPermissao.fCamera(ActCamera, fErroPermissaoFotos);
+end;
+
+procedure TfrmProdutoCad.fErroPermissaoFotos(Sender: TObject);
+begin
+  ShowMessage('Você não possui acesso a esse recurso no aparelho');
 end;
 
 end.

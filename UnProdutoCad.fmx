@@ -719,4 +719,20 @@ object frmProdutoCad: TfrmProdutoCad
       TabOrder = 3
     end
   end
+  object ActionList1: TActionList
+    Left = 25
+    Top = 66
+    object ActBibliotecaFotos: TTakePhotoFromLibraryAction
+      Category = 'Media Library'
+      MaxHeight = 256
+      MaxWidth = 256
+      OnDidFinishTaking = ActBibliotecaFotosDidFinishTaking
+    end
+    object ActCamera: TTakePhotoFromCameraAction
+      Category = 'Media Library'
+      MaxHeight = 256
+      MaxWidth = 256
+      OnDidFinishTaking = ActCameraDidFinishTaking
+    end
+  end
 end

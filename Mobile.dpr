@@ -22,7 +22,8 @@ uses
   UnProduto in 'UnProduto.pas' {frmProduto},
   DataModule.Produto in 'DataModule\DataModule.Produto.pas' {DMProduto: TDataModule},
   UnProdutoCad in 'UnProdutoCad.pas' {frmProdutoCad},
-  uActionSheet in 'Units\uActionSheet.pas';
+  uActionSheet in 'Units\uActionSheet.pas',
+  u99Permissions in 'Units\u99Permissions.pas';
 
 {$R *.res}
 
@@ -35,8 +36,6 @@ begin
   Application.CreateForm(TDMOS, DMOS);
   Application.CreateForm(TDMCliente, DMCliente);
   Application.CreateForm(TDMNotificacao, DMNotificacao);
-  Application.CreateForm(TfrmProduto, frmProduto);
   Application.CreateForm(TDMProduto, DMProduto);
-  Application.CreateForm(TfrmProdutoCad, frmProdutoCad);
   Application.Run;
 end.
