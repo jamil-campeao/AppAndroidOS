@@ -94,6 +94,7 @@ object frmProdutoCad: TfrmProdutoCad
       Size.Width = 60.000000000000000000
       Size.Height = 48.000000000000000000
       Size.PlatformDefault = False
+      OnClick = btSalvarClick
       object Image1: TImage
         MultiResBitmap.Height = 128
         MultiResBitmap.Width = 128
@@ -426,8 +427,8 @@ object frmProdutoCad: TfrmProdutoCad
             075BA90EDB2A5C48890000000049454E44AE426082}
           FileName = 'C:\Temp\ws-Delphi\images\Images\sem-foto.png'
         end>
-      Position.X = 95.000000000000000000
-      Position.Y = 16.000000000000000000
+      Position.X = 96.000000000000000000
+      Position.Y = 8.000000000000000000
       Size.Width = 150.000000000000000000
       Size.Height = 150.000000000000000000
       Size.PlatformDefault = False

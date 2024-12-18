@@ -37,8 +37,6 @@ begin
 
   QryConsNotificacao.SQL.Text :=
     ' SELECT N.* FROM NOTIFICACAO N    ' +
-    ' LEFT JOIN USUARIO U              ' +
-    '  ON N.USU_CODIGO = U.USU_CODIGO  ' +
     ' WHERE N.NOT_CODIGO > 0           ' +
     ' ORDER BY N.NOT_CODIGO DESC       ';
 

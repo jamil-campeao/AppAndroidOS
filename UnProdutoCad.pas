@@ -9,6 +9,8 @@ uses
   FMX.MediaLibrary.Actions, System.Actions, FMX.ActnList, FMX.StdActns;
 
 type
+  TExecuteOnClose = procedure of Object;
+
   TfrmProdutoCad = class(TForm)
     rectToolBar: TRectangle;
     lblTitulo: TLabel;
@@ -45,11 +47,13 @@ type
     procedure rectValorClick(Sender: TObject);
     procedure rectEstoqueClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure btSalvarClick(Sender: TObject);
   private
     vMenu      : TActionSheet;
     vPermissao : T99Permissions;
     FCod_produto: Integer;
     FModo: String;
+    FExecuteOnClose: TExecuteOnClose;
     procedure fClickBibliotecaFotos(Sender: TObject);
     procedure fClickTirarFoto(Sender: TObject);
     procedure fErroPermissaoFotos(Sender: TObject);
@@ -57,6 +61,7 @@ type
   public
   property Modo: String read FModo write FModo;
   property Cod_Produto: Integer read FCod_produto write FCod_produto;
+  property ExecuteOnClose: TExecuteOnClose read FExecuteOnClose write FExecuteOnClose;
     { Public declarations }
   end;
 
@@ -77,6 +82,39 @@ end;
 procedure TfrmProdutoCad.ActCameraDidFinishTaking(Image: TBitmap);
 begin
   imgFoto.Bitmap := Image;
+end;
+
+procedure TfrmProdutoCad.btSalvarClick(Sender: TObject);
+begin
+  if lblDescricao.Text = '' then
+  begin
+    ShowMessage('Informe a descrição do produto');
+    Exit;
+  end;
+
+  try
+    if Modo = 'I' then
+      DMProduto.fInserirProduto(lblDescricao.Text,
+                                fStringToFloat(lblValor.Text),
+                                fStringToFloat(lblEstoque.Text),
+                                imgFoto.Bitmap
+                                )
+    else
+      DMProduto.fEditarProduto(Cod_Produto,
+                               lblDescricao.Text,
+                               fStringToFloat(lblValor.Text),
+                               fStringToFloat(lblEstoque.Text),
+                               imgFoto.Bitmap
+                               );
+
+      if Assigned(ExecuteOnClose) then
+        ExecuteOnClose;
+
+      Close;
+  except on E:Exception do
+    ShowMessage('Erro ao salvar dados do produto: ' + e.Message);
+
+  end;
 end;
 
 procedure TfrmProdutoCad.btVoltarClick(Sender: TObject);
@@ -127,7 +165,7 @@ begin
 
       lblDescricao.Text := DMProduto.QryProduto.FieldByName('PROD_DESCRICAO').AsString;
       lblValor.Text     := FormatFloat('#,##0.00', DMProduto.QryProduto.FieldByName('PROD_VALORVENDA').AsFloat);
-      lblEstoque.Text   := FormatFloat('#,##0', DMProduto.QryProduto.FieldByName('PROD_ESTOQUE').AsFloat);
+      lblEstoque.Text   := FormatFloat('#,##0.00', DMProduto.QryProduto.FieldByName('PROD_ESTOQUE').AsFloat);
       lblTitulo.Text    := 'Editar Produto';
     end;
   except on E:Exception do
@@ -156,7 +194,7 @@ end;
 procedure TfrmProdutoCad.rectEstoqueClick(Sender: TObject);
 begin
   FrmEdicaoPadrao.fEditar(lblEstoque,
-                          TTipoCampo.Inteiro,
+                          TTipoCampo.Valor,
                           'Quantidade em estoque',
                           '',
                           lblEstoque.Text,

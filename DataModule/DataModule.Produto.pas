@@ -97,29 +97,20 @@ begin
 end;
 
 procedure TDMProduto.fInserirProduto(pDescricao: String; pValor, pQtdEstoque: Double; pFoto: TBitmap);
-var
-  vCodProdAux : Integer;
 begin
   QryProduto.SQL.Clear;
 
-  QryProduto.SQL.Text := 'SELECT MAX(PROD_CODIGO_LOCAL) AS PROD_CODIGO_LOCAL FROM PRODUTO ';
-  QryProduto.Open;
-  vCodProdAux := QryProduto.FieldByName('PROD_CODIGO_LOCAL').AsInteger;
-
-  QryProduto.SQL.Clear;
-
   QryProduto.SQL.Text :=
-    ' INSERT INTO PRODUTO                                                                             '+
-    ' (PROD_CODIGO_LOCAL, PROD_DESCRICAO, PROD_VALORVENDA, PROD_ESTOQUE, FOTO, IND_SINCRONIZAR)       '+
-    ' VALUES                                                                                          '+
-    ' (:PROD_CODIGO_LOCAL, :PROD_DESCRICAO, :PROD_VALORVENDA, :PROD_ESTOQUE, :FOTO, :IND_SINCRONIZAR) ';
+    ' INSERT INTO PRODUTO                                                               '+
+    ' (PROD_DESCRICAO, PROD_VALORVENDA, PROD_ESTOQUE, FOTO, PROD_IND_SINCRONIZAR)       '+
+    ' VALUES                                                                            '+
+    ' (:PROD_DESCRICAO, :PROD_VALORVENDA, :PROD_ESTOQUE, :FOTO, :PROD_IND_SINCRONIZAR)  ';
 
-  QryProduto.ParamByName('PROD_CODIGO_LOCAL').AsInteger := vCodProdAux;
-  QryProduto.ParamByName('PROD_DESCRICAO').AsString     := pDescricao;
-  QryProduto.ParamByName('PROD_VALORVENDA').AsFloat     := pValor;
-  QryProduto.ParamByName('PROD_ESTOQUE').AsFloat        := pQtdEstoque;
+  QryProduto.ParamByName('PROD_DESCRICAO').AsString       := pDescricao;
+  QryProduto.ParamByName('PROD_VALORVENDA').AsFloat       := pValor;
+  QryProduto.ParamByName('PROD_ESTOQUE').AsFloat          := pQtdEstoque;
   QryProduto.ParamByName('FOTO').Assign(pFoto);
-  QryProduto.ParamByName('IND_SINCRONIZAR').AsString    := 'S';
+  QryProduto.ParamByName('PROD_IND_SINCRONIZAR').AsString := 'S';
 
   QryProduto.ExecSQL;
 end;
@@ -132,15 +123,15 @@ begin
   QryProduto.SQL.Text :=
     ' UPDATE PRODUTO SET                                                                                  '+
     ' PROD_DESCRICAO = :PROD_DESCRICAO, PROD_VALORVENDA = :PROD_VALORVENDA, PROD_ESTOQUE = :PROD_ESTOQUE, '+
-    ' FOTO = :FOTO, IND_SINCRONIZAR = :IND_SINCRONIZAR                                                    '+
+    ' FOTO = :FOTO, PROD_IND_SINCRONIZAR = :PROD_IND_SINCRONIZAR                                          '+
     ' WHERE PROD_CODIGO_LOCAL = :PROD_CODIGO_LOCAL                                                        ';
 
-  QryProduto.ParamByName('PROD_CODIGO_LOCAL').AsInteger := pCodProdutoLocal;
-  QryProduto.ParamByName('PROD_DESCRICAO').AsString     := pDescricao;
-  QryProduto.ParamByName('PROD_VALORVENDA').AsFloat     := pValor;
-  QryProduto.ParamByName('PROD_ESTOQUE').AsFloat        := pQtdEstoque;
+  QryProduto.ParamByName('PROD_CODIGO_LOCAL').AsInteger   := pCodProdutoLocal;
+  QryProduto.ParamByName('PROD_DESCRICAO').AsString       := pDescricao;
+  QryProduto.ParamByName('PROD_VALORVENDA').AsFloat       := pValor;
+  QryProduto.ParamByName('PROD_ESTOQUE').AsFloat          := pQtdEstoque;
   QryProduto.ParamByName('FOTO').Assign(pFoto);
-  QryProduto.ParamByName('IND_SINCRONIZAR').AsString    := 'S';
+  QryProduto.ParamByName('PROD_IND_SINCRONIZAR').AsString := 'S';
 
   QryProduto.ExecSQL;
 end;

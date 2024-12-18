@@ -37,6 +37,7 @@ object frmProduto: TfrmProduto
         Size.Width = 60.000000000000000000
         Size.Height = 48.000000000000000000
         Size.PlatformDefault = False
+        OnClick = btVoltarClick
         object Image2: TImage
           MultiResBitmap.Height = 128
           MultiResBitmap.Width = 128

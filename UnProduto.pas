@@ -33,6 +33,7 @@ type
     procedure btAdicionarProdutoClick(Sender: TObject);
     procedure lvProdutoItemClick(const Sender: TObject;
       const AItem: TListViewItem);
+    procedure btVoltarClick(Sender: TObject);
   private
     procedure fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
       pValor, pEstoque: Double; pFoto: TStream);
@@ -40,6 +41,7 @@ type
       pIndClear: Boolean);
     procedure fThreadProdutosTerminate(Sender: TObject);
     procedure fLayoutListViewProduto(pAItem: TListViewItem);
+    procedure fRefreshListagem;
     { Private declarations }
   public
     { Public declarations }
@@ -61,12 +63,18 @@ begin
 
   FrmProdutoCad.Modo := 'I';
   FrmProdutoCad.Cod_Produto := 0;
+  frmProdutoCad.ExecuteOnClose := fRefreshListagem;
   FrmProdutoCad.Show;
 end;
 
 procedure TfrmProduto.btBuscaProdutoClick(Sender: TObject);
 begin
   fListarProdutos(1, Trim(edBuscaProduto.Text), True);
+end;
+
+procedure TfrmProduto.btVoltarClick(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TfrmProduto.fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
@@ -141,6 +149,14 @@ begin
 
   lvProduto.BeginUpdate;
 
+  //limpo a lista
+  if pIndClear then
+  begin
+    pPagina := 1;
+    lvProduto.ScrollTo(0);
+    lvProduto.Items.Clear;
+  end;
+
   {
     Tag: contém a página atual solicitada ao servidor
     Quando a Tag for >= 1: faz o request para buscar mais dados
@@ -191,7 +207,7 @@ begin
                              DMProduto.QryConsProduto.FieldByName('PROD_DESCRICAO').AsString,
                              DMProduto.QryConsProduto.FieldByName('PROD_VALORVENDA').AsFloat,
                              DMProduto.QryConsProduto.FieldByName('PROD_ESTOQUE').AsFloat,
-                             nil
+                             vFoto
                              );
 
 
@@ -221,8 +237,9 @@ begin
   if not Assigned(FrmProdutoCad) then
     Application.CreateForm(TFrmProdutoCad, FrmProdutoCad);
 
-  FrmProdutoCad.Modo        := 'A';
-  FrmProdutoCad.Cod_Produto := AItem.TagString.ToInteger;
+  FrmProdutoCad.Modo           := 'A';
+  FrmProdutoCad.Cod_Produto    := AItem.TagString.ToInteger;
+  FrmProdutoCad.ExecuteOnClose := fRefreshListagem;
   FrmProdutoCad.Show;
 end;
 
@@ -261,6 +278,11 @@ begin
 
   pAItem.Height := Trunc(vPosicaoY + 30);
 
+end;
+
+procedure TfrmProduto.fRefreshListagem;
+begin
+  fListarProdutos(1, Trim(edBuscaProduto.Text), True);
 end;
 
 

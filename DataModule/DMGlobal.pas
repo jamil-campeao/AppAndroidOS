@@ -217,9 +217,10 @@ begin
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS PRODUTO (                                                                                  '+
-          '     PROD_CODIGO             INTEGER NOT NULL PRIMARY KEY,                                                             '+
+          '     PROD_CODIGO_LOCAL       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,                                               '+
           '     GRU_CODIGO              INTEGER,                                                                                  '+
           '     FAB_CODIGO              INTEGER,                                                                                  '+
+          '     PROD_ESTOQUE            DECIMAL(18,4),                                                                            '+
           '     UNI_SIGLA               VARCHAR(6),                                                                               '+
           '     PROD_CODIGO_BARRA       VARCHAR(50),                                                                              '+
           '     PROD_REFERENCIA         VARCHAR(50),                                                                              '+
@@ -240,6 +241,7 @@ begin
           '     PROD_OBS                VARCHAR(5000),                                                                            '+
           '     PROD_CEST               VARCHAR(7),                                                                               '+
           '     FOTO                    BLOB,                                                                                     '+
+          '     PROD_IND_SINCRONIZAR    CHAR(1),                                                                                  '+
           ' FOREIGN KEY (GRU_CODIGO) REFERENCES PRODUTOGRUPO (GRU_CODIGO),                                                        '+
           ' FOREIGN KEY (FAB_CODIGO) REFERENCES PRODUTOFABRICANTE (FAB_CODIGO),                                                   '+
           ' FOREIGN KEY (UNI_SIGLA) REFERENCES PRODUTOUNIDADE (UNI_SIGLA),                                                        '+
