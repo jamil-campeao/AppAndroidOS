@@ -24,6 +24,7 @@ type
     imgIconeValor: TImage;
     imgIconeSemFoto: TImage;
     procedure FormShow(Sender: TObject);
+    procedure btBuscaProdutoClick(Sender: TObject);
   private
     procedure fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
       pValor, pEstoque: Double; pFoto: TStream);
@@ -41,7 +42,12 @@ implementation
 
 {$R *.fmx}
 
-uses UnPrincipal;
+uses UnPrincipal, DataModule.Produto;
+
+procedure TfrmProduto.btBuscaProdutoClick(Sender: TObject);
+begin
+  fListarProdutos(1, Trim(edBuscaProduto.Text), True);
+end;
 
 procedure TfrmProduto.fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
 pValor, pEstoque: Double;
@@ -101,13 +107,23 @@ end;
 
 procedure TfrmProduto.fListarProdutos(pPagina: Integer; pBusca: String; pIndClear: Boolean);
 begin
-  fAdicionaProdutoListView('0000', 'Monitor Tech 22', 499.90, 12, nil);
-  fAdicionaProdutoListView('0000', 'Monitor Tech 22', 499.90, 12, nil);
-  fAdicionaProdutoListView('0000', 'Monitor Tech 22', 499.90, 12, nil);
-  fAdicionaProdutoListView('0000', 'Monitor Tech 22', 499.90, 12, nil);
-  fAdicionaProdutoListView('0000', 'Monitor Tech 22', 499.90, 12, nil);
-  fAdicionaProdutoListView('0000', 'Monitor Tech 22', 499.90, 12, nil);
-  fAdicionaProdutoListView('0000', 'Monitor Tech 22', 499.90, 12, nil);
+  if pIndClear then
+    lvProduto.Items.Clear;
+
+  DMProduto.fListarProdutos(pPagina, pBusca);
+
+  while not DMProduto.QryConsProduto.Eof do
+  begin
+    fAdicionaProdutoListView(DMProduto.QryConsProduto.FieldByName('PROD_CODIGO_LOCAL').AsString,
+                             DMProduto.QryConsProduto.FieldByName('PROD_DESCRICAO').AsString,
+                             DMProduto.QryConsProduto.FieldByName('PROD_VALORVENDA').AsFloat,
+                             DMProduto.QryConsProduto.FieldByName('PROD_ESTOQUE').AsFloat,
+                             nil
+                             );
+
+
+    DMProduto.QryConsProduto.Next;
+  end;
 end;
 
 procedure TfrmProduto.FormShow(Sender: TObject);

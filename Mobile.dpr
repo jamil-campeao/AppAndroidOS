@@ -20,7 +20,8 @@ uses
   DataModule.OS in 'DataModule\DataModule.OS.pas' {DMOS: TDataModule},
   DataModule.Cliente in 'DataModule\DataModule.Cliente.pas' {DMCliente: TDataModule},
   DataModule.Notificacao in 'DataModule\DataModule.Notificacao.pas' {DMNotificacao: TDataModule},
-  UnProduto in 'UnProduto.pas' {frmProduto};
+  UnProduto in 'UnProduto.pas' {frmProduto},
+  DataModule.Produto in 'DataModule\DataModule.Produto.pas' {DMProduto: TDataModule};
 
 {$R *.res}
 
@@ -34,5 +35,6 @@ begin
   Application.CreateForm(TDMCliente, DMCliente);
   Application.CreateForm(TDMNotificacao, DMNotificacao);
   Application.CreateForm(TfrmProduto, frmProduto);
+  Application.CreateForm(TDMProduto, DMProduto);
   Application.Run;
 end.

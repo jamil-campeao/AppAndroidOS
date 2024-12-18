@@ -224,6 +224,7 @@ object frmProduto: TfrmProduto
       Text = 'Buscar'
       TextSettings.Font.Size = 16.000000000000000000
       TextSettings.FontColor = claWhite
+      OnClick = btBuscaProdutoClick
     end
   end
   object lvProduto: TListView
@@ -243,6 +244,8 @@ object frmProduto: TfrmProduto
       item
         AppearanceObjectName = 'txtDescricao'
         AppearanceClassName = 'TTextObjectAppearance'
+        Appearance.Font.Size = 13.000000000000000000
+        Appearance.Font.StyleExt = {00060000000000000004000000}
         Appearance.TextAlign = Leading
         Appearance.TextColor = xFF404040
         Appearance.Width = 247.000000000000000000
@@ -253,6 +256,7 @@ object frmProduto: TfrmProduto
       item
         AppearanceObjectName = 'txtValor'
         AppearanceClassName = 'TTextObjectAppearance'
+        Appearance.Font.Size = 13.000000000000000000
         Appearance.TextAlign = Leading
         Appearance.TextColor = xFF585F5A
         Appearance.Width = 73.000000000000000000
@@ -263,6 +267,7 @@ object frmProduto: TfrmProduto
       item
         AppearanceObjectName = 'txtEstoque'
         AppearanceClassName = 'TTextObjectAppearance'
+        Appearance.Font.Size = 13.000000000000000000
         Appearance.TextAlign = Leading
         Appearance.TextColor = xFF585F5A
         Appearance.Width = 73.000000000000000000
