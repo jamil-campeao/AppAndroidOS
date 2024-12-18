@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Edit,
   FMX.Objects, FMX.StdCtrls, FMX.Controls.Presentation, FMX.ListView.Types,
-  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, Data.DB;
 
 type
   TfrmProduto = class(TForm)
@@ -106,6 +106,8 @@ end;
 
 
 procedure TfrmProduto.fListarProdutos(pPagina: Integer; pBusca: String; pIndClear: Boolean);
+var
+  vFoto : TStream;
 begin
   if pIndClear then
     lvProduto.Items.Clear;
@@ -114,6 +116,11 @@ begin
 
   while not DMProduto.QryConsProduto.Eof do
   begin
+    if DMProduto.QryConsProduto.FieldByName('FOTO').AsString <> '' then
+      vFoto := DMProduto.QryConsProduto.CreateBlobStream(DMProduto.QryConsProduto.FieldByName('FOTO'), TBlobStreamMode.bmRead)
+    else
+      vFoto := nil;
+
     fAdicionaProdutoListView(DMProduto.QryConsProduto.FieldByName('PROD_CODIGO_LOCAL').AsString,
                              DMProduto.QryConsProduto.FieldByName('PROD_DESCRICAO').AsString,
                              DMProduto.QryConsProduto.FieldByName('PROD_VALORVENDA').AsFloat,
