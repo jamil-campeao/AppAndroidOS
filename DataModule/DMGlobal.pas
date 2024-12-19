@@ -123,6 +123,7 @@ begin
           '     CLI_OBS                 VARCHAR(5000),                                                                            '+
           '     CLI_SEXO                CHAR(1),                                                                                  '+
           '     CLI_CODIGO_OFICIAL      INTEGER,                                                                                  '+
+          '     CLI_LIMITECREDITO      NUMERIC (12, 4),                                                                           '+
           ' FOREIGN KEY (CID_CODIGO) REFERENCES CIDADE (CID_CODIGO),                                                              '+
           ' FOREIGN KEY (CID_EMPRESA) REFERENCES CIDADE (CID_CODIGO),                                                             '+
           ' FOREIGN KEY (USU_CODIGO_CADASTRO) REFERENCES USUARIO (USU_CODIGO)                                                     '+

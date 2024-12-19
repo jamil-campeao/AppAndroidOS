@@ -108,6 +108,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btAdicionarClienteClick(Sender: TObject);
+    procedure lvClienteItemClick(const Sender: TObject;
+      const AItem: TListViewItem);
   private
     vFancy : TFancyDialog;
     procedure fAbrirAba(pImg: TImage);
@@ -126,6 +128,7 @@ pCidade, pUF, pFone, pIndSincronizar: String);
     procedure fThreadNotificacoesTerminate(Sender: TObject);
     procedure fLayoutListViewNotificacao(pAItem: TListViewItem);
     procedure fLayoutListViewCliente(pAItem: TListViewItem);
+    procedure fRefreshListagemCliente;
     { Private declarations }
   public
     { Public declarations }
@@ -146,6 +149,9 @@ begin
   if not Assigned(FrmClienteCad) then
     Application.CreateForm(TFrmClienteCad, frmClienteCad);
 
+  frmClienteCad.Modo := 'I';
+  frmClienteCad.Cod_Cliente := 0;
+  frmClienteCad.ExecuteOnClose := fRefreshListagemCliente;
   frmClienteCad.Show;
 end;
 
@@ -209,6 +215,18 @@ begin
     Application.CreateForm(TFrmProduto, frmProduto);
 
     FrmProduto.Show;
+end;
+
+procedure TfrmPrincipal.lvClienteItemClick(const Sender: TObject;
+  const AItem: TListViewItem);
+begin
+  if not Assigned(frmClienteCad) then
+    Application.CreateForm(TFrmClienteCad, frmClienteCad);
+
+  FrmClienteCad.Modo           := 'A';
+  FrmClienteCad.Cod_Cliente    := Aitem.TagString.ToInteger;
+  FrmCLienteCad.ExecuteOnClose := fRefreshListagemCliente;
+  FrmClienteCad.Show;
 end;
 
 procedure TfrmPrincipal.lvClientePaint(Sender: TObject; Canvas: TCanvas;
@@ -692,6 +710,11 @@ begin
 
   pAItem.Height := Trunc(vTxt.PlaceOffset.Y + vTxt.Height);
 
+end;
+
+procedure TfrmPrincipal.fRefreshListagemCliente;
+begin
+  fListarClientes(1, Trim(edBuscaCliente.Text), True);
 end;
 
 

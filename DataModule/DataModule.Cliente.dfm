@@ -6,4 +6,9 @@ object DMCliente: TDMCliente
     Left = 32
     Top = 24
   end
+  object QryCliente: TFDQuery
+    Connection = DM.Conn
+    Left = 136
+    Top = 24
+  end
 end

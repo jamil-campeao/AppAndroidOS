@@ -6,16 +6,23 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.Graphics;
 
 type
   TDMCliente = class(TDataModule)
     QryConsCliente: TFDQuery;
+    QryCliente: TFDQuery;
   private
     function fFiltros(pBusca: String): String;
     { Private declarations }
   public
     procedure fListarClientes(pPagina: Integer; pBusca: String);
+    procedure fEditarCliente(pCodProdutoLocal: Integer; pDescricao: String;
+      pValor, pQtdEstoque: Double; pFoto: TBitmap);
+    procedure fExcluirCliente(pCodProdutoLocal: Integer);
+    procedure fInserirCliente(pDescricao: String; pValor, pQtdEstoque: Double;
+      pFoto: TBitmap);
+    procedure fListarClienteId(pCodClienteLocal: Integer);
 
     { Public declarations }
   end;
@@ -78,6 +85,101 @@ begin
               '  OR C.CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL) ';
   end;
 end;
+
+procedure TDMCliente.fInserirCliente(pDescricao: String; pValor, pQtdEstoque: Double; pFoto: TBitmap);
+begin
+  QryCliente.SQL.Clear;
+
+  QryCliente.SQL.Text :=
+    ' INSERT INTO PRODUTO                                                               '+
+    ' (PROD_DESCRICAO, PROD_VALORVENDA, PROD_ESTOQUE, FOTO, PROD_IND_SINCRONIZAR)       '+
+    ' VALUES                                                                            '+
+    ' (:PROD_DESCRICAO, :PROD_VALORVENDA, :PROD_ESTOQUE, :FOTO, :PROD_IND_SINCRONIZAR)  ';
+
+  QryCliente.ParamByName('PROD_DESCRICAO').AsString       := pDescricao;
+  QryCliente.ParamByName('PROD_VALORVENDA').AsFloat       := pValor;
+  QryCliente.ParamByName('PROD_ESTOQUE').AsFloat          := pQtdEstoque;
+  QryCliente.ParamByName('FOTO').Assign(pFoto);
+  QryCliente.ParamByName('PROD_IND_SINCRONIZAR').AsString := 'S';
+
+  QryCliente.ExecSQL;
+end;
+
+
+procedure TDMCliente.fEditarCliente(pCodProdutoLocal: Integer; pDescricao: String; pValor, pQtdEstoque: Double; pFoto: TBitmap);
+begin
+  QryCliente.SQL.Clear;
+
+  QryCliente.SQL.Text :=
+    ' UPDATE PRODUTO SET                                                                                  '+
+    ' PROD_DESCRICAO = :PROD_DESCRICAO, PROD_VALORVENDA = :PROD_VALORVENDA, PROD_ESTOQUE = :PROD_ESTOQUE, '+
+    ' FOTO = :FOTO, PROD_IND_SINCRONIZAR = :PROD_IND_SINCRONIZAR                                          '+
+    ' WHERE PROD_CODIGO_LOCAL = :PROD_CODIGO_LOCAL                                                        ';
+
+  QryCliente.ParamByName('PROD_CODIGO_LOCAL').AsInteger   := pCodProdutoLocal;
+  QryCliente.ParamByName('PROD_DESCRICAO').AsString       := pDescricao;
+  QryCliente.ParamByName('PROD_VALORVENDA').AsFloat       := pValor;
+  QryCliente.ParamByName('PROD_ESTOQUE').AsFloat          := pQtdEstoque;
+  QryCliente.ParamByName('FOTO').Assign(pFoto);
+  QryCliente.ParamByName('PROD_IND_SINCRONIZAR').AsString := 'S';
+
+  QryCliente.ExecSQL;
+end;
+
+procedure TDMCliente.fExcluirCliente(pCodProdutoLocal: Integer);
+begin
+  {$REGION 'VALIDAÇÕES'}
+  QryCliente.SQL.Clear;
+
+  QryCliente.SQL.Text := ' SELECT PROD_CODIGO FROM OSPRODUTO WHERE PROD_CODIGO = :PROD_CODIGO ';
+  QryCliente.ParamByName('PROD_CODIGO').AsInteger   := pCodProdutoLocal;
+  QryCliente.Open;
+
+  if not QryCliente.IsEmpty then
+    raise Exception.Create('Produto já um uso no banco de dados, não é possível realizar a exclusão');
+  {$ENDREGION}
+
+  QryCliente.SQL.Clear;
+
+  QryCliente.SQL.Text := ' DELETE FROM PRODUTO WHERE PROD_CODIGO_LOCAL = :PROD_CODIGO_LOCAL ';
+
+  QryCliente.ParamByName('PROD_CODIGO_LOCAL').AsInteger   := pCodProdutoLocal;
+
+  QryCliente.ExecSQL;
+end;
+
+procedure TDMCliente.fListarClienteId(pCodClienteLocal: Integer);
+begin
+  QryCliente.SQL.Clear;
+
+  QryCliente.SQL.Text := ' SELECT                                                                              '+
+                         ' C.CLI_CODIGO_LOCAL,                                                                 '+
+                         ' C.CLI_NOME,                                                                         '+
+                         ' CASE                                                                                '+
+                         '         WHEN C.CLI_CPF = '''' OR C.CLI_CPF IS NULL THEN COALESCE(C.CLI_CNPJ, '''')  '+
+                         '         WHEN C.CLI_CNPJ = '''' OR C.CLI_CNPJ IS NULL THEN COALESCE(C.CLI_CPF, '''') '+
+                         '     END AS CLI_DOC,                                                                 '+
+                         '                                                                                     '+
+                         ' C.CLI_CEL,                                                                          '+
+                         ' C.CLI_EMAIL,                                                                        '+
+                         ' C.CLI_ENDERECO,                                                                     '+
+                         ' C.CLI_NUMERO,                                                                       '+
+                         ' C.CLI_BAIRRO,                                                                       '+
+                         ' C.CLI_COMPLEMENTO,                                                                  '+
+                         ' CID.CID_NOME,                                                                       '+
+                         ' CID.CID_UF,                                                                         '+
+                         ' CID.CID_CEP,                                                                        '+
+                         ' COALESCE(C.CLI_LIMITECREDITO,0) AS CLI_LIMITECREDITO                                '+
+                         ' FROM CLIENTE C                                                                      '+
+                         ' LEFT JOIN CIDADE CID                                                                '+
+                         '  ON CID.CID_CODIGO = C.CID_CODIGO                                                   '+
+                         ' WHERE C.CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL                                        ';
+
+  QryCliente.ParamByName('CLI_CODIGO_LOCAL').AsInteger := pCodClienteLocal;
+
+  QryCliente.Open;
+end;
+
 
 
 
