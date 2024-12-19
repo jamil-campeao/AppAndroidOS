@@ -107,6 +107,7 @@ type
     procedure lbiProdutosClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btAdicionarClienteClick(Sender: TObject);
   private
     vFancy : TFancyDialog;
     procedure fAbrirAba(pImg: TImage);
@@ -138,7 +139,15 @@ implementation
 {$R *.fmx}
 
 uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao,
-  uFunctions, UnProduto;
+  uFunctions, UnProduto, UnClienteCad;
+
+procedure TfrmPrincipal.btAdicionarClienteClick(Sender: TObject);
+begin
+  if not Assigned(FrmClienteCad) then
+    Application.CreateForm(TFrmClienteCad, frmClienteCad);
+
+  frmClienteCad.Show;
+end;
 
 procedure TfrmPrincipal.btBuscaClienteClick(Sender: TObject);
 begin

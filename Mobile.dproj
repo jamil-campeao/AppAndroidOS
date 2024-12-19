@@ -333,6 +333,10 @@
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="Units\uFancyDialog.pas"/>
+        <DCCReference Include="UnClienteCad.pas">
+            <Form>frmClienteCad</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
