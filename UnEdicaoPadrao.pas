@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Calendar,
-  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, FMX.Layouts;
+  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, FMX.Layouts, uFancyDialog;
 
 type
   TTipoCampo = (Edit, Data, Senha, Memo, Valor, Inteiro);
@@ -55,7 +55,10 @@ type
     procedure btSalvarClick(Sender: TObject);
     procedure Label2Click(Sender: TObject);
     procedure imgBackspaceClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
+    vFancy : TFancyDialog;
     vObjeto: TObject;
     vProcExecuteOnClose: TExecuteOnClose;
     vIndObrigatorio: Boolean;
@@ -156,6 +159,16 @@ begin
 
 end;
 
+procedure TFrmEdicaoPadrao.FormCreate(Sender: TObject);
+begin
+  vFancy := TFancyDialog.Create(FrmEdicaoPadrao);
+end;
+
+procedure TFrmEdicaoPadrao.FormDestroy(Sender: TObject);
+begin
+  vFancy.DisposeOf;
+end;
+
 procedure TFrmEdicaoPadrao.btSalvarClick(Sender: TObject);
 var
   vRet: String;
@@ -177,7 +190,7 @@ begin
 
   if (vIndObrigatorio) and (vRet = '') then
   begin
-    ShowMessage('Esse campo é obrigatório');
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', 'Campo obrigatório', 'OK');
     Exit;
   end;
 

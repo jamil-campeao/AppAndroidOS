@@ -96,7 +96,7 @@ begin
   if Sender is TThread then
     if Assigned(TThread(Sender).FatalException) then
     begin
-      aFancy.Show(TIconDialog.Error, '', Exception(TThread(sender).FatalException).Message, 'OK');
+      aFancy.fShow(TIconDialog.Error, '', Exception(TThread(sender).FatalException).Message, 'OK');
       Exit;
     end;
 

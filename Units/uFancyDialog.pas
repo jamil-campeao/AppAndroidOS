@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////////////////////////
 {
     Unit FancyDialog
     Criação: 99 Coders (Heber Stein Mazutti - @99coders)
@@ -32,16 +32,16 @@ type
         LabelTitulo, LabelMensagem, LabelBtn1, LabelBtn2, LabelIcon : TLabel;
         AnimacaoArco, AnimacaoFundo : TFloatAnimation;
         CallBack1, CallBack2 : TCallbackProc;
-        procedure BtnMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
-        procedure BtnMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
-        procedure CloseDialog(Sender: TObject);
-        procedure EndAnimation(Sender: TObject);
-        procedure ClickBtn1(Sender: TObject);
-        procedure ClickBtn2(Sender: TObject);
-    procedure EndAnimationArco(Sender: TObject);
+        procedure fBtnMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+        procedure fBtnMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+        procedure fCloseDialog(Sender: TObject);
+        procedure fEndAnimation(Sender: TObject);
+        procedure fClickBtn1(Sender: TObject);
+        procedure fClickBtn2(Sender: TObject);
+    procedure fEndAnimationArco(Sender: TObject);
     public
         constructor Create(const Frm : TForm);
-        procedure Show(icon : TIconDialog;
+        procedure fShow(icon : TIconDialog;
                        titulo, mensagem : string;
                        TextoBtn1 : string = 'OK';
                        CallBackBtn1 : TCallbackProc = nil;
@@ -171,13 +171,13 @@ begin
     AnimacaoArco.PropertyName := 'EndAngle';
     AnimacaoArco.AnimationType := TAnimationType.&In;
     AnimacaoArco.Interpolation := TInterpolationType.Circular;
-    AnimacaoArco.OnFinish := EndAnimationArco;
+    AnimacaoArco.OnFinish := fEndAnimationArco;
 
 
     // Animacao Fundo...
     AnimacaoFundo := TFloatAnimation.Create(Layout);
     AnimacaoFundo.Parent := Layout;
-    AnimacaoFundo.OnFinish := EndAnimation;
+    AnimacaoFundo.OnFinish := fEndAnimation;
 
 
     // Label da mensagem...
@@ -238,9 +238,9 @@ begin
     RectBtn1.Stroke.Kind := TBrushKind.None;
     RectBtn1.XRadius := 4;
     RectBtn1.YRadius := 4;
-    RectBtn1.OnMouseDown := Self.BtnMouseDown;
-    RectBtn1.OnMouseUp := Self.BtnMouseUp;
-    RectBtn1.OnClick := ClickBtn1;
+    RectBtn1.OnMouseDown := Self.fBtnMouseDown;
+    RectBtn1.OnMouseUp := Self.fBtnMouseUp;
+    RectBtn1.OnClick := fClickBtn1;
     RectBtn1.Visible := false;
 
 
@@ -272,9 +272,9 @@ begin
         Stroke.Kind := TBrushKind.None;
         XRadius := 4;
         YRadius := 4;
-        OnMouseDown := Self.BtnMouseDown;
-        OnMouseUp := Self.BtnMouseUp;
-        OnClick := ClickBtn2;
+        OnMouseDown := Self.fBtnMouseDown;
+        OnMouseUp := Self.fBtnMouseUp;
+        OnClick := fClickBtn2;
         Visible := false;
     end;
 
@@ -298,21 +298,21 @@ begin
 end;
 
 // Trata efeito de clique nos botaoes 1 e 2...
-procedure TFancyDialog.BtnMouseDown(Sender: TObject;
+procedure TFancyDialog.fBtnMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
     TRectangle(Sender).Opacity := 0.8;
 end;
 
 // Trata efeito de clique nos botaoes 1 e 2...
-procedure TFancyDialog.BtnMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TFancyDialog.fBtnMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Single);
 begin
     TRectangle(Sender).Opacity := 1;
 end;
 
 // Executada ao terminar animacao de fechar mensagem...
-procedure TFancyDialog.EndAnimation(Sender: TObject);
+procedure TFancyDialog.fEndAnimation(Sender: TObject);
 begin
     Fundo.Visible := false;
     Layout.Visible := false;
@@ -331,7 +331,7 @@ begin
 end;
 
 // Executada ao terminar a formacao do circulo do icone...
-procedure TFancyDialog.EndAnimationArco(Sender: TObject);
+procedure TFancyDialog.fEndAnimationArco(Sender: TObject);
 begin
     // Desenha icone sucesso...
     if Ficon = TIconDialog.Success then
@@ -405,7 +405,7 @@ begin
 end;
 
 // Fecha mensagem...
-procedure TFancyDialog.CloseDialog(Sender: TObject);
+procedure TFancyDialog.fCloseDialog(Sender: TObject);
 begin
     // AnimacaoFundo...
     AnimacaoFundo.StartValue := 1;
@@ -418,21 +418,21 @@ begin
 end;
 
 // Trata clique no Botao 1...
-procedure TFancyDialog.ClickBtn1(Sender: TObject);
+procedure TFancyDialog.fClickBtn1(Sender: TObject);
 begin
     RectMsg.Tag := 1;
-    CloseDialog(Sender);
+    fCloseDialog(Sender);
 end;
 
 // Trata clique no Botao 2...
-procedure TFancyDialog.ClickBtn2(Sender: TObject);
+procedure TFancyDialog.fClickBtn2(Sender: TObject);
 begin
     RectMsg.Tag := 2;
-    CloseDialog(Sender);
+    fCloseDialog(Sender);
 end;
 
 // Exibe a mensagem para o usuario...
-procedure TFancyDialog.Show(icon : TIconDialog;
+procedure TFancyDialog.fShow(icon : TIconDialog;
                             titulo, mensagem: string;
                             TextoBtn1 : string = 'OK';
                             CallBackBtn1 : TCallbackProc = nil;

@@ -288,7 +288,6 @@
         </DCCReference>
         <DCCReference Include="Units\uCombobox.pas"/>
         <DCCReference Include="Units\uConstantes.pas"/>
-        <DCCReference Include="Units\uFancyDialog.pas"/>
         <DCCReference Include="Units\uFormat.pas"/>
         <DCCReference Include="Units\uFunctions.pas"/>
         <DCCReference Include="Units\uLoading.pas"/>
@@ -333,6 +332,7 @@
             <Form>FrmEdicaoPadrao</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="Units\uFancyDialog.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

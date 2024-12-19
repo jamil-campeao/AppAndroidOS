@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, uActionSheet, u99Permissions,
-  FMX.MediaLibrary.Actions, System.Actions, FMX.ActnList, FMX.StdActns, FMX.DialogService;
+  FMX.MediaLibrary.Actions, System.Actions, FMX.ActnList, FMX.StdActns, FMX.DialogService,
+  uFancyDialog;
 
 type
   TExecuteOnClose = procedure of Object;
@@ -58,9 +59,11 @@ type
     FCod_produto: Integer;
     FModo: String;
     FExecuteOnClose: TExecuteOnClose;
+    vFancy : TFancyDialog;
     procedure fClickBibliotecaFotos(Sender: TObject);
     procedure fClickTirarFoto(Sender: TObject);
     procedure fErroPermissaoFotos(Sender: TObject);
+    procedure fClickDelete(Sender: TObject);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -88,37 +91,12 @@ begin
   imgFoto.Bitmap := Image;
 end;
 
-procedure TfrmProdutoCad.btExcluirClick(Sender: TObject);
-begin
-  TDialogService.MessageDialog('Deseja excluir o produto?',
-                               TMsgDlgType.mtConfirmation,
-                               [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
-                               TMsgDlgBtn.mbNo,
-                               0,
-                               procedure(const AResult: TModalResult)
-                               begin
-                                if aResult = mrYes then
-                                begin
-                                  try
-                                    DMProduto.fExcluirProduto(Cod_Produto);
-                                  except on E:Exception do
-                                    ShowMessage(e.Message);
-                                  end;
-
-                                  if Assigned(ExecuteOnClose) then
-                                    ExecuteOnClose;
-
-                                  Close;
-
-                                end;
-                               end);
-end;
-
 procedure TfrmProdutoCad.btSalvarClick(Sender: TObject);
 begin
   if lblDescricao.Text = '' then
   begin
-    ShowMessage('Informe a descrição do produto');
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', 'Informe a descrição do produto', 'OK');
+
     Exit;
   end;
 
@@ -142,7 +120,7 @@ begin
 
       Close;
   except on E:Exception do
-    ShowMessage('Erro ao salvar dados do produto: ' + e.Message);
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao salvar dados do produto: ' + e.Message, 'OK');
 
   end;
 end;
@@ -162,6 +140,7 @@ procedure TfrmProdutoCad.FormCreate(Sender: TObject);
 begin
   vMenu      := TActionSheet.Create(frmProdutoCad);
   vPermissao := T99Permissions.Create;
+  vFancy     := TFancyDialog.Create(frmProdutoCad);
 
   vMenu.TitleFontSize     := 12;
   vMenu.TitleMenuText     := 'O que deseja fazer?';
@@ -180,6 +159,7 @@ procedure TfrmProdutoCad.FormDestroy(Sender: TObject);
 begin
   vMenu.DisposeOf;
   vPermissao.DisposeOf;
+  vFancy.DisposeOf;
 end;
 
 procedure TfrmProdutoCad.FormShow(Sender: TObject);
@@ -201,7 +181,7 @@ begin
       lblTitulo.Text    := 'Editar Produto';
     end;
   except on E:Exception do
-    ShowMessage('Erro ao carregar dados do produto: ' + e.Message);
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados do produto: ' + e.Message, 'OK');
 
   end;
 end;
@@ -225,6 +205,9 @@ end;
 
 procedure TfrmProdutoCad.rectEstoqueClick(Sender: TObject);
 begin
+  if not Assigned(FrmEdicaoPadrao) then
+    Application.CreateForm(TFrmEdicaoPadrao, FrmEdicaoPadrao);
+
   FrmEdicaoPadrao.fEditar(lblEstoque,
                           TTipoCampo.Valor,
                           'Quantidade em estoque',
@@ -237,6 +220,9 @@ end;
 
 procedure TfrmProdutoCad.rectValorClick(Sender: TObject);
 begin
+  if not Assigned(FrmEdicaoPadrao) then
+    Application.CreateForm(TFrmEdicaoPadrao, FrmEdicaoPadrao);
+
   FrmEdicaoPadrao.fEditar(lblValor,
                           TTipoCampo.Valor,
                           'Valor do Produto',
@@ -263,7 +249,59 @@ end;
 
 procedure TfrmProdutoCad.fErroPermissaoFotos(Sender: TObject);
 begin
-  ShowMessage('Você não possui acesso a esse recurso no aparelho');
+  vFancy.fShow(TIconDialog.Warning, 'Aviso', 'Você não possui acesso a esse recurso no aparelho', 'OK');
+
 end;
+
+procedure TfrmProdutoCad.btExcluirClick(Sender: TObject);
+begin
+  vFancy.fShow(TIconDialog.Question,
+               'Confirmação',
+               'Deseja excluir o produto?',
+               'Sim',
+               fClickDelete,
+               'Não'
+               );
+
+
+
+  {TDialogService.MessageDialog('Deseja excluir o produto?',
+                               TMsgDlgType.mtConfirmation,
+                               [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
+                               TMsgDlgBtn.mbNo,
+                               0,
+                               procedure(const AResult: TModalResult)
+                               begin
+                                if aResult = mrYes then
+                                begin
+                                  try
+                                    DMProduto.fExcluirProduto(Cod_Produto);
+                                  except on E:Exception do
+                                    ShowMessage(e.Message);
+                                  end;
+
+                                  if Assigned(ExecuteOnClose) then
+                                    ExecuteOnClose;
+
+                                  Close;
+
+                                end;
+                               end); }
+end;
+
+procedure TfrmProdutoCad.fClickDelete(Sender: TObject);
+begin
+  try
+    DMProduto.fExcluirProduto(Cod_Produto);
+
+    if Assigned(ExecuteOnClose) then
+      ExecuteOnClose;
+
+    Close;
+  except on E:Exception do
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', e.Message, 'OK');
+  end;
+end;
+
 
 end.

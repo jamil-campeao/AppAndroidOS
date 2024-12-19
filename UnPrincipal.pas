@@ -8,7 +8,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
   FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
   FMX.ListView.Adapters.Base, FMX.ListView, FMX.ListBox, FMX.TextLayout,
-  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo;
+  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, uFancyDialog;
 
 type
   TfrmPrincipal = class(TForm)
@@ -88,6 +88,9 @@ type
     imgIconeEndereco: TImage;
     imgIconeFone: TImage;
     imgIconeMenu: TImage;
+    imgSemOS: TImage;
+    imgSemCliente: TImage;
+    imgSemNotificacao: TImage;
     procedure imgAbaDashBoardClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btBuscaOSClick(Sender: TObject);
@@ -102,7 +105,10 @@ type
     procedure lvClienteUpdateObjects(const Sender: TObject;
       const AItem: TListViewItem);
     procedure lbiProdutosClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
+    vFancy : TFancyDialog;
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaOSListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
@@ -163,6 +169,16 @@ begin
   //Aba Notificacoes
   if pImg.Name = 'imgAbaNotificacao' then
     fListarNotificacoes(1, True);
+end;
+
+procedure TfrmPrincipal.FormCreate(Sender: TObject);
+begin
+  vFancy := TFancyDialog.Create(frmPrincipal);
+end;
+
+procedure TfrmPrincipal.FormDestroy(Sender: TObject);
+begin
+  vFancy.DisposeOf;
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
@@ -280,7 +296,7 @@ begin
 
 
   except on e:Exception do
-    ShowMessage('Erro ao inserir pedido na lista: ' + e.Message);
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao inserir pedido na lista: ' + e.Message, 'OK');
 
   end;
 
@@ -290,6 +306,8 @@ procedure TfrmPrincipal.fListarOS(pPagina: Integer; pBusca: String; pIndClear: B
 var
   vThread: TThread;
 begin
+  imgSemOS.Visible := False;
+
   //Evito processamento concorrente
   if lvOS.TagString = 'S' then
     exit;
@@ -350,12 +368,16 @@ begin
   // Marco que o processo terminou
   lvOS.TagString := '';
 
+  //Verifico se a tela esta vazia, se estiver, ele habilita a imagem de tela vazia
+  imgSemOS.Visible := lvOS.ItemCount = 0;
+
   //Caso e algum erro na Thread
   if Sender is TThread then
   begin
     if Assigned(TThread(Sender).FatalException) then
     begin
-      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      vFancy.fShow(TIconDialog.Error, 'Erro', Exception(TThread(sender).FatalException).Message, 'OK');
+
       exit;
     end;
   end;
@@ -419,8 +441,7 @@ begin
     fLayoutListViewCliente(vItem);
 
   except on e:Exception do
-    ShowMessage('Erro ao inserir cliente na lista: ' + e.Message);
-
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao inserir cliente na lista: ' + e.Message, 'OK');
   end;
 
 end;
@@ -430,6 +451,7 @@ procedure TfrmPrincipal.fListarClientes(pPagina: Integer; pBusca: String; pIndCl
 var
   vThread: TThread;
 begin
+  imgSemCliente.Visible := False;
 
   //Evito processamento concorrente
   if lvCliente.TagString = 'S' then
@@ -497,12 +519,16 @@ begin
   // Marco que o processo terminou
   lvCliente.TagString := '';
 
+  //Verifico se a tela esta vazia, se estiver, ele habilita a imagem de tela vazia
+  imgSemCliente.Visible := lvCliente.ItemCount = 0;
+
   //Caso e algum erro na Thread
   if Sender is TThread then
   begin
     if Assigned(TThread(Sender).FatalException) then
     begin
-      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      vFancy.fShow(TIconDialog.Error, 'Erro', Exception(TThread(sender).FatalException).Message, 'OK');
+
       exit;
     end;
   end;
@@ -544,7 +570,7 @@ begin
     fLayoutListViewNotificacao(vItem);
 
   except on e:Exception do
-    ShowMessage('Erro ao inserir notificação na lista: ' + e.Message);
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao inserir notificação na lista: ' + e.Message, 'OK');
 
   end;
 
@@ -554,6 +580,7 @@ procedure TfrmPrincipal.fListarNotificacoes(pPagina: Integer; pIndClear: Boolean
 var
   vThread: TThread;
 begin
+  imgSemNotificacao.Visible := False;
 
   //Evito processamento concorrente
   if lvNotificacao.TagString = 'S' then
@@ -614,12 +641,16 @@ begin
   // Marco que o processo terminou
   lvNotificacao.TagString := '';
 
+  //Verifico se a tela esta vazia, se estiver, ele habilita a imagem de tela vazia
+  imgSemNotificacao.Visible := lvNotificacao.ItemCount = 0;
+
+
   //Caso e algum erro na Thread
   if Sender is TThread then
   begin
     if Assigned(TThread(Sender).FatalException) then
     begin
-      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      vFancy.fShow(TIconDialog.Error, 'Erro', Exception(TThread(sender).FatalException).Message, 'OK');
       exit;
     end;
   end;

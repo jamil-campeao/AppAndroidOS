@@ -9,7 +9,6 @@ uses
   DMGlobal in 'DataModule\DMGlobal.pas' {DM: TDataModule},
   uCombobox in 'Units\uCombobox.pas',
   uConstantes in 'Units\uConstantes.pas',
-  uFancyDialog in 'Units\uFancyDialog.pas',
   uFormat in 'Units\uFormat.pas',
   uFunctions in 'Units\uFunctions.pas',
   uLoading in 'Units\uLoading.pas',
@@ -24,7 +23,8 @@ uses
   UnProdutoCad in 'UnProdutoCad.pas' {frmProdutoCad},
   uActionSheet in 'Units\uActionSheet.pas',
   u99Permissions in 'Units\u99Permissions.pas',
-  UnEdicaoPadrao in 'UnEdicaoPadrao.pas' {FrmEdicaoPadrao};
+  UnEdicaoPadrao in 'UnEdicaoPadrao.pas' {FrmEdicaoPadrao},
+  uFancyDialog in 'Units\uFancyDialog.pas';
 
 {$R *.res}
 
@@ -38,6 +38,5 @@ begin
   Application.CreateForm(TDMCliente, DMCliente);
   Application.CreateForm(TDMNotificacao, DMNotificacao);
   Application.CreateForm(TDMProduto, DMProduto);
-  Application.CreateForm(TFrmEdicaoPadrao, FrmEdicaoPadrao);
   Application.Run;
 end.

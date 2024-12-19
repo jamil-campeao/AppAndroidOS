@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Edit,
   FMX.Objects, FMX.StdCtrls, FMX.Controls.Presentation, FMX.ListView.Types,
-  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, Data.DB;
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, Data.DB,
+  uFancyDialog;
 
 type
   TfrmProduto = class(TForm)
@@ -23,6 +24,7 @@ type
     imgIconeEstoque: TImage;
     imgIconeValor: TImage;
     imgIconeSemFoto: TImage;
+    imgSemProduto: TImage;
     procedure FormShow(Sender: TObject);
     procedure btBuscaProdutoClick(Sender: TObject);
     procedure lvProdutoPaint(Sender: TObject; Canvas: TCanvas;
@@ -34,7 +36,10 @@ type
     procedure lvProdutoItemClick(const Sender: TObject;
       const AItem: TListViewItem);
     procedure btVoltarClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
+  vFancy : TFancyDialog;
     procedure fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
       pValor, pEstoque: Double; pFoto: TStream);
     procedure fListarProdutos(pPagina: Integer; pBusca: String;
@@ -128,7 +133,7 @@ begin
     fLayoutListViewProduto(vItem);
 
   except on e:Exception do
-    ShowMessage('Erro ao inserir produto na lista: ' + e.Message);
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao inserir produto na lista: ' + e.Message, 'OK');
 
   end;
 
@@ -139,6 +144,7 @@ procedure TfrmProduto.fListarProdutos(pPagina: Integer; pBusca: String; pIndClea
 var
   vThread : TThread;
 begin
+  imgSemProduto.Visible := False;
 
   //Evito processamento concorrente
   if lvProduto.TagString = 'S' then
@@ -183,6 +189,16 @@ begin
   FrmProduto := nil;
 end;
 
+procedure TfrmProduto.FormCreate(Sender: TObject);
+begin
+  vFancy := TFancyDialog.Create(frmProduto);
+end;
+
+procedure TfrmProduto.FormDestroy(Sender: TObject);
+begin
+  vFancy.DisposeOf;
+end;
+
 procedure TfrmProduto.FormShow(Sender: TObject);
 begin
   fListarProdutos(1, '', True);
@@ -219,12 +235,17 @@ begin
   // Marco que o processo terminou
   lvProduto.TagString := '';
 
+  //Verifico se a tela esta vazia, se estiver, ele habilita a imagem de tela vazia
+  imgSemProduto.Visible := lvProduto.ItemCount = 0;
+
+
   //Caso e algum erro na Thread
   if Sender is TThread then
   begin
     if Assigned(TThread(Sender).FatalException) then
     begin
-      ShowMessage(Exception(TThread(sender).FatalException).Message);
+      vFancy.fShow(TIconDialog.Error, 'Erro', Exception(TThread(sender).FatalException).Message, 'OK');
+
       exit;
     end;
   end;
