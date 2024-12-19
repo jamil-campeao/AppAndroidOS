@@ -25,7 +25,9 @@ uses
   u99Permissions in 'Units\u99Permissions.pas',
   UnEdicaoPadrao in 'UnEdicaoPadrao.pas' {FrmEdicaoPadrao},
   uFancyDialog in 'Units\uFancyDialog.pas',
-  UnClienteCad in 'UnClienteCad.pas' {frmClienteCad};
+  UnClienteCad in 'UnClienteCad.pas' {frmClienteCad},
+  UnCidade in 'UnCidade.pas' {frmCidade},
+  DataModule.Cidade in 'DataModule\DataModule.Cidade.pas' {DMCidade: TDataModule};
 
 {$R *.res}
 
@@ -40,5 +42,6 @@ begin
   Application.CreateForm(TDMNotificacao, DMNotificacao);
   Application.CreateForm(TDMProduto, DMProduto);
   Application.CreateForm(TfrmClienteCad, frmClienteCad);
+  Application.CreateForm(TDMCidade, DMCidade);
   Application.Run;
 end.

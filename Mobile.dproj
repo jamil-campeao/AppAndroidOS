@@ -337,6 +337,15 @@
             <Form>frmClienteCad</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="UnCidade.pas">
+            <Form>frmCidade</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="DataModule\DataModule.Cidade.pas">
+            <Form>DMCidade</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -86,7 +86,7 @@ begin
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS CLIENTE (                                                                                  '+
-          '     CLI_CODIGO_LOCAL        INTEGER NOT NULL PRIMARY KEY,                                                             '+
+          '     CLI_CODIGO_LOCAL        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,                                               '+
           '     CID_CODIGO              INTEGER,                                                                                  '+
           '     CLI_NOME                VARCHAR(50),                                                                              '+
           '     CLI_ENDERECO            VARCHAR(50),                                                                              '+
@@ -124,6 +124,7 @@ begin
           '     CLI_SEXO                CHAR(1),                                                                                  '+
           '     CLI_CODIGO_OFICIAL      INTEGER,                                                                                  '+
           '     CLI_LIMITECREDITO      NUMERIC (12, 4),                                                                           '+
+          '     CLI_IND_SINCRONIZAR    CHAR(1),                                                                                   '+
           ' FOREIGN KEY (CID_CODIGO) REFERENCES CIDADE (CID_CODIGO),                                                              '+
           ' FOREIGN KEY (CID_EMPRESA) REFERENCES CIDADE (CID_CODIGO),                                                             '+
           ' FOREIGN KEY (USU_CODIGO_CADASTRO) REFERENCES USUARIO (USU_CODIGO)                                                     '+

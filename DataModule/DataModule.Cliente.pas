@@ -17,12 +17,13 @@ type
     { Private declarations }
   public
     procedure fListarClientes(pPagina: Integer; pBusca: String);
-    procedure fEditarCliente(pCodProdutoLocal: Integer; pDescricao: String;
-      pValor, pQtdEstoque: Double; pFoto: TBitmap);
-    procedure fExcluirCliente(pCodProdutoLocal: Integer);
-    procedure fInserirCliente(pDescricao: String; pValor, pQtdEstoque: Double;
-      pFoto: TBitmap);
+    procedure fEditarCliente(pCodClienteLocal: Integer; pCPFCNPJ, pNome, pFone, pEmail, pEndereco, pNumero, pComplemento, pBairro, pCliCEP: String;
+pCidadeCodigo: Integer; pLimite: Double);
+    procedure fExcluirCliente(pCodClienteLocal: Integer);
+    procedure fInserirCliente(pCPFCNPJ, pNome, pFone, pEmail, pEndereco, pNumero, pComplemento, pBairro, pCliCEP: String;
+pCidadeCodigo: Integer; pLimite: Double);
     procedure fListarClienteId(pCodClienteLocal: Integer);
+    function fRetornaCidadeCliente(pCodCliente: Integer): Integer;
 
     { Public declarations }
   end;
@@ -86,64 +87,88 @@ begin
   end;
 end;
 
-procedure TDMCliente.fInserirCliente(pDescricao: String; pValor, pQtdEstoque: Double; pFoto: TBitmap);
+procedure TDMCliente.fInserirCliente(pCPFCNPJ, pNome, pFone, pEmail, pEndereco, pNumero, pComplemento, pBairro, pCliCEP: String;
+pCidadeCodigo: Integer; pLimite: Double);
 begin
   QryCliente.SQL.Clear;
 
   QryCliente.SQL.Text :=
-    ' INSERT INTO PRODUTO                                                               '+
-    ' (PROD_DESCRICAO, PROD_VALORVENDA, PROD_ESTOQUE, FOTO, PROD_IND_SINCRONIZAR)       '+
-    ' VALUES                                                                            '+
-    ' (:PROD_DESCRICAO, :PROD_VALORVENDA, :PROD_ESTOQUE, :FOTO, :PROD_IND_SINCRONIZAR)  ';
+    ' INSERT INTO CLIENTE                                                                          '+
+    ' (CLI_CPF, CLI_NOME, CLI_EMAIL, CLI_ENDERECO, CLI_NUMERO, CLI_COMPLEMENTO, CLI_BAIRRO,        '+
+    ' CID_CODIGO, CLI_CEP, CLI_LIMITECREDITO, CLI_IND_SINCRONIZAR)                                 '+
+    ' VALUES                                                                                       '+
+    ' (:CLI_CPF, :CLI_NOME, :CLI_EMAIL, :CLI_ENDERECO, :CLI_NUMERO, :CLI_COMPLEMENTO, :CLI_BAIRRO, '+
+    ' :CID_CODIGO, :CLI_CEP, :CLI_LIMITECREDITO, :CLI_IND_SINCRONIZAR)                             ';
 
-  QryCliente.ParamByName('PROD_DESCRICAO').AsString       := pDescricao;
-  QryCliente.ParamByName('PROD_VALORVENDA').AsFloat       := pValor;
-  QryCliente.ParamByName('PROD_ESTOQUE').AsFloat          := pQtdEstoque;
-  QryCliente.ParamByName('FOTO').Assign(pFoto);
-  QryCliente.ParamByName('PROD_IND_SINCRONIZAR').AsString := 'S';
+  QryCliente.ParamByName('CLI_CPF').AsString             := pCPFCNPJ;
+  QryCliente.ParamByName('CLI_NOME').AsString            := pNome;
+  QryCliente.ParamByName('CLI_EMAIL').AsString           := pEmail;
+  QryCliente.ParamByName('CLI_ENDERECO').AsString        := pEndereco;
+  QryCliente.ParamByName('CLI_NUMERO').AsString          := pNumero;
+  QryCliente.ParamByName('CLI_COMPLEMENTO').AsString     := pComplemento;
+  QryCliente.ParamByName('CLI_BAIRRO').AsString          := pBairro;
+
+  if pCidadeCodigo > 0 then
+    QryCliente.ParamByName('CID_CODIGO').AsInteger         := pCidadeCodigo
+  else
+  begin
+    QryCliente.ParamByName('CID_CODIGO').DataType := ftInteger;
+    QryCliente.ParamByName('CID_CODIGO').Clear;
+  end;
+
+
+  QryCliente.ParamByName('CLI_CEP').AsString             := pCliCEP;
+  QryCliente.ParamByName('CLI_LIMITECREDITO').AsFloat    := pLimite;
+  QryCliente.ParamByName('CLI_IND_SINCRONIZAR').AsString := 'S';
 
   QryCliente.ExecSQL;
 end;
 
 
-procedure TDMCliente.fEditarCliente(pCodProdutoLocal: Integer; pDescricao: String; pValor, pQtdEstoque: Double; pFoto: TBitmap);
+procedure TDMCliente.fEditarCliente(pCodClienteLocal: Integer; pCPFCNPJ, pNome, pFone, pEmail, pEndereco, pNumero, pComplemento, pBairro, pCliCEP: String;
+pCidadeCodigo: Integer; pLimite: Double);
 begin
   QryCliente.SQL.Clear;
 
   QryCliente.SQL.Text :=
-    ' UPDATE PRODUTO SET                                                                                  '+
-    ' PROD_DESCRICAO = :PROD_DESCRICAO, PROD_VALORVENDA = :PROD_VALORVENDA, PROD_ESTOQUE = :PROD_ESTOQUE, '+
-    ' FOTO = :FOTO, PROD_IND_SINCRONIZAR = :PROD_IND_SINCRONIZAR                                          '+
-    ' WHERE PROD_CODIGO_LOCAL = :PROD_CODIGO_LOCAL                                                        ';
+    ' UPDATE CLIENTE SET                                                                              '+
+    ' CLI_CPF = :CLI_CPF, CLI_NOME = :CLI_NOME, CLI_EMAIL = :CLI_EMAIL, CLI_ENDERECO = :CLI_ENDERECO, '+
+    ' CLI_NUMERO = :CLI_NUMERO, CLI_COMPLEMENTO = :CLI_COMPLEMENTO, CLI_BAIRRO = :CLI_BAIRRO,         '+
+    ' CID_CODIGO = :CID_CODIGO, CLI_CEP = :CLI_CEP, CLI_LIMITECREDITO = :CLI_LIMITECREDITO            '+
+    ' WHERE CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL                                                      ';
 
-  QryCliente.ParamByName('PROD_CODIGO_LOCAL').AsInteger   := pCodProdutoLocal;
-  QryCliente.ParamByName('PROD_DESCRICAO').AsString       := pDescricao;
-  QryCliente.ParamByName('PROD_VALORVENDA').AsFloat       := pValor;
-  QryCliente.ParamByName('PROD_ESTOQUE').AsFloat          := pQtdEstoque;
-  QryCliente.ParamByName('FOTO').Assign(pFoto);
-  QryCliente.ParamByName('PROD_IND_SINCRONIZAR').AsString := 'S';
-
+  QryCliente.ParamByName('CLI_CODIGO_LOCAL').AsInteger   := pCodClienteLocal;
+  QryCliente.ParamByName('CLI_CPF').AsString             := pCPFCNPJ;
+  QryCliente.ParamByName('CLI_NOME').AsString            := pNome;
+  QryCliente.ParamByName('CLI_EMAIL').AsString           := pEmail;
+  QryCliente.ParamByName('CLI_ENDERECO').AsString        := pEndereco;
+  QryCliente.ParamByName('CLI_NUMERO').AsString          := pNumero;
+  QryCliente.ParamByName('CLI_COMPLEMENTO').AsString     := pComplemento;
+  QryCliente.ParamByName('CLI_BAIRRO').AsString          := pBairro;
+  QryCliente.ParamByName('CID_CODIGO').AsInteger         := pCidadeCodigo;
+  QryCliente.ParamByName('CLI_CEP').AsString             := pCliCEP;
+  QryCliente.ParamByName('CLI_LIMITECREDITO').AsFloat    := pLimite;
   QryCliente.ExecSQL;
 end;
 
-procedure TDMCliente.fExcluirCliente(pCodProdutoLocal: Integer);
+procedure TDMCliente.fExcluirCliente(pCodClienteLocal: Integer);
 begin
   {$REGION 'VALIDAÇÕES'}
   QryCliente.SQL.Clear;
 
-  QryCliente.SQL.Text := ' SELECT PROD_CODIGO FROM OSPRODUTO WHERE PROD_CODIGO = :PROD_CODIGO ';
-  QryCliente.ParamByName('PROD_CODIGO').AsInteger   := pCodProdutoLocal;
+  QryCliente.SQL.Text := ' SELECT CLI_CODIGO FROM OS WHERE CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL ';
+  QryCliente.ParamByName('CLI_CODIGO_LOCAL').AsInteger   := pCodClienteLocal;
   QryCliente.Open;
 
   if not QryCliente.IsEmpty then
-    raise Exception.Create('Produto já um uso no banco de dados, não é possível realizar a exclusão');
+    raise Exception.Create('Cliente já um uso no banco de dados, não é possível realizar a exclusão');
   {$ENDREGION}
 
   QryCliente.SQL.Clear;
 
-  QryCliente.SQL.Text := ' DELETE FROM PRODUTO WHERE PROD_CODIGO_LOCAL = :PROD_CODIGO_LOCAL ';
+  QryCliente.SQL.Text := ' DELETE FROM CLIENTE WHERE CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL ';
 
-  QryCliente.ParamByName('PROD_CODIGO_LOCAL').AsInteger   := pCodProdutoLocal;
+  QryCliente.ParamByName('CLI_CODIGO_LOCAL').AsInteger   := pCodClienteLocal;
 
   QryCliente.ExecSQL;
 end;
@@ -178,6 +203,25 @@ begin
   QryCliente.ParamByName('CLI_CODIGO_LOCAL').AsInteger := pCodClienteLocal;
 
   QryCliente.Open;
+end;
+
+function TDMCliente.fRetornaCidadeCliente(pCodCliente: Integer): Integer;
+begin
+  Result := 0;
+  QryConsCliente.SQL.Clear;
+
+  QryConsCliente.SQL.Text :=
+    ' SELECT CID_CODIGO                           '+
+    ' FROM CLIENTE                                '+
+    ' WHERE CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL  ';
+
+  QryConsCliente.ParamByName('CLI_CODIGO_LOCAL').AsInteger := pCodCliente;
+
+  QryConsCliente.Open;
+
+  if not QryConsCliente.IsEmpty then
+    Result := QryConsCliente.FieldByName('CID_CODIGO').AsInteger;
+  
 end;
 
 

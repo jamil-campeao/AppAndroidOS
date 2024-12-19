@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
-  uFancyDialog;
+  uFancyDialog, uFunctions, UnEdicaoPadrao;
 
 type
   TExecuteOnClose = procedure of object;
@@ -88,15 +88,26 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btSalvarClick(Sender: TObject);
+    procedure ListBox1ItemClick(const Sender: TCustomListBox;
+      const Item: TListBoxItem);
   private
     FCod_cliente: Integer;
     FModo: String;
     FExecuteOnClose: TExecuteOnClose;
     vFancy : TFancyDialog;
+    FUF: String;
+    FCod_cidade: Integer;
+    FNome_cidade: String;
+    FCEP: String;
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
   property Cod_Cliente: Integer read FCod_cliente write FCod_cliente;
+  property Cod_Cidade: Integer read FCod_cidade write FCod_cidade;
+  property Nome_Cidade: String read FNome_cidade write FNome_cidade;
+  property UF: String read FUF write FUF;
+  property CEP: String read FCEP write FCEP;
   property ExecuteOnClose: TExecuteOnClose read FExecuteOnClose write FExecuteOnClose;
 
     { Public declarations }
@@ -109,7 +120,73 @@ implementation
 
 {$R *.fmx}
 
-uses UnPrincipal, DataModule.Cliente;
+uses UnPrincipal, DataModule.Cliente, UnCidade;
+
+procedure TfrmClienteCad.btSalvarClick(Sender: TObject);
+begin
+  if lblCPFCNPJ.Text = '' then
+  begin
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', 'Informe o CNPJ/CPF do Cliente', 'OK');
+    Exit;
+  end;
+
+  if lblNome.Text = '' then
+  begin
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', 'Informe o Nome do Cliente', 'OK');
+    Exit;
+  end;
+
+  if lblEndereco.Text = '' then
+  begin
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', 'Informe o Endereço do Cliente', 'OK');
+    Exit;
+  end;
+
+  if lblCidade.Text = '' then
+  begin
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', 'Informe a Cidade do Cliente', 'OK');
+    Exit;
+  end;
+
+  try
+    if Modo = 'I' then
+      DMCliente.fInserirCliente(Trim(lblCPFCNPJ.Text),
+                                Trim(lblNome.Text),
+                                Trim(lblFone.Text),
+                                Trim(lblEmail.Text),
+                                Trim(lblEndereco.Text),
+                                Trim(lblNumero.Text),
+                                Trim(lblComplemento.Text),
+                                Trim(lblBairro.Text),
+                                Trim(lblCEP.Text),
+                                Cod_Cidade,
+                                fStringToFloat(lblLimite.Text)
+                                )
+    else
+      DMCliente.fEditarCliente( Cod_Cliente,
+                                Trim(lblCPFCNPJ.Text),
+                                Trim(lblNome.Text),
+                                Trim(lblFone.Text),
+                                Trim(lblEmail.Text),
+                                Trim(lblEndereco.Text),
+                                Trim(lblNumero.Text),
+                                Trim(lblComplemento.Text),
+                                Trim(lblBairro.Text),
+                                Trim(lblCEP.Text),
+                                Cod_Cidade,
+                                fStringToFloat(lblLimite.Text)
+                                );
+
+      if Assigned(ExecuteOnClose) then
+        ExecuteOnClose;
+
+      Close;
+  except on E:Exception do
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao salvar dados do cliente: ' + e.Message, 'OK');
+
+  end;
+end;
+
 
 procedure TfrmClienteCad.btVoltarClick(Sender: TObject);
 begin
@@ -160,6 +237,132 @@ begin
     vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados do cliente: ' + e.Message, 'OK');
 
   end;
+end;
+
+procedure TfrmClienteCad.ListBox1ItemClick(const Sender: TCustomListBox;
+  const Item: TListBoxItem);
+begin
+  if not Assigned(frmEdicaoPadrao) then
+    Application.CreateForm(TfrmEdicaoPadrao, frmEdicaoPadrao);
+
+  if Item.Name = 'lbiCPFCNPJ' then
+    FrmEdicaoPadrao.fEditar(lblCPFCNPJ,
+                          TTipoCampo.Edit,
+                          'CNPJ/CPF',
+                          'Informe o CNPJ/CPF',
+                          lblCPFCNPJ.Text,
+                          True,
+                          20
+                          )
+  else
+  if Item.Name = 'lbiNome' then
+    FrmEdicaoPadrao.fEditar(lblNome,
+                          TTipoCampo.Edit,
+                          'Nome do Cliente',
+                          'Informe o nome do cliente',
+                          lblNome.Text,
+                          True,
+                          50
+                          )
+  else
+  if Item.Name = 'lbiFone' then
+    FrmEdicaoPadrao.fEditar(lblFone,
+                          TTipoCampo.Edit,
+                          'Fone do Cliente',
+                          'Informe o fone do cliente',
+                          lblFone.Text,
+                          False,
+                          20
+                          )
+  else
+  if Item.Name = 'lbiEmail' then
+    FrmEdicaoPadrao.fEditar(lblEmail,
+                          TTipoCampo.Edit,
+                          'E-mail do Cliente',
+                          'Informe o e-mail do cliente',
+                          lblEmail.Text,
+                          False,
+                          20
+                          )
+  else
+  if Item.Name = 'lbiEndereco' then
+    FrmEdicaoPadrao.fEditar(lblEndereco,
+                          TTipoCampo.Edit,
+                          'Endereço do Cliente',
+                          'Informe o endereço do cliente',
+                          lblEndereco.Text,
+                          True,
+                          50
+                          )
+  else
+  if Item.Name = 'lbiNumero' then
+    FrmEdicaoPadrao.fEditar(lblNumero,
+                          TTipoCampo.Edit,
+                          'Número do Endereço',
+                          'Informe o número do endereço',
+                          lblNumero.Text,
+                          False,
+                          15
+                          )
+  else
+  if Item.Name = 'lbiComplemento' then
+    FrmEdicaoPadrao.fEditar(lblComplemento,
+                          TTipoCampo.Edit,
+                          'Completo do Cliente',
+                          'Informe o complemento do cliente',
+                          lblComplemento.Text,
+                          False,
+                          50
+                          )
+  else
+  if Item.Name = 'lbiBairro' then
+    FrmEdicaoPadrao.fEditar(lblBairro,
+                          TTipoCampo.Edit,
+                          'Bairro do Cliente',
+                          'Informe o bairro do cliente',
+                          lblBairro.Text,
+                          False,
+                          50
+                          )
+  else
+  if Item.Name = 'lbiCidade' then
+    begin
+      if not Assigned(FrmCidade) then
+        Application.CreateForm(TFrmCidade, FrmCidade);
+
+    FrmCidade.ShowModal;
+
+    if Cod_Cidade > 0 then
+    begin
+      lblCidade.Text := Nome_Cidade;
+      lblUF.Text     := UF;
+      lblCEP.Text    := CEP;
+    end;
+  end
+  else
+  if Item.Name = 'lbiCEP' then
+    FrmEdicaoPadrao.fEditar(lblCEP,
+                          TTipoCampo.Edit,
+                          'CEP do Cliente',
+                          'Informe o CEP do cliente',
+                          lblCEP.Text,
+                          True,
+                          9
+                          )
+  else
+  if Item.Name = 'lbiLimite' then
+    FrmEdicaoPadrao.fEditar(lblLimite,
+                          TTipoCampo.Valor,
+                          'Limite do Cliente',
+                          'Informe o limite do cliente',
+                          lblLimite.Text,
+                          False,
+                          20
+                          )
+
+
+
+
 end;
 
 end.

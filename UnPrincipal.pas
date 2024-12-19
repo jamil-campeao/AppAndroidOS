@@ -118,7 +118,7 @@ pDataOS, pIndSincronizar: String; pValor: Double);
     procedure fListarOS(pPagina: Integer; pBusca: String; pIndClear: Boolean);
     procedure fThreadOSTerminate(Sender: TObject);
     procedure fAdicionaClienteListView(pCodClienteLocal, pNome, pEndereco, pNumero, pCompl, pBairro,
-pCidade, pUF, pFone, pIndSincronizar: String);
+pCidade, pUF, pFone, pIndSincronizar: String; pCodCidade: Integer);
     procedure fListarClientes(pPagina: Integer; pBusca: String;
       pIndClear: Boolean);
     procedure fThreadClientesTerminate(Sender: TObject);
@@ -225,6 +225,7 @@ begin
 
   FrmClienteCad.Modo           := 'A';
   FrmClienteCad.Cod_Cliente    := Aitem.TagString.ToInteger;
+  FrmClienteCad.Cod_Cidade     := DMCliente.fRetornaCidadeCliente(AItem.TagString.ToInteger);
   FrmCLienteCad.ExecuteOnClose := fRefreshListagemCliente;
   FrmClienteCad.Show;
 end;
@@ -411,7 +412,7 @@ begin
 end;
 
 procedure TfrmPrincipal.fAdicionaClienteListView(pCodClienteLocal, pNome, pEndereco, pNumero, pCompl, pBairro,
-pCidade, pUF, pFone, pIndSincronizar: String);
+pCidade, pUF, pFone, pIndSincronizar: String; pCodCidade: Integer);
 var
   vItem: TListViewItem;
   vTxt : TListItemText;
@@ -534,7 +535,8 @@ begin
                              DMCliente.QryConsCliente.FieldByName('CID_NOME').AsString,
                              DMCliente.QryConsCliente.FieldByName('CID_UF').AsString,
                              DMCliente.QryConsCliente.FieldByName('CLI_CEL').AsString,
-                             DMCliente.QryConsCliente.FieldByName('CLI_IND_SINCRONIZAR').AsString
+                             DMCliente.QryConsCliente.FieldByName('CLI_IND_SINCRONIZAR').AsString,
+                             DMCliente.QryConsCliente.FieldByName('CID_CODIGO').AsInteger
                              );
 
     DMCliente.QryConsCliente.Next;
