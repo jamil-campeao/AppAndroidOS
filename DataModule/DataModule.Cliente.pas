@@ -156,12 +156,12 @@ begin
   {$REGION 'VALIDAÇÕES'}
   QryCliente.SQL.Clear;
 
-  QryCliente.SQL.Text := ' SELECT CLI_CODIGO FROM OS WHERE CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL ';
+  QryCliente.SQL.Text := ' SELECT CLI_CODIGO_LOCAL FROM OS WHERE CLI_CODIGO_LOCAL = :CLI_CODIGO_LOCAL ';
   QryCliente.ParamByName('CLI_CODIGO_LOCAL').AsInteger   := pCodClienteLocal;
   QryCliente.Open;
 
   if not QryCliente.IsEmpty then
-    raise Exception.Create('Cliente já um uso no banco de dados, não é possível realizar a exclusão');
+    raise Exception.Create('Cliente já em uso no banco de dados, não é possível realizar a exclusão');
   {$ENDREGION}
 
   QryCliente.SQL.Clear;

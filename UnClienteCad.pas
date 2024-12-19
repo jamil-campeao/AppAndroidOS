@@ -91,6 +91,7 @@ type
     procedure btSalvarClick(Sender: TObject);
     procedure ListBox1ItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
+    procedure btExcluirClick(Sender: TObject);
   private
     FCod_cliente: Integer;
     FModo: String;
@@ -100,6 +101,7 @@ type
     FCod_cidade: Integer;
     FNome_cidade: String;
     FCEP: String;
+    procedure fClickDelete(Sender: TObject);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -121,6 +123,12 @@ implementation
 {$R *.fmx}
 
 uses UnPrincipal, DataModule.Cliente, UnCidade;
+
+procedure TfrmClienteCad.btExcluirClick(Sender: TObject);
+begin
+  vFancy.fShow(TIconDialog.Question, 'Confirmação', 'Confirma a exclusão do cliente?',
+              'Sim', fClickDelete, 'Não');
+end;
 
 procedure TfrmClienteCad.btSalvarClick(Sender: TObject);
 begin
@@ -364,5 +372,20 @@ begin
 
 
 end;
+
+procedure TfrmClienteCad.fClickDelete(Sender: TObject);
+begin
+  try
+    DMCliente.fExcluirCliente(Cod_Cliente);
+
+    if Assigned(ExecuteOnClose) then
+      ExecuteOnClose;
+
+    Close;
+  except on E:Exception do
+    vFancy.fShow(TIconDialog.Warning, 'Aviso', e.Message, 'OK');
+  end;
+end;
+
 
 end.
