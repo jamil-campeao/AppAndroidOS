@@ -159,6 +159,7 @@ object frmClienteCad: TfrmClienteCad
     Viewport.Width = 350.000000000000000000
     Viewport.Height = 406.000000000000000000
     object lbiCPFCNPJ: TListBoxItem
+      Selectable = False
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
       Size.PlatformDefault = False
@@ -253,6 +254,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiNome: TListBoxItem
+      Selectable = False
       Position.Y = 60.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -348,6 +350,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiFone: TListBoxItem
+      Selectable = False
       Position.Y = 120.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -443,6 +446,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiEmail: TListBoxItem
+      Selectable = False
       Position.Y = 180.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -538,6 +542,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiEndereco: TListBoxItem
+      Selectable = False
       Position.Y = 240.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -633,6 +638,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiNumero: TListBoxItem
+      Selectable = False
       Position.Y = 300.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -728,6 +734,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiComplemento: TListBoxItem
+      Selectable = False
       Position.Y = 360.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -823,6 +830,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiBairro: TListBoxItem
+      Selectable = False
       Position.Y = 420.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -918,6 +926,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiCidade: TListBoxItem
+      Selectable = False
       Position.Y = 480.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -1013,6 +1022,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiUF: TListBoxItem
+      Selectable = False
       Position.Y = 540.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -1108,6 +1118,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiCEP: TListBoxItem
+      Selectable = False
       Position.Y = 600.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -1203,6 +1214,7 @@ object frmClienteCad: TfrmClienteCad
       end
     end
     object lbiLimite: TListBoxItem
+      Selectable = False
       Position.Y = 660.000000000000000000
       Size.Width = 350.000000000000000000
       Size.Height = 60.000000000000000000
@@ -1512,6 +1524,7 @@ object frmClienteCad: TfrmClienteCad
       Size.Width = 64.000000000000000000
       Size.Height = 48.000000000000000000
       Size.PlatformDefault = False
+      OnClick = btMapaClick
       object Image16: TImage
         MultiResBitmap.Height = 128
         MultiResBitmap.Width = 128
@@ -1792,5 +1805,12 @@ object frmClienteCad: TfrmClienteCad
         Size.PlatformDefault = False
       end
     end
+  end
+  object LocationSensor: TLocationSensor
+    ActivityType = Other
+    UsageAuthorization = WhenInUse
+    OnLocationChanged = LocationSensorLocationChanged
+    Left = 56
+    Top = 472
   end
 end

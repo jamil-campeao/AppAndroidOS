@@ -10,6 +10,8 @@ uses
   uFancyDialog, uFunctions, UnClienteCad;
 
 type
+  TOnCidadeSelecionada = reference to procedure(ASelected: Boolean; ACodCidade: Integer; ANomeCidade, AUF, ACEP: String);
+
   TfrmCidade = class(TForm)
     StyleBook1: TStyleBook;
     Rectangle3: TRectangle;
@@ -28,7 +30,10 @@ type
     procedure lvCidadeItemClick(const Sender: TObject;
       const AItem: TListViewItem);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure fShow(ACallback: TOnCidadeSelecionada);
+
   private
+    FOnCidadeSelecionada: TOnCidadeSelecionada;
     vFancy : TFancyDialog;
     procedure fListarCidades(pPagina: Integer; pBusca: String;
       pIndClear: Boolean);
@@ -149,17 +154,26 @@ end;
 
 procedure TfrmCidade.lvCidadeItemClick(const Sender: TObject;
   const AItem: TListViewItem);
+var
+  ACodCidade: Integer;
+  ANomeCidade, AUF, ACEP: String;
 begin
-  DMCidade.fListarCidadeID(AItem.TagString.ToInteger);
+  // Busca os dados da cidade selecionada
+  ACodCidade := AItem.TagString.ToInteger;
+  DMCidade.fListarCidadeID(ACodCidade);
 
   if not DMCidade.QryConsCidade.IsEmpty then
   begin
-    frmClienteCad.Cod_Cidade  := DMCidade.QryConsCidade.FieldByName('CID_CODIGO').AsInteger;
-    frmClienteCad.Nome_Cidade := DMCidade.QryConsCidade.FieldByName('CID_NOME').AsString;
-    frmClienteCad.UF          := DMCidade.QryConsCidade.FieldByName('CID_UF').AsString;
-    frmClienteCad.CEP         := DMCidade.QryConsCidade.FieldByName('CID_CEP').AsString;
+    ANomeCidade := DMCidade.QryConsCidade.FieldByName('CID_NOME').AsString;
+    AUF         := DMCidade.QryConsCidade.FieldByName('CID_UF').AsString;
+    ACEP        := DMCidade.QryConsCidade.FieldByName('CID_CEP').AsString;
+
+    // Chama o callback com os dados selecionados
+    if Assigned(FOnCidadeSelecionada) then
+      FOnCidadeSelecionada(True, ACodCidade, ANomeCidade, AUF, ACEP);
   end;
 
+  // Fecha o formulário
   Close;
 end;
 
@@ -227,8 +241,12 @@ begin
 
 end;
 
-
-
-
+procedure TFrmCidade.fShow(ACallback: TOnCidadeSelecionada);
+begin
+  // Atribui o callback
+  FOnCidadeSelecionada := ACallback;
+  // Exibe a tela sem ser modal
+  Self.Show;
+end;
 
 end.

@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
-  uFancyDialog, uFunctions, UnEdicaoPadrao;
+  uFancyDialog, uFunctions, UnEdicaoPadrao, u99Permissions, System.Sensors,
+  System.Sensors.Components;
 
 type
   TExecuteOnClose = procedure of object;
@@ -83,6 +84,7 @@ type
     Image15: TImage;
     btMapa: TSpeedButton;
     Image16: TImage;
+    LocationSensor: TLocationSensor;
     procedure btVoltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
@@ -92,6 +94,9 @@ type
     procedure ListBox1ItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
     procedure btExcluirClick(Sender: TObject);
+    procedure btMapaClick(Sender: TObject);
+    procedure LocationSensorLocationChanged(Sender: TObject; const OldLocation,
+      NewLocation: TLocationCoord2D);
   private
     FCod_cliente: Integer;
     FModo: String;
@@ -101,7 +106,10 @@ type
     FCod_cidade: Integer;
     FNome_cidade: String;
     FCEP: String;
+    vPermissao: T99Permissions;
     procedure fClickDelete(Sender: TObject);
+    procedure fErroLocalizacao(Sender: TObject);
+    procedure fObterLocalizacao(Sender: TObject);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -211,11 +219,13 @@ end;
 procedure TfrmClienteCad.FormCreate(Sender: TObject);
 begin
   vFancy := TFancyDialog.Create(frmClienteCad);
+  vPermissao := T99Permissions.Create;
 end;
 
 procedure TfrmClienteCad.FormDestroy(Sender: TObject);
 begin
   vFancy.DisposeOf;
+  vPermissao.DisposeOf;
 end;
 
 procedure TfrmClienteCad.FormShow(Sender: TObject);
@@ -334,18 +344,22 @@ begin
                           )
   else
   if Item.Name = 'lbiCidade' then
-    begin
-      if not Assigned(FrmCidade) then
-        Application.CreateForm(TFrmCidade, FrmCidade);
+  begin
+  if not Assigned(FrmCidade) then
+    Application.CreateForm(TFrmCidade, FrmCidade);
 
-    FrmCidade.ShowModal;
-
-    if Cod_Cidade > 0 then
+  // Chama o formulário de cidades com o callback configurado
+  FrmCidade.fShow(
+    procedure(ASelected: Boolean; ACodCidade: Integer; ANomeCidade, AUF, ACEP: String)
     begin
-      lblCidade.Text := Nome_Cidade;
-      lblUF.Text     := UF;
-      lblCEP.Text    := CEP;
-    end;
+      if ASelected then
+      begin
+        lblCidade.Text := ANomeCidade;
+        lblUF.Text     := AUF;
+        lblCEP.Text    := ACEP;
+      end;
+    end
+  );
   end
   else
   if Item.Name = 'lbiCEP' then
@@ -373,6 +387,19 @@ begin
 
 end;
 
+procedure TfrmClienteCad.LocationSensorLocationChanged(Sender: TObject;
+  const OldLocation, NewLocation: TLocationCoord2D);
+begin
+  LocationSensor.Active := False;
+
+  ShowMessage(NewLocation.Latitude.ToString);
+  ShowMessage(NewLocation.Longitude.ToString);
+
+  //Obter o endereco do cliente com base nas coordenadas..
+
+
+end;
+
 procedure TfrmClienteCad.fClickDelete(Sender: TObject);
 begin
   try
@@ -385,6 +412,22 @@ begin
   except on E:Exception do
     vFancy.fShow(TIconDialog.Warning, 'Aviso', e.Message, 'OK');
   end;
+end;
+
+procedure TfrmClienteCad.btMapaClick(Sender: TObject);
+begin
+  vPermissao.fLocation(fObterLocalizacao, fErroLocalizacao);
+end;
+
+procedure TfrmClienteCad.fObterLocalizacao(Sender: TObject);
+begin
+  LocationSensor.Active := True;
+
+end;
+
+procedure TfrmClienteCad.fErroLocalizacao(Sender: TObject);
+begin
+  vFancy.fShow(TIconDialog.Error, 'Permissão', 'Você não possui acesso ao GPS do aparelho', 'OK')
 end;
 
 
