@@ -358,6 +358,10 @@
             <Form>frmSincronizacao</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="UnOSCad.pas">
+            <Form>frmOSCad</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -59,7 +59,6 @@ type
     Image11: TImage;
     Label18: TLabel;
     lblUF: TLabel;
-    Image12: TImage;
     Label20: TLabel;
     lblCEP: TLabel;
     Image13: TImage;

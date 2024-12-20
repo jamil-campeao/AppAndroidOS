@@ -118,6 +118,7 @@ type
     procedure lbiSenhaClick(Sender: TObject);
     procedure lbiLogoutClick(Sender: TObject);
     procedure lbiSincronizarClick(Sender: TObject);
+    procedure btnAdicionarOSClick(Sender: TObject);
   private
     vFancy : TFancyDialog;
     vMenuNotificacao: TActionSheet;
@@ -155,7 +156,7 @@ implementation
 
 uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao,
   uFunctions, UnProduto, UnClienteCad, UnPerfilCad, UnSenhaCad,
-  DataModule.Usuario, UnSincronizacao;
+  DataModule.Usuario, UnSincronizacao, UnOSCad;
 
 procedure TfrmPrincipal.btAdicionarClienteClick(Sender: TObject);
 begin
@@ -176,6 +177,14 @@ end;
 procedure TfrmPrincipal.btBuscaOSClick(Sender: TObject);
 begin
   fListarOS(1, Trim(edBuscaOS.Text), True);
+end;
+
+procedure TfrmPrincipal.btnAdicionarOSClick(Sender: TObject);
+begin
+  if not Assigned(FrmOSCad) then
+    Application.CreateForm(TFrmOSCad, FrmOSCad);
+
+  FrmOSCad.Show;
 end;
 
 procedure TfrmPrincipal.fAbrirAba(pImg: TImage);

@@ -30,7 +30,8 @@ uses
   uFormat in 'Units\uFormat.pas',
   UnPerfilCad in 'UnPerfilCad.pas' {frmPerfilCad},
   UnSenhaCad in 'UnSenhaCad.pas' {frmSenhaCad},
-  UnSincronizacao in 'UnSincronizacao.pas' {frmSincronizacao};
+  UnSincronizacao in 'UnSincronizacao.pas' {frmSincronizacao},
+  UnOSCad in 'UnOSCad.pas' {frmOSCad};
 
 {$R *.res}
 
@@ -38,6 +39,5 @@ begin
   Application.Initialize;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TfrmInicial, frmInicial);
-  Application.CreateForm(TfrmSincronizacao, frmSincronizacao);
   Application.Run;
 end.
