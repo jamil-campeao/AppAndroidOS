@@ -9,7 +9,10 @@ object frmPerfilCad: TfrmPerfilCad
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
   OnClose = FormClose
+  OnDestroy = FormDestroy
+  OnShow = FormShow
   DesignerMasterStyle = 3
   object rectToolBar: TRectangle
     Align = Top
@@ -90,6 +93,7 @@ object frmPerfilCad: TfrmPerfilCad
       Size.Width = 60.000000000000000000
       Size.Height = 48.000000000000000000
       Size.PlatformDefault = False
+      OnClick = btSalvarClick
       object Image1: TImage
         MultiResBitmap.Height = 128
         MultiResBitmap.Width = 128

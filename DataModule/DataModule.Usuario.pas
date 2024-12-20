@@ -47,16 +47,14 @@ uses DMGlobal;
 
 procedure TDmUsuario.fListarUsuarios;
 begin
-    qryConsUsuario.Active := false;
     qryConsUsuario.SQL.Clear;
-    qryConsUsuario.SQL.Add('select * from tab_usuario');
-    qryConsUsuario.active := true;
+    qryConsUsuario.SQL.Add('select * from USUARIO');
+    qryConsUsuario.Open;
 end;
 
 procedure TDmUsuario.fInserirUsuario(pCodUsuario: integer;
                                     pNome, pLogin, pSenha, pTokenJWT: string);
 begin
-    qryUsuario.Active := false;
     qryUsuario.SQL.Clear;
     qryUsuario.SQL.Text := ' insert into USUARIO(USU_CODIGO, USU_NOME, USU_LOGIN, USU_SENHA, USU_TOKENJWT, IND_LOGIN, IND_ONBOARDING) '+
                            ' values(:USU_CODIGO, :USU_NOME, :USU_LOGIN, :USU_SENHA, :USU_TOKENJWT, :IND_LOGIN, :IND_ONBOARDING)       ';
@@ -75,7 +73,7 @@ end;
 procedure TDmUsuario.fEditarUsuario(pNome, pLogin: string);
 begin
     qryUsuario.SQL.Clear;
-    qryUsuario.SQL.Text := 'UPDATE USUARIO SET USU_NOME=: USU_NOME, USU_LOGIN=: USU_LOGIN';
+    qryUsuario.SQL.Text := 'UPDATE USUARIO SET USU_NOME = :USU_NOME, USU_LOGIN= :USU_LOGIN';
 
     qryUsuario.ParamByName('USU_NOME').Value  := pNome;
     qryUsuario.ParamByName('USU_LOGIN').Value := pLogin;

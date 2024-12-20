@@ -1,13 +1,14 @@
 object DmUsuario: TDmUsuario
   OnCreate = DataModuleCreate
-  Height = 480
-  Width = 369
+  Height = 199
+  Width = 237
   object qryUsuario: TFDQuery
     Connection = DM.Conn
     Left = 168
     Top = 64
   end
   object qryConsUsuario: TFDQuery
+    Connection = DM.Conn
     Left = 64
     Top = 64
   end
@@ -19,7 +20,7 @@ object DmUsuario: TDmUsuario
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 64
-    Top = 168
+    Left = 104
+    Top = 128
   end
 end
