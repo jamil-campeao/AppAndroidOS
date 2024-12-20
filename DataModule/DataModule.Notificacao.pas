@@ -11,10 +11,14 @@ uses
 type
   TDMNotificacao = class(TDataModule)
     QryConsNotificacao: TFDQuery;
+    QryNotificacao: TFDQuery;
   private
     { Private declarations }
   public
   procedure fListarNotificacoes(pPagina: Integer);
+  procedure fMarcarNotificacaoLida(pCodigoNotificao: Integer);
+  procedure fMarcarNotificacaoNaoLida(pCodigoNotificao: Integer);
+  procedure fExcluirNotificacao(pCodigoNotificao: Integer);
 
     { Public declarations }
   end;
@@ -48,6 +52,46 @@ begin
   end;
 
   QryConsNotificacao.Open;
+end;
+
+procedure TDMNotificacao.fMarcarNotificacaoLida(pCodigoNotificao: Integer);
+begin
+  QryNotificacao.SQL.Clear;
+
+  QryNotificacao.SQL.Text := ' UPDATE NOTIFICACAO SET          ' +
+                             ' NOT_IND_LIDO = :NOT_IND_LIDO    ' +
+                             ' WHERE NOT_CODIGO = :NOT_CODIGO  ';
+
+  QryNotificacao.ParamByName('NOT_IND_LIDO').AsString := 'S';
+  QryNotificacao.ParamByName('NOT_CODIGO').AsInteger  := pCodigoNotificao;
+
+  QryNotificacao.ExecSQL;
+end;
+
+procedure TDMNotificacao.fMarcarNotificacaoNaoLida(pCodigoNotificao: Integer);
+begin
+  QryNotificacao.SQL.Clear;
+
+  QryNotificacao.SQL.Text := ' UPDATE NOTIFICACAO SET          ' +
+                             ' NOT_IND_LIDO = :NOT_IND_LIDO    ' +
+                             ' WHERE NOT_CODIGO = :NOT_CODIGO  ';
+
+  QryNotificacao.ParamByName('NOT_IND_LIDO').AsString := 'N';
+  QryNotificacao.ParamByName('NOT_CODIGO').AsInteger  := pCodigoNotificao;
+
+  QryNotificacao.ExecSQL;
+end;
+
+procedure TDMNotificacao.fExcluirNotificacao(pCodigoNotificao: Integer);
+begin
+  QryNotificacao.SQL.Clear;
+
+  QryNotificacao.SQL.Text := ' DELETE FROM NOTIFICACAO         ' +
+                             ' WHERE NOT_CODIGO = :NOT_CODIGO  ';
+
+  QryNotificacao.ParamByName('NOT_CODIGO').AsInteger  := pCodigoNotificao;
+
+  QryNotificacao.ExecSQL;
 end;
 
 

@@ -8,7 +8,6 @@ uses
   UnPrincipal in 'UnPrincipal.pas' {frmPrincipal},
   DMGlobal in 'DataModule\DMGlobal.pas' {DM: TDataModule},
   uConstantes in 'Units\uConstantes.pas',
-  uFormat in 'Units\uFormat.pas',
   uFunctions in 'Units\uFunctions.pas',
   uLoading in 'Units\uLoading.pas',
   uSession in 'Units\uSession.pas',
@@ -27,7 +26,8 @@ uses
   UnClienteCad in 'UnClienteCad.pas' {frmClienteCad},
   UnCidade in 'UnCidade.pas' {frmCidade},
   DataModule.Cidade in 'DataModule\DataModule.Cidade.pas' {DMCidade: TDataModule},
-  uCombobox in 'Units\uCombobox.pas';
+  uCombobox in 'Units\uCombobox.pas',
+  uFormat in 'Units\uFormat.pas';
 
 {$R *.res}
 

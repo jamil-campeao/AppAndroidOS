@@ -287,7 +287,6 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Units\uConstantes.pas"/>
-        <DCCReference Include="Units\uFormat.pas"/>
         <DCCReference Include="Units\uFunctions.pas"/>
         <DCCReference Include="Units\uLoading.pas"/>
         <DCCReference Include="Units\uSession.pas"/>
@@ -346,6 +345,7 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Units\uCombobox.pas"/>
+        <DCCReference Include="Units\uFormat.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

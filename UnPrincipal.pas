@@ -8,7 +8,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
   FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
   FMX.ListView.Adapters.Base, FMX.ListView, FMX.ListBox, FMX.TextLayout,
-  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, uFancyDialog;
+  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, uFancyDialog, uActionSheet;
 
 type
   TfrmPrincipal = class(TForm)
@@ -110,8 +110,12 @@ type
     procedure btAdicionarClienteClick(Sender: TObject);
     procedure lvClienteItemClick(const Sender: TObject;
       const AItem: TListViewItem);
+    procedure lvNotificacaoItemClickEx(const Sender: TObject;
+      ItemIndex: Integer; const LocalClickPos: TPointF;
+      const ItemObject: TListItemDrawable);
   private
     vFancy : TFancyDialog;
+    vMenuNotificacao: TActionSheet;
     procedure fAbrirAba(pImg: TImage);
     procedure fAdicionaOSListView(pOSLocal, pOSOficial, pCliente,
 pDataOS, pIndSincronizar: String; pValor: Double);
@@ -129,6 +133,9 @@ pCidade, pUF, pFone, pIndSincronizar: String; pCodCidade: Integer);
     procedure fLayoutListViewNotificacao(pAItem: TListViewItem);
     procedure fLayoutListViewCliente(pAItem: TListViewItem);
     procedure fRefreshListagemCliente;
+    procedure fClickNotificacaoExcluir(Sender: TObject);
+    procedure fClickNotificacaoLida(Sender: TObject);
+    procedure fClickNotificacaoNaoLida(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -188,12 +195,28 @@ end;
 
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
-  vFancy := TFancyDialog.Create(frmPrincipal);
+  vFancy           := TFancyDialog.Create(frmPrincipal);
+  vMenuNotificacao := TActionSheet.Create(frmPrincipal);
+
+  vMenuNotificacao.TitleFontSize     := 12;
+  vMenuNotificacao.TitleMenuText     := 'O que deseja fazer?';
+  vMenuNotificacao.TitleFontColor    := $FF404040;
+  vMenuNotificacao.CancelMenuText    := 'Cancelar';
+  vMenuNotificacao.CancelFontSize    := 15;
+  vMenuNotificacao.CancelFontColor   := $FF585F5A;
+  vMenuNotificacao.BackgroundOpacity := 0.5;
+  vMenuNotificacao.MenuColor         := $FFFFFFFF;
+
+  vMenuNotificacao.fAddItem('', 'Excluir', fClickNotificacaoExcluir, $FFFB4747, 15);
+  vMenuNotificacao.fAddItem('', 'Marcar como lida', fClickNotificacaoLida, $FF585F5A, 15);
+  vMenuNotificacao.fAddItem('', 'Marcar como não lida', fClickNotificacaoNaoLida, $FF585F5A, 15);
+
 end;
 
 procedure TfrmPrincipal.FormDestroy(Sender: TObject);
 begin
   vFancy.DisposeOf;
+  vMenuNotificacao.DisposeOf;
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
@@ -244,6 +267,18 @@ procedure TfrmPrincipal.lvClienteUpdateObjects(const Sender: TObject;
   const AItem: TListViewItem);
 begin
   fLayoutListViewCliente(AItem);
+end;
+
+procedure TfrmPrincipal.lvNotificacaoItemClickEx(const Sender: TObject;
+  ItemIndex: Integer; const LocalClickPos: TPointF;
+  const ItemObject: TListItemDrawable);
+begin
+  if Assigned(ItemObject) then
+    if ItemObject.Name = 'imgMenu' then
+    begin
+      vMenuNotificacao.TagString := ItemObject.TagString; // Código da notificação
+      vMenuNotificacao.fShowMenu;
+    end;
 end;
 
 procedure TfrmPrincipal.lvNotificacaoPaint(Sender: TObject; Canvas: TCanvas;
@@ -596,6 +631,8 @@ begin
     vImg        := TListItemImage(vItem.Objects.FindDrawable('imgMenu'));
     vImg.Bitmap := imgIconeMenu.Bitmap;
 
+    vImg.TagString := pCodNotificacao; // Salvo o código da notificação na imagem para uso futuro
+
     fLayoutListViewNotificacao(vItem);
 
   except on e:Exception do
@@ -719,5 +756,31 @@ begin
   fListarClientes(1, Trim(edBuscaCliente.Text), True);
 end;
 
+procedure TfrmPrincipal.fClickNotificacaoExcluir(Sender: TObject);
+begin
+  vMenuNotificacao.fHideMenu;
+
+  DMNotificacao.fExcluirNotificacao(vMenuNotificacao.TagString.ToInteger);
+
+  fListarNotificacoes(1, true);
+
+end;
+
+
+procedure TfrmPrincipal.fClickNotificacaoLida(Sender: TObject);
+begin
+  vMenuNotificacao.fHideMenu;
+  DMNotificacao.fMarcarNotificacaoLida(vMenuNotificacao.TagString.ToInteger);
+  fListarNotificacoes(1, true);
+
+end;
+
+
+procedure TfrmPrincipal.fClickNotificacaoNaoLida(Sender: TObject);
+begin
+  vMenuNotificacao.fHideMenu;
+  DMNotificacao.fMarcarNotificacaoNaoLida(vMenuNotificacao.TagString.ToInteger);
+  fListarNotificacoes(1, true);
+end;
 
 end.

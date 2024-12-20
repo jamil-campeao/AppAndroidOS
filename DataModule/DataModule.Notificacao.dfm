@@ -6,4 +6,9 @@ object DMNotificacao: TDMNotificacao
     Left = 56
     Top = 32
   end
+  object QryNotificacao: TFDQuery
+    Connection = DM.Conn
+    Left = 56
+    Top = 88
+  end
 end
