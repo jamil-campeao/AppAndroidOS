@@ -57,6 +57,7 @@ type
     procedure imgBackspaceClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     vFancy : TFancyDialog;
     vObjeto: TObject;
@@ -157,6 +158,12 @@ begin
 
   FrmEdicaoPadrao.Show;
 
+end;
+
+procedure TFrmEdicaoPadrao.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action          := TCloseAction.caFree;
+  FrmEdicaoPadrao := nil;
 end;
 
 procedure TFrmEdicaoPadrao.FormCreate(Sender: TObject);

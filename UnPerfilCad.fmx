@@ -1,11 +1,12 @@
 object frmPerfilCad: TfrmPerfilCad
   Left = 0
   Top = 0
-  Caption = 'Form1'
+  Caption = 'Editar Usu'#225'rio'
   ClientHeight = 416
   ClientWidth = 288
   Fill.Kind = Solid
   Position = MainFormCenter
+  StyleBook = frmPrincipal.StyleBook1
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]

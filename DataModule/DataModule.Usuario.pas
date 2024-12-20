@@ -91,58 +91,70 @@ end;
 
 procedure TDmUsuario.fEditarSenha(pSenha: string);
 begin
-    qryUsuario.Active := false;
     qryUsuario.SQL.Clear;
     qryUsuario.SQL.Text := 'UPDATE USUARIO SET USU_SENHA =:USU_SENHA';
 
-    qryUsuario.ParamByName('USU_SENHA').Value := pSenha;
+    qryUsuario.ParamByName('USU_SENHA').AsString := pSenha;
 
     qryUsuario.ExecSQL;
 end;
 
 procedure TDmUsuario.fLogout;
 begin
-    qryUsuario.Active := false;
     qryUsuario.SQL.Clear;
     qryUsuario.SQL.Text := ' UPDATE USUARIO SET IND_LOGIN =:IND_LOGIN, IND_ONBOARDING=:IND_ONBOARDING ';
-    qryUsuario.ParamByName('IND_LOGIN').Value      := 'N';
-    qryUsuario.ParamByName('IND_ONBOARDING').Value := 'N';
+    qryUsuario.ParamByName('IND_LOGIN').AsString      := 'N';
+    qryUsuario.ParamByName('IND_ONBOARDING').AsString := 'N';
     qryUsuario.ExecSQL;
 
-//    qryUsuario.Active := false;
-//    qryUsuario.SQL.Clear;
-//    qryUsuario.SQL.Add('delete from tab_pedido_item');
-//    qryUsuario.ExecSQL;
-//
-//    qryUsuario.Active := false;
-//    qryUsuario.SQL.Clear;
-//    qryUsuario.SQL.Add('delete from tab_pedido');
-//    qryUsuario.ExecSQL;
-//
-//    qryUsuario.Active := false;
-//    qryUsuario.SQL.Clear;
-//    qryUsuario.SQL.Add('delete from tab_notificacao');
-//    qryUsuario.ExecSQL;
-//
-//    qryUsuario.Active := false;
-//    qryUsuario.SQL.Clear;
-//    qryUsuario.SQL.Add('delete from tab_produto');
-//    qryUsuario.ExecSQL;
-//
-//    qryUsuario.Active := false;
-//    qryUsuario.SQL.Clear;
-//    qryUsuario.SQL.Add('delete from tab_cliente');
-//    qryUsuario.ExecSQL;
-//
-//    qryUsuario.Active := false;
-//    qryUsuario.SQL.Clear;
-//    qryUsuario.SQL.Add('delete from tab_cond_pagto');
-//    qryUsuario.ExecSQL;
-//
-//    qryUsuario.Active := false;
-//    qryUsuario.SQL.Clear;
-//    qryUsuario.SQL.Add('delete from tab_config where campo <> ''VERSAO'' ');
-//    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM OSPRODUTO');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM OSPRODUTO_TEMP');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM OSSERVICO');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM OSSERVICOTERCEIROS');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM OSSERVICO_TEMP');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM OSSERVICOTERCEIROS_TEMP');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM OS');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM NOTIFICACAO');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM PRODUTO');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM CLIENTE');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM FORMAPAGAMENTO');
+    qryUsuario.ExecSQL;
+
+    qryUsuario.SQL.Clear;
+    qryUsuario.SQL.Add('DELETE FROM TAB_CONFIG WHERE CAMPO <> ''VERSAO'' ');
+    qryUsuario.ExecSQL;
 end;
 
 procedure TDmUsuario.DataModuleCreate(Sender: TObject);
@@ -152,11 +164,10 @@ end;
 
 procedure TDmUsuario.fDesativarOnboarding;
 begin
-    qryUsuario.Active := false;
     qryUsuario.SQL.Clear;
-    qryUsuario.SQL.Add('update tab_usuario set ind_onboarding=:ind_onboarding');
+    qryUsuario.SQL.Add('UPDATE USUARIO SET IND_ONBOARDING = :IND_ONBOARDING');
 
-    qryUsuario.ParamByName('ind_onboarding').Value := 'N';
+    qryUsuario.ParamByName('IND_ONBOARDING').AsString := 'N';
 
     qryUsuario.ExecSQL;
 end;

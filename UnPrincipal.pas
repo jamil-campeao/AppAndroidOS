@@ -8,7 +8,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
   FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
   FMX.ListView.Adapters.Base, FMX.ListView, FMX.ListBox, FMX.TextLayout,
-  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, uFancyDialog, uActionSheet;
+  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, uFancyDialog, uActionSheet, UnLogin;
 
 type
   TfrmPrincipal = class(TForm)
@@ -114,6 +114,8 @@ type
       ItemIndex: Integer; const LocalClickPos: TPointF;
       const ItemObject: TListItemDrawable);
     procedure lbiPerfilClick(Sender: TObject);
+    procedure lbiSenhaClick(Sender: TObject);
+    procedure lbiLogoutClick(Sender: TObject);
   private
     vFancy : TFancyDialog;
     vMenuNotificacao: TActionSheet;
@@ -150,7 +152,8 @@ implementation
 {$R *.fmx}
 
 uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao,
-  uFunctions, UnProduto, UnClienteCad, UnPerfilCad;
+  uFunctions, UnProduto, UnClienteCad, UnPerfilCad, UnSenhaCad,
+  DataModule.Usuario;
 
 procedure TfrmPrincipal.btAdicionarClienteClick(Sender: TObject);
 begin
@@ -196,6 +199,19 @@ end;
 
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
+    if not Assigned(DMUsuario) then
+      Application.CreateForm(TDMUsuario, DMUsuario);
+
+    if not Assigned(DMNotificacao) then
+      Application.CreateForm(TDMNotificacao, DMNotificacao);
+
+    if not Assigned(DMOS) then
+      Application.CreateForm(TDMOS, DMOS);
+
+    if not Assigned(DMCliente) then
+      Application.CreateForm(TDMCliente, DMCliente);
+
+
   vFancy           := TFancyDialog.Create(frmPrincipal);
   vMenuNotificacao := TActionSheet.Create(frmPrincipal);
 
@@ -233,6 +249,26 @@ begin
 end;
 
 
+procedure TfrmPrincipal.lbiLogoutClick(Sender: TObject);
+begin
+  try
+    DMUsuario.fLogout;
+
+    if not Assigned(frmLogin) then
+      Application.CreateForm(TfrmLogin, frmLogin);
+
+    Application.MainForm := FrmLogin;
+
+    FrmLogin.Show;
+    FrmPrincipal.Close;
+
+  except on e:exception do
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao fazer logout: ' + e.Message, 'OK');
+
+
+  end;
+end;
+
 procedure TfrmPrincipal.lbiPerfilClick(Sender: TObject);
 begin
   if not Assigned(frmPerfilCad) then
@@ -247,6 +283,14 @@ begin
     Application.CreateForm(TFrmProduto, frmProduto);
 
     FrmProduto.Show;
+end;
+
+procedure TfrmPrincipal.lbiSenhaClick(Sender: TObject);
+begin
+  if not Assigned(frmSenhaCad) then
+    Application.CreateForm(TfrmSenhaCad, frmSenhaCad);
+
+  frmSenhaCad.Show;
 end;
 
 procedure TfrmPrincipal.lvClienteItemClick(const Sender: TObject;

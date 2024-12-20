@@ -28,22 +28,14 @@ uses
   DataModule.Cidade in 'DataModule\DataModule.Cidade.pas' {DMCidade: TDataModule},
   uCombobox in 'Units\uCombobox.pas',
   uFormat in 'Units\uFormat.pas',
-  UnPerfilCad in 'UnPerfilCad.pas' {frmPerfilCad};
+  UnPerfilCad in 'UnPerfilCad.pas' {frmPerfilCad},
+  UnSenhaCad in 'UnSenhaCad.pas' {frmSenhaCad};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TfrmPrincipal, frmPrincipal);
-  Application.CreateForm(TfrmInicial, frmInicial);
   Application.CreateForm(TDM, DM);
-  Application.CreateForm(TDmUsuario, DmUsuario);
-  Application.CreateForm(TDMOS, DMOS);
-  Application.CreateForm(TDMCliente, DMCliente);
-  Application.CreateForm(TDMNotificacao, DMNotificacao);
-  Application.CreateForm(TDMProduto, DMProduto);
-  Application.CreateForm(TfrmClienteCad, frmClienteCad);
-  Application.CreateForm(TDMCidade, DMCidade);
-  Application.CreateForm(TfrmPerfilCad, frmPerfilCad);
+  Application.CreateForm(TfrmInicial, frmInicial);
   Application.Run;
 end.

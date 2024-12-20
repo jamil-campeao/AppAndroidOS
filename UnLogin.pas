@@ -44,6 +44,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btCriarContaClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     aFancy: TFancyDialog;
     procedure fThreadLoginTerminated(Sender: TObject);
@@ -77,6 +78,12 @@ begin
   FrmPrincipal.Show;
   FrmLogin.Close;
 
+end;
+
+procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := TCloseAction.caFree;
+  FrmLogin := nil;
 end;
 
 procedure TfrmLogin.FormCreate(Sender: TObject);

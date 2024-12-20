@@ -2556,7 +2556,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Produtos'
-            TabOrder = 39
+            TabOrder = 38
           end
           object Image4: TImage
             MultiResBitmap.Height = 128
@@ -2818,7 +2818,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Meu Perfil'
-            TabOrder = 39
+            TabOrder = 38
             object Line2: TLine
               Align = Bottom
               LineType = Diagonal
@@ -2837,6 +2837,7 @@ object frmPrincipal: TfrmPrincipal
           Size.Height = 60.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 2
+          OnClick = lbiSenhaClick
           object Image7: TImage
             MultiResBitmap.Height = 128
             MultiResBitmap.Width = 128
@@ -3031,7 +3032,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Alterar Senha'
-            TabOrder = 39
+            TabOrder = 38
             object Line3: TLine
               Align = Bottom
               LineType = Diagonal
@@ -3192,7 +3193,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Sincronizar Dados'
-            TabOrder = 39
+            TabOrder = 38
             object Line4: TLine
               Align = Bottom
               LineType = Diagonal
@@ -3264,6 +3265,7 @@ object frmPrincipal: TfrmPrincipal
           Size.Height = 60.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 4
+          OnClick = lbiLogoutClick
           object Image11: TImage
             MultiResBitmap.Height = 128
             MultiResBitmap.Width = 128
@@ -3403,7 +3405,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Desconectar'
-            TabOrder = 39
+            TabOrder = 38
             object Line5: TLine
               Align = Bottom
               LineType = Diagonal

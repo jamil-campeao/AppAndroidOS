@@ -407,10 +407,6 @@ begin
   if TLabel(Sender).Name = 'lblCEP' then
     fFormatar(Sender, TFormato.CEP);
 
-
-
-
-
 end;
 
 
