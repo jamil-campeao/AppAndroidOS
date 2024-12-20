@@ -7,7 +7,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
   uFancyDialog, uFunctions, UnEdicaoPadrao, u99Permissions, System.Sensors,
-  System.Sensors.Components;
+  System.Sensors.Components, uLoading, uFormat;
 
 type
   TExecuteOnClose = procedure of object;
@@ -98,6 +98,7 @@ type
     procedure LocationSensorLocationChanged(Sender: TObject; const OldLocation,
       NewLocation: TLocationCoord2D);
   private
+    vGeoCoder : TGeocoder;
     FCod_cliente: Integer;
     FModo: String;
     FExecuteOnClose: TExecuteOnClose;
@@ -110,6 +111,8 @@ type
     procedure fClickDelete(Sender: TObject);
     procedure fErroLocalizacao(Sender: TObject);
     procedure fObterLocalizacao(Sender: TObject);
+    procedure fOnGeocodeReverse(const Address: TCivicAddress);
+    procedure fFormatarCampos(Sender: TObject);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -226,6 +229,9 @@ procedure TfrmClienteCad.FormDestroy(Sender: TObject);
 begin
   vFancy.DisposeOf;
   vPermissao.DisposeOf;
+
+  if Assigned(vGeoCoder) then
+    vGeoCoder.DisposeOf;
 end;
 
 procedure TfrmClienteCad.FormShow(Sender: TObject);
@@ -270,7 +276,8 @@ begin
                           'Informe o CNPJ/CPF',
                           lblCPFCNPJ.Text,
                           True,
-                          20
+                          20,
+                          fFormatarCampos
                           )
   else
   if Item.Name = 'lbiNome' then
@@ -290,7 +297,8 @@ begin
                           'Informe o fone do cliente',
                           lblFone.Text,
                           False,
-                          20
+                          20,
+                          fFormatarCampos
                           )
   else
   if Item.Name = 'lbiEmail' then
@@ -369,7 +377,8 @@ begin
                           'Informe o CEP do cliente',
                           lblCEP.Text,
                           True,
-                          9
+                          9,
+                          fFormatarCampos
                           )
   else
   if Item.Name = 'lbiLimite' then
@@ -387,16 +396,47 @@ begin
 
 end;
 
+procedure TfrmClienteCad.fFormatarCampos(Sender: TObject);
+begin
+  if TLabel(Sender).Name = 'lblCPFCNPJ' then
+    fFormatar(Sender, TFormato.CNPJorCPF)
+  else
+  if TLabel(Sender).Name = 'lblFone' then
+    fFormatar(Sender, TFormato.Celular)
+  else
+  if TLabel(Sender).Name = 'lblCEP' then
+    fFormatar(Sender, TFormato.CEP);
+
+
+
+
+
+end;
+
+
 procedure TfrmClienteCad.LocationSensorLocationChanged(Sender: TObject;
   const OldLocation, NewLocation: TLocationCoord2D);
 begin
   LocationSensor.Active := False;
 
-  ShowMessage(NewLocation.Latitude.ToString);
-  ShowMessage(NewLocation.Longitude.ToString);
+  try
+    if not Assigned(vGeoCoder) then
+    begin
+      if Assigned(TGeoCoder.Current) then
+        vGeoCoder := tGeoCoder.Current.Create;
 
-  //Obter o endereco do cliente com base nas coordenadas..
+      if Assigned(vGeoCoder) then
+        vGeoCoder.OnGeocodeReverse := fOnGeocodeReverse;
+    end;
 
+    if Assigned(vGeoCoder) and not (vGeoCoder.Geocoding) then
+      vGeoCoder.GeocodeReverse(NewLocation);
+
+
+  except on E:Exception do
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao coletar dados de geolocalização: ' + e.Message, 'OK');
+
+  end;
 
 end;
 
@@ -416,7 +456,9 @@ end;
 
 procedure TfrmClienteCad.btMapaClick(Sender: TObject);
 begin
+  TLoading.Show(FrmClienteCad, 'Coletando geolocalização');
   vPermissao.fLocation(fObterLocalizacao, fErroLocalizacao);
+  TLoading.Hide;
 end;
 
 procedure TfrmClienteCad.fObterLocalizacao(Sender: TObject);
@@ -428,6 +470,18 @@ end;
 procedure TfrmClienteCad.fErroLocalizacao(Sender: TObject);
 begin
   vFancy.fShow(TIconDialog.Error, 'Permissão', 'Você não possui acesso ao GPS do aparelho', 'OK')
+end;
+
+procedure TfrmClienteCad.fOnGeocodeReverse(const Address: TCivicAddress);
+begin
+  lblEndereco.Text := Address.Thoroughfare;
+  lblNumero.Text   := Address.SubThoroughfare;
+  lblUf.Text       := fObterUF(Address.AdminArea);
+  lblCidade.Text   := Address.Locality;
+  lblCEP.Text      := Address.PostalCode;
+  lblBairro.Text   := Address.SubLocality;
+
+
 end;
 
 

@@ -7,7 +7,6 @@ uses
   UnLogin in 'UnLogin.pas' {frmLogin},
   UnPrincipal in 'UnPrincipal.pas' {frmPrincipal},
   DMGlobal in 'DataModule\DMGlobal.pas' {DM: TDataModule},
-  uCombobox in 'Units\uCombobox.pas',
   uConstantes in 'Units\uConstantes.pas',
   uFormat in 'Units\uFormat.pas',
   uFunctions in 'Units\uFunctions.pas',
@@ -27,7 +26,8 @@ uses
   uFancyDialog in 'Units\uFancyDialog.pas',
   UnClienteCad in 'UnClienteCad.pas' {frmClienteCad},
   UnCidade in 'UnCidade.pas' {frmCidade},
-  DataModule.Cidade in 'DataModule\DataModule.Cidade.pas' {DMCidade: TDataModule};
+  DataModule.Cidade in 'DataModule\DataModule.Cidade.pas' {DMCidade: TDataModule},
+  uCombobox in 'Units\uCombobox.pas';
 
 {$R *.res}
 

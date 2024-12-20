@@ -29,17 +29,17 @@ type
 
   public
     constructor Create(Frm: TForm);
-    procedure ShowMenu();
-    procedure ClickCancel(Sender: TObject);
-    procedure HideMenu();
-    procedure FinishFade(Sender: TObject);
-    procedure ProcessFade(Sender: TObject);
-    procedure AddItem(codItem: string; itemText: string);
+    procedure fShowMenu();
+    procedure fClickCancel(Sender: TObject);
+    procedure fHideMenu();
+    procedure fFinishFade(Sender: TObject);
+    procedure fProcessFade(Sender: TObject);
+    procedure fAddItem(codItem: string; itemText: string);
 
     {$IFDEF MSWINDOWS}
-    procedure ItemClick(Sender: TObject);
+    procedure fItemClick(Sender: TObject);
     {$ELSE}
-    procedure ItemClick(Sender: TObject; const Point: TPointF);
+    procedure fItemClick(Sender: TObject; const Point: TPointF);
     {$ENDIF}
 
   published
@@ -120,8 +120,8 @@ begin
         StopValue := 0;
         Inverse := false;
         Duration := 0.3;
-        OnFinish := FinishFade;
-        OnProcess := ProcessFade;
+        OnFinish := fFinishFade;
+        OnProcess := fProcessFade;
     end;
     rectFundo.AddObject(ani);
 
@@ -188,7 +188,7 @@ begin
         BringToFront;
         StyleLookup := 'backtoolbutton';
         Text := '';
-        OnClick := ClickCancel;
+        OnClick := fClickCancel;
     end;
     rectFundo.AddObject(btnBack);
 
@@ -233,22 +233,22 @@ begin
     }
 end;
 
-procedure TCustomCombo.ClickCancel(Sender: TObject);
+procedure TCustomCombo.fClickCancel(Sender: TObject);
 begin
     FCodItem := '';
     FDescrItem := '';
-    HideMenu;
+    fHideMenu;
 end;
 
 {$IFDEF MSWINDOWS}
-procedure TCustomCombo.ItemClick(Sender: TObject);
+procedure TCustomCombo.fItemClick(Sender: TObject);
 begin
     FCodItem := TLabel(Sender).TagString;
     FDescrItem := TLabel(Sender).Text;
     ACallBack(Sender);
 end;
 {$ELSE}
-procedure TCustomCombo.ItemClick(Sender: TObject; const Point: TPointF);
+procedure TCustomCombo.fItemClick(Sender: TObject; const Point: TPointF);
 begin
     FCodItem := TLabel(Sender).TagString;
     FDescrItem := TLabel(Sender).Text;
@@ -256,7 +256,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TCustomCombo.ShowMenu();
+procedure TCustomCombo.fShowMenu();
 begin
     // Volta scroll para o inicio...
     vert.ViewportPosition := TPointF.Zero;
@@ -303,7 +303,7 @@ begin
 
 end;
 
-procedure TCustomCombo.AddItem(codItem: string; itemText: string);
+procedure TCustomCombo.fAddItem(codItem: string; itemText: string);
 begin
 
     // Fundo do item...
@@ -339,9 +339,9 @@ begin
         TagString := codItem;
 
         {$IFDEF MSWINDOWS}
-        OnClick := ItemClick;
+        OnClick := fItemClick;
         {$ELSE}
-        OnTap := ItemClick;
+        OnTap := fItemClick;
         {$ENDIF}
     end;
     rectItem.AddObject(lblItem);
@@ -349,17 +349,17 @@ begin
     vert.Repaint;
 end;
 
-procedure TCustomCombo.FinishFade(Sender: TObject);
+procedure TCustomCombo.fFinishFade(Sender: TObject);
 begin
     rectFundo.Visible := FVisible;
 end;
 
-procedure TCustomCombo.ProcessFade(Sender: TObject);
+procedure TCustomCombo.fProcessFade(Sender: TObject);
 begin
     rectFundo.Margins.Left := rectFundo.Margins.Right * -1;
 end;
 
-procedure TCustomCombo.HideMenu();
+procedure TCustomCombo.fHideMenu();
 begin
     FVisible := false;
 

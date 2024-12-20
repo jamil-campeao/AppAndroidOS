@@ -16,12 +16,12 @@ type
     TFormato = (CNPJ, CPF, InscricaoEstadual, CNPJorCPF, TelefoneFixo, Celular, Personalizado,
                 Valor, Money, CEP, Dt, Peso);
 
-procedure Formatar(Obj: TObject; Formato : TFormato; Extra : string = '');
-function SomenteNumero(str : string) : string;
+procedure fFormatar(Obj: TObject; Formato : TFormato; Extra : string = '');
+function fSomenteNumero(str : string) : string;
 
 implementation
 
-function SomenteNumero(str : string) : string;
+function fSomenteNumero(str : string) : string;
 var
     x : integer;
 begin
@@ -31,7 +31,7 @@ begin
             Result := Result + str.Chars[x];
 end;
 
-function FormataValor(str : string) : string;
+function fFormataValor(str : string) : string;
 begin
     if Str = '' then
         Str := '0';
@@ -43,7 +43,7 @@ begin
     end;
 end;
 
-function FormataPeso(str : string) : string;
+function fFormataPeso(str : string) : string;
 begin
     if Str.IsEmpty then
         Str := '0';
@@ -55,7 +55,7 @@ begin
     end;
 end;
 
-function Mask(Mascara, Str : string) : string;
+function fMask(Mascara, Str : string) : string;
 var
     x, p : integer;
 begin
@@ -80,7 +80,7 @@ begin
     end;
 end;
 
-function FormataIE(Num, UF: string): string;
+function fFormataIE(Num, UF: string): string;
 var
     Mascara : string;
 begin
@@ -113,19 +113,19 @@ begin
     IF UF = 'SE' Then Mascara := '#########-#';
     IF UF = 'TO' Then Mascara := '###########';
 
-    Result := Mask(mascara, Num);
+    Result := fMask(mascara, Num);
 end;
 
-function FormataData(str : string): string;
+function fFormataData(str : string): string;
 begin
     str := Copy(str, 1, 8);
 
     if Length(str) < 8 then
-        Result := Mask('##/##/####', str)
+        Result := fMask('##/##/####', str)
     else
     begin
         try
-            str := Mask('##/##/####', str);
+            str := fMask('##/##/####', str);
             strtodate(str);
             Result := str;
         except
@@ -134,7 +134,7 @@ begin
     end;
 end;
 
-procedure Formatar(Obj: TObject; Formato : TFormato; Extra : string = '');
+procedure fFormatar(Obj: TObject; Formato : TFormato; Extra : string = '');
 var
     texto : string;
 begin
@@ -147,38 +147,38 @@ begin
 
         // Telefone Fixo...
         if formato = TelefoneFixo then
-            texto := Mask('(##) ####-####', SomenteNumero(texto));
+            texto := fMask('(##) ####-####', fSomenteNumero(texto));
 
         // Celular...
         if formato = Celular then
-            texto := Mask('(##) #####-####', SomenteNumero(texto));
+            texto := fMask('(##) #####-####', fSomenteNumero(texto));
 
         // CNPJ...
         if formato = CNPJ then
-            texto := Mask('##.###.###/####-##', SomenteNumero(texto));
+            texto := fMask('##.###.###/####-##', fSomenteNumero(texto));
 
         // CPF...
         if formato = CPF then
-            texto := Mask('###.###.###-##', SomenteNumero(texto));
+            texto := fMask('###.###.###-##', fSomenteNumero(texto));
 
         // Inscricao Estadual (IE)...
         if formato = InscricaoEstadual then
-            texto := FormataIE(SomenteNumero(texto), Extra);
+            texto := fFormataIE(fSomenteNumero(texto), Extra);
 
         // CNPJ ou CPF...
         if formato = CNPJorCPF then
-            if Length(SomenteNumero(texto)) <= 11 then
-                texto := Mask('###.###.###-##', SomenteNumero(texto))
+            if Length(fSomenteNumero(texto)) <= 11 then
+                texto := fMask('###.###.###-##', fSomenteNumero(texto))
             else
-                texto := Mask('##.###.###/####-##', SomenteNumero(texto));
+                texto := fMask('##.###.###/####-##', fSomenteNumero(texto));
 
         // Personalizado...
         if formato = Personalizado then
-            texto := Mask(Extra, SomenteNumero(texto));
+            texto := fMask(Extra, fSomenteNumero(texto));
 
         // Valor...
         if Formato = Valor then
-            texto := FormataValor(SomenteNumero(texto));
+            texto := fFormataValor(fSomenteNumero(texto));
 
         // Money (com simbolo da moeda)...
         if Formato = Money then
@@ -186,20 +186,20 @@ begin
             if Extra = '' then
                 Extra := 'R$';
 
-            texto := Extra + ' ' + FormataValor(SomenteNumero(texto));
+            texto := Extra + ' ' + fFormataValor(fSomenteNumero(texto));
         end;
 
         // CEP...
         if Formato = CEP then
-            texto := Mask('##.###-###', SomenteNumero(texto));
+            texto := fMask('##.###-###', fSomenteNumero(texto));
 
         // Data...
         if formato = Dt then
-            texto := FormataData(SomenteNumero(texto));
+            texto := fFormataData(fSomenteNumero(texto));
 
         // Peso...
         if Formato = Peso then
-            texto := FormataPeso(SomenteNumero(texto));
+            texto := fFormataPeso(fSomenteNumero(texto));
 
 
         if obj is TEdit then
@@ -209,8 +209,8 @@ begin
         end
 		else if obj is TLabel then
             TLabel(obj).Text := texto;
-		
-		
+
+
 
     end);
 
