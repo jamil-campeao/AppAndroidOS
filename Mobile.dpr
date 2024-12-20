@@ -29,7 +29,8 @@ uses
   uCombobox in 'Units\uCombobox.pas',
   uFormat in 'Units\uFormat.pas',
   UnPerfilCad in 'UnPerfilCad.pas' {frmPerfilCad},
-  UnSenhaCad in 'UnSenhaCad.pas' {frmSenhaCad};
+  UnSenhaCad in 'UnSenhaCad.pas' {frmSenhaCad},
+  UnSincronizacao in 'UnSincronizacao.pas' {frmSincronizacao};
 
 {$R *.res}
 
@@ -37,5 +38,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TfrmInicial, frmInicial);
+  Application.CreateForm(TfrmSincronizacao, frmSincronizacao);
   Application.Run;
 end.

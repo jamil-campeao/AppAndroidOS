@@ -2556,7 +2556,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Produtos'
-            TabOrder = 38
+            TabOrder = 39
           end
           object Image4: TImage
             MultiResBitmap.Height = 128
@@ -2818,7 +2818,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Meu Perfil'
-            TabOrder = 38
+            TabOrder = 39
             object Line2: TLine
               Align = Bottom
               LineType = Diagonal
@@ -3032,7 +3032,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Alterar Senha'
-            TabOrder = 38
+            TabOrder = 39
             object Line3: TLine
               Align = Bottom
               LineType = Diagonal
@@ -3104,6 +3104,7 @@ object frmPrincipal: TfrmPrincipal
           Size.Height = 60.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 3
+          OnClick = lbiSincronizarClick
           object Image9: TImage
             MultiResBitmap.Height = 128
             MultiResBitmap.Width = 128
@@ -3193,7 +3194,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Sincronizar Dados'
-            TabOrder = 38
+            TabOrder = 39
             object Line4: TLine
               Align = Bottom
               LineType = Diagonal
@@ -3405,7 +3406,7 @@ object frmPrincipal: TfrmPrincipal
             TextSettings.Font.StyleExt = {00060000000000000004000000}
             TextSettings.FontColor = xFF585F5A
             Text = 'Desconectar'
-            TabOrder = 38
+            TabOrder = 39
             object Line5: TLine
               Align = Bottom
               LineType = Diagonal

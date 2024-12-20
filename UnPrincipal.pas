@@ -8,7 +8,8 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.TabControl, FMX.Ani,
   FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
   FMX.ListView.Adapters.Base, FMX.ListView, FMX.ListBox, FMX.TextLayout,
-  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, uFancyDialog, uActionSheet, UnLogin;
+  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, uFancyDialog, uActionSheet, UnLogin,
+  DataModule.Produto;
 
 type
   TfrmPrincipal = class(TForm)
@@ -116,6 +117,7 @@ type
     procedure lbiPerfilClick(Sender: TObject);
     procedure lbiSenhaClick(Sender: TObject);
     procedure lbiLogoutClick(Sender: TObject);
+    procedure lbiSincronizarClick(Sender: TObject);
   private
     vFancy : TFancyDialog;
     vMenuNotificacao: TActionSheet;
@@ -153,7 +155,7 @@ implementation
 
 uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao,
   uFunctions, UnProduto, UnClienteCad, UnPerfilCad, UnSenhaCad,
-  DataModule.Usuario;
+  DataModule.Usuario, UnSincronizacao;
 
 procedure TfrmPrincipal.btAdicionarClienteClick(Sender: TObject);
 begin
@@ -199,6 +201,7 @@ end;
 
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
+{$REGION 'CRIAÇÃO DOS DATAMODULES'}
     if not Assigned(DMUsuario) then
       Application.CreateForm(TDMUsuario, DMUsuario);
 
@@ -210,6 +213,10 @@ begin
 
     if not Assigned(DMCliente) then
       Application.CreateForm(TDMCliente, DMCliente);
+
+    if not Assigned(DMProduto) then
+      Application.CreateForm(TDMProduto, DMProduto);
+{$ENDREGION}
 
 
   vFancy           := TFancyDialog.Create(frmPrincipal);
@@ -291,6 +298,14 @@ begin
     Application.CreateForm(TfrmSenhaCad, frmSenhaCad);
 
   frmSenhaCad.Show;
+end;
+
+procedure TfrmPrincipal.lbiSincronizarClick(Sender: TObject);
+begin
+  if not Assigned(frmSincronizacao) then
+    Application.CreateForm(TfrmSincronizacao, frmSincronizacao);
+
+  FrmSincronizacao.Show;
 end;
 
 procedure TfrmPrincipal.lvClienteItemClick(const Sender: TObject;
