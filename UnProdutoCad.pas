@@ -193,6 +193,9 @@ end;
 
 procedure TfrmProdutoCad.rectDescricaoClick(Sender: TObject);
 begin
+  if not Assigned(frmEdicaoPadrao) then
+    Application.CreateForm(TFrmEdicaoPadrao, frmEdicaoPadrao);
+
   FrmEdicaoPadrao.fEditar(lblDescricao,
                           TTipoCampo.Memo,
                           'Descrição do Produto',

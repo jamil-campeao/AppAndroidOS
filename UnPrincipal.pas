@@ -113,6 +113,7 @@ type
     procedure lvNotificacaoItemClickEx(const Sender: TObject;
       ItemIndex: Integer; const LocalClickPos: TPointF;
       const ItemObject: TListItemDrawable);
+    procedure lbiPerfilClick(Sender: TObject);
   private
     vFancy : TFancyDialog;
     vMenuNotificacao: TActionSheet;
@@ -149,7 +150,7 @@ implementation
 {$R *.fmx}
 
 uses DataModule.OS, uConstantes, DataModule.Cliente, DataModule.Notificacao,
-  uFunctions, UnProduto, UnClienteCad;
+  uFunctions, UnProduto, UnClienteCad, UnPerfilCad;
 
 procedure TfrmPrincipal.btAdicionarClienteClick(Sender: TObject);
 begin
@@ -231,6 +232,14 @@ begin
   fAbrirAba(TImage(Sender));
 end;
 
+
+procedure TfrmPrincipal.lbiPerfilClick(Sender: TObject);
+begin
+  if not Assigned(frmPerfilCad) then
+    Application.CreateForm(TFrmPerfilCad, frmPerfilCad);
+
+  frmPerfilCad.Show;
+end;
 
 procedure TfrmPrincipal.lbiProdutosClick(Sender: TObject);
 begin

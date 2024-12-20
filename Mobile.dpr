@@ -27,7 +27,8 @@ uses
   UnCidade in 'UnCidade.pas' {frmCidade},
   DataModule.Cidade in 'DataModule\DataModule.Cidade.pas' {DMCidade: TDataModule},
   uCombobox in 'Units\uCombobox.pas',
-  uFormat in 'Units\uFormat.pas';
+  uFormat in 'Units\uFormat.pas',
+  UnPerfilCad in 'UnPerfilCad.pas' {frmPerfilCad};
 
 {$R *.res}
 
@@ -43,5 +44,6 @@ begin
   Application.CreateForm(TDMProduto, DMProduto);
   Application.CreateForm(TfrmClienteCad, frmClienteCad);
   Application.CreateForm(TDMCidade, DMCidade);
+  Application.CreateForm(TfrmPerfilCad, frmPerfilCad);
   Application.Run;
 end.
