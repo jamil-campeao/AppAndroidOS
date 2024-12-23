@@ -32,7 +32,8 @@ uses
   UnSenhaCad in 'UnSenhaCad.pas' {frmSenhaCad},
   UnSincronizacao in 'UnSincronizacao.pas' {frmSincronizacao},
   UnOSCad in 'UnOSCad.pas' {frmOSCad},
-  UnOSItemCad in 'UnOSItemCad.pas' {frmOSItemCad};
+  UnOSItemCad in 'UnOSItemCad.pas' {frmOSItemCad},
+  UnClienteBusca in 'UnClienteBusca.pas' {frmClienteBusca};
 
 {$R *.res}
 

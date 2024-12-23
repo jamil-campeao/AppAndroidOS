@@ -76,8 +76,11 @@ type
     procedure rectAbaOSClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btInserirItemClick(Sender: TObject);
+    procedure ListBox1ItemClick(const Sender: TCustomListBox;
+      const Item: TListBoxItem);
   private
     procedure fAbrirAba(pRect: TRectangle);
+    procedure fSelecionarCliente(pCodClienteLocal: Integer; pNome: String);
     { Private declarations }
   public
     { Public declarations }
@@ -90,7 +93,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnOSItemCad;
+uses UnOSItemCad, UnClienteBusca;
 
 procedure TfrmOSCad.btInserirItemClick(Sender: TObject);
 begin
@@ -115,6 +118,25 @@ end;
 procedure TfrmOSCad.FormCreate(Sender: TObject);
 begin
   TabControl1.ActiveTab := tabOS;
+end;
+
+procedure TfrmOSCad.ListBox1ItemClick(const Sender: TCustomListBox;
+  const Item: TListBoxItem);
+begin
+  if Item.Name = 'lbiCliente' then
+  begin
+    if not assigned(frmClienteBusca) then
+      Application.CreateForm(TfrmClienteBusca, frmClienteBusca);
+
+    FrmClienteBusca.ExecuteOnClick := fSelecionarCliente;
+    frmClienteBusca.Show;
+  end;
+end;
+
+procedure TfrmOSCad.fSelecionarCliente(pCodClienteLocal: Integer; pNome: String);
+begin
+  lblCliente.Text := pNome;
+  lblCliente.Tag  := pCodClienteLocal;
 end;
 
 procedure TfrmOSCad.rectAbaOSClick(Sender: TObject);
