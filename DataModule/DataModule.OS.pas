@@ -23,6 +23,7 @@ type
     procedure fListarItensOSID(pCodPedidoLocal, pCodItem: Integer);
     procedure fCarregaTabelaTemp(pCodPedidoLocal: Integer);
     procedure fAtualizarQuantidadeItem(pCodItem: Integer; pQtd: Double);
+    procedure fExcluirItem(pCodItem: Integer);
 
     { Public declarations }
   end;
@@ -261,6 +262,18 @@ begin
 
   QryItem.ParamByName('OSP_CODIGO').AsInteger    := pCodItem;
   QryItem.ParamByName('OSP_QUANTIDADE').AsFloat  := pQtd;
+
+  QryItem.ExecSQL;
+end;
+
+procedure TDMOS.fExcluirItem(pCodItem: Integer);
+begin
+  QryItem.SQL.Clear;
+
+  QryItem.SQL.Text := ' DELETE FROM OSPRODUTO_TEMP     '+
+                      ' WHERE OSP_CODIGO = :OSP_CODIGO ';
+
+  QryItem.ParamByName('OSP_CODIGO').AsInteger    := pCodItem;
 
   QryItem.ExecSQL;
 end;

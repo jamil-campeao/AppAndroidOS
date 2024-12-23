@@ -231,19 +231,28 @@ procedure TfrmOSCad.lvItemProdutoItemClickEx(const Sender: TObject;
   ItemIndex: Integer; const LocalClickPos: TPointF;
   const ItemObject: TListItemDrawable);
 begin
-  if ItemObject.Name = 'imgMenos' then
+  if Assigned(ItemObject) then
   begin
-    fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], -1);
-    DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), -1);
-  end
-  else
-  if ItemObject.Name = 'imgMais' then
-  begin
-    fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], 1);
-    DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), 1);
-  end;
+    if ItemObject.Name = 'imgMenos' then
+    begin
+      fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], -1);
+      DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), -1);
+    end
+    else
+    if ItemObject.Name = 'imgMais' then
+    begin
+      fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], 1);
+      DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), 1);
+    end
+    else
+    if ItemObject.Name = 'imgExcluir' then
+    begin
+      DMOS.fExcluirItem(Trunc(ItemObject.TagFloat));  //Deleto do BD
+      lvItemProduto.Items.Delete(ItemIndex);          //Deleto da ListView
+    end;
 
-  fCalcularTotalOS;
+    fCalcularTotalOS;
+  end;
 
 end;
 
