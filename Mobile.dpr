@@ -33,7 +33,8 @@ uses
   UnSincronizacao in 'UnSincronizacao.pas' {frmSincronizacao},
   UnOSCad in 'UnOSCad.pas' {frmOSCad},
   UnOSItemCad in 'UnOSItemCad.pas' {frmOSItemCad},
-  UnClienteBusca in 'UnClienteBusca.pas' {frmClienteBusca};
+  UnClienteBusca in 'UnClienteBusca.pas' {frmClienteBusca},
+  UnProdutoBusca in 'UnProdutoBusca.pas' {frmProdutoBusca};
 
 {$R *.res}
 

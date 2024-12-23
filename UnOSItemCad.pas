@@ -45,11 +45,13 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btSalvarClick(Sender: TObject);
+    procedure rectProdutoClick(Sender: TObject);
   private
     vFancy : TFancyDialog;
     FCod_Item: Integer;
     FModo: String;
     FExecuteOnClose: TExecuteOnClose;
+    procedure fSelecionaProduto(pCodProdutoLocal: Integer; pDescricao: String);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -66,7 +68,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnEdicaoPadrao, DataModule.OS;
+uses UnEdicaoPadrao, DataModule.OS, UnProdutoBusca;
 
 procedure TfrmOSItemCad.btSalvarClick(Sender: TObject);
 begin
@@ -153,6 +155,22 @@ begin
     vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados do item: ' + e.Message, 'OK');
 
   end;
+end;
+
+procedure TfrmOSItemCad.rectProdutoClick(Sender: TObject);
+begin
+  if not Assigned(frmProdutoBusca) then
+    Application.CreateForm(TfrmProdutoBusca, frmProdutoBusca);
+
+  frmProdutoBusca.ExecuteOnClick := fSelecionaProduto;
+  frmProdutoBusca.Show;
+
+end;
+
+procedure TfrmOSItemCad.fSelecionaProduto(pCodProdutoLocal: Integer; pDescricao: String);
+begin
+  lblDescricao.Text := pDescricao;
+  lblDescricao.Tag  := pCodProdutoLocal;
 end;
 
 procedure TfrmOSItemCad.rectQuantidadeClick(Sender: TObject);
