@@ -22,6 +22,7 @@ type
     procedure fListarOSID(pCodPedidoLocal: Integer);
     procedure fListarItensOSID(pCodPedidoLocal, pCodItem: Integer);
     procedure fCarregaTabelaTemp(pCodPedidoLocal: Integer);
+    procedure fAtualizarQuantidadeItem(pCodItem: Integer; pQtd: Double);
 
     { Public declarations }
   end;
@@ -249,5 +250,19 @@ begin
   QryItem.ExecSQL;
 end;
 
+procedure TDMOS.fAtualizarQuantidadeItem(pCodItem: Integer; pQtd: Double);
+begin
+  QryItem.SQL.Clear;
+
+  QryItem.SQL.Text := ' UPDATE OSPRODUTO_TEMP SET                                  '+
+                      ' OSP_QUANTIDADE = OSP_QUANTIDADE + :OSP_QUANTIDADE,         '+
+                      ' OSP_TOTAL = (OSP_QUANTIDADE + :OSP_QUANTIDADE) * OSP_VALOR '+
+                      ' WHERE OSP_CODIGO = :OSP_CODIGO                             ';
+
+  QryItem.ParamByName('OSP_CODIGO').AsInteger    := pCodItem;
+  QryItem.ParamByName('OSP_QUANTIDADE').AsFloat  := pQtd;
+
+  QryItem.ExecSQL;
+end;
 
 end.

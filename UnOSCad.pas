@@ -82,6 +82,9 @@ type
       const Item: TListBoxItem);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure lvItemProdutoItemClickEx(const Sender: TObject;
+      ItemIndex: Integer; const LocalClickPos: TPointF;
+      const ItemObject: TListItemDrawable);
   private
     vFancy : TFancyDialog;
     FCod_OS: Integer;
@@ -94,6 +97,7 @@ type
       pFoto: TStream);
     procedure fLayoutListViewProduto(pAItem: TListViewItem);
     procedure fCalcularTotalOS;
+    procedure fCalcularQuantidadeListView(pItem: TListViewItem; pQtd: Integer);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -223,6 +227,26 @@ begin
   end;
 end;
 
+procedure TfrmOSCad.lvItemProdutoItemClickEx(const Sender: TObject;
+  ItemIndex: Integer; const LocalClickPos: TPointF;
+  const ItemObject: TListItemDrawable);
+begin
+  if ItemObject.Name = 'imgMenos' then
+  begin
+    fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], -1);
+    DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), -1);
+  end
+  else
+  if ItemObject.Name = 'imgMais' then
+  begin
+    fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], 1);
+    DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), 1);
+  end;
+
+  fCalcularTotalOS;
+
+end;
+
 procedure TfrmOSCad.fSelecionarCliente(pCodClienteLocal: Integer; pNome: String);
 begin
   lblCliente.Text := pNome;
@@ -266,7 +290,7 @@ var
 begin
   try
     vItem := lvItemProduto.Items.Add;
-    vItem.Height := 105;
+    vItem.Height := 100;
 
     vItem.Tag := pCodProdutoItem;
 
@@ -275,8 +299,9 @@ begin
     vTxt.Text := pDescricao;
 
     //Quantidade + Valor Unitário
-    vTxt      := TListItemText(vItem.Objects.FindDrawable('txtUnitario'));
-    vTxt.Text := FormatFloat('#,##0.00', pQuantidade) + ' x ' + FormatFloat('R$ #,##0.00', pValorUnitario);
+    vTxt          := TListItemText(vItem.Objects.FindDrawable('txtUnitario'));
+    vTxt.Text     := FormatFloat('#,##0.00', pQuantidade) + ' x ' + FormatFloat('R$ #,##0.00', pValorUnitario);
+    vTxt.TagFloat := pValorUnitario;
 
     //Valor total
     vTxt      := TListItemText(vItem.Objects.FindDrawable('txtTotal'));
@@ -332,7 +357,7 @@ var
 begin
   vTxt         := TListItemText(pAItem.Objects.FindDrawable('txtDescricao'));
   vTxt.Width   := lvItemProduto.Width - 84;
-  vTxt.Height  := fGetTextHeight(vTxt, vTxt.Width, vTxt.Text) + 3;
+  vTxt.Height  := fGetTextHeight(vTxt, vTxt.Width, vTxt.Text) + 10;
 
   vPosicaoY    := vTxt.PlaceOffset.Y + vTxt.Height;
 
@@ -360,6 +385,30 @@ begin
   lblTotal.Text := FormatFloat('R$#,##0.00', vTotal);
 end;
 
+procedure TfrmOSCad.fCalcularQuantidadeListView(pItem: TListViewItem; pQtd: Integer);
+var
+  vQtdAtual       : Double;
+  vValorUnitario  : Double;
+  i         : Integer;
+begin
+  vQtdAtual := TListItemText(pItem.Objects.FindDrawable('txtQuantidade')).Text.ToInteger;
+
+  vQtdAtual := vQtdAtual + pQtd;
+
+  if vQtdAtual < 1 then
+    vQtdAtual := 1;
+
+  TListItemText(pItem.Objects.FindDrawable('txtQuantidade')).Text := vQtdAtual.ToString;
+
+  //Valor unitario
+  vValorUnitario := TListItemText(pItem.Objects.FindDrawable('txtUnitario')).TagFloat;
+  TListItemText(pItem.Objects.FindDrawable('txtUnitario')).Text := FormatFloat('#,##0', vQtdAtual) + ' x ' +
+                                                                   FormatFloat('R$#,##0.00',vValorUnitario);
+
+  //Valor total
+  TListItemText(pItem.Objects.FindDrawable('txtTotal')).Text := FormatFloat('R$#,##0.00', vQtdAtual * vValorUnitario);
+
+end;
 
 
 

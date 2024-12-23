@@ -1049,7 +1049,7 @@ object frmOSCad: TfrmOSCad
         Size.Height = 354.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
-        ItemAppearance.ItemHeight = 105
+        ItemAppearance.ItemHeight = 100
         ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
           item
             AppearanceObjectName = 'txtDescricao'
@@ -1068,7 +1068,7 @@ object frmOSCad: TfrmOSCad
             Appearance.Font.Size = 13.000000000000000000
             Appearance.TextColor = xFF404040
             Appearance.Width = 160.000000000000000000
-            Appearance.Height = 25.000000000000000000
+            Appearance.Height = 20.000000000000000000
             Appearance.PlaceOffset.X = 65.000000000000000000
             Appearance.PlaceOffset.Y = 29.000000000000000000
           end
@@ -1086,7 +1086,7 @@ object frmOSCad: TfrmOSCad
             Appearance.Width = 35.000000000000000000
             Appearance.Height = 35.000000000000000000
             Appearance.PlaceOffset.X = 72.000000000000000000
-            Appearance.PlaceOffset.Y = 55.000000000000000000
+            Appearance.PlaceOffset.Y = 50.000000000000000000
           end
           item
             AppearanceObjectName = 'imgMais'
@@ -1095,7 +1095,7 @@ object frmOSCad: TfrmOSCad
             Appearance.Height = 35.000000000000000000
             Appearance.Align = Trailing
             Appearance.PlaceOffset.X = -139.000000000000000000
-            Appearance.PlaceOffset.Y = 55.000000000000000000
+            Appearance.PlaceOffset.Y = 50.000000000000000000
           end
           item
             AppearanceObjectName = 'imgExcluir'
@@ -1113,7 +1113,7 @@ object frmOSCad: TfrmOSCad
             Appearance.Width = 34.000000000000000000
             Appearance.Height = 25.000000000000000000
             Appearance.PlaceOffset.X = 115.000000000000000000
-            Appearance.PlaceOffset.Y = 58.000000000000000000
+            Appearance.PlaceOffset.Y = 53.000000000000000000
           end
           item
             AppearanceObjectName = 'txtTotal'
@@ -1132,6 +1132,7 @@ object frmOSCad: TfrmOSCad
             AppearanceClassName = 'TTextObjectAppearance'
           end>
         CanSwipeDelete = False
+        OnItemClickEx = lvItemProdutoItemClickEx
         ShowSelection = False
         object imgSemProduto: TImage
           MultiResBitmap.Height = 160
