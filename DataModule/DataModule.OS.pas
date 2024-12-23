@@ -11,12 +11,15 @@ uses
 type
   TDMOS = class(TDataModule)
     QryConsOS: TFDQuery;
+    QryOS: TFDQuery;
   private
     function fFiltros(pBusca: String) : String;
 
     { Private declarations }
   public
     procedure fListarOS(pPagina: Integer; pBusca: String);
+    procedure fListarOSID(pCodPedidoLocal: Integer);
+
     { Public declarations }
   end;
 
@@ -99,6 +102,85 @@ begin
               '  OR O.OS_CODIGO_OFICIAL = :OS_CODIGO_OFICIAL) ';
   end;
 end;
+
+procedure TDMOS.fListarOSID(pCodPedidoLocal: Integer);
+begin
+  QryOS.SQL.Clear;
+
+  QryOS.SQL.Text :=
+                    ' SELECT                                                                                  '+
+                    '     O.CLI_CODIGO_LOCAL,                                                                 '+
+                    '     C.CLI_NOME,                                                                         '+
+                    '     CASE                                                                                '+
+                    '         WHEN (C.CLI_ENDERECO IS NOT NULL AND C.CLI_ENDERECO <> '''') THEN               '+
+                    '             C.CLI_ENDERECO                                                              '+
+                    '             || CASE                                                                     '+
+                    '                 WHEN (C.CLI_NUMERO IS NOT NULL AND C.CLI_NUMERO <> '''') THEN           '+
+                    '                     '', '' || C.CLI_NUMERO                                              '+
+                    '                 ELSE                                                                    '+
+                    '                     ''''                                                                '+
+                    '             END                                                                         '+
+                    '             || CASE                                                                     '+
+                    '                 WHEN (C.CLI_COMPLEMENTO IS NOT NULL AND C.CLI_COMPLEMENTO <> '''') THEN '+
+                    '                     '' - '' || C.CLI_COMPLEMENTO                                        '+
+                    '                 ELSE                                                                    '+
+                    '                     ''''                                                                '+
+                    '             END                                                                         '+
+                    '             || CASE                                                                     '+
+                    '                 WHEN (C.CLI_BAIRRO IS NOT NULL AND C.CLI_BAIRRO <> '''') THEN           '+
+                    '                     '', '' || C.CLI_BAIRRO                                              '+
+                    '                 ELSE                                                                    '+
+                    '                     ''''                                                                '+
+                    '             END                                                                         '+
+                    '             || CASE                                                                     '+
+                    '                 WHEN (CID.CID_NOME IS NOT NULL AND CID.CID_NOME <> '''') THEN           '+
+                    '                     '' - '' || CID.CID_NOME || '' - '' || CID.CID_UF                    '+
+                    '                 ELSE                                                                    '+
+                    '                     ''''                                                                '+
+                    '             END                                                                         '+
+                    '             || CASE                                                                     '+
+                    '                 WHEN (C.CLI_CEP IS NOT NULL AND C.CLI_CEP <> '''') THEN                 '+
+                    '                     '' - '' || C.CLI_CEP                                                '+
+                    '                 ELSE                                                                    '+
+                    '                     ''''                                                                '+
+                    '             END                                                                         '+
+                    '         ELSE                                                                            '+
+                    '             NULL                                                                        '+
+                    '     END AS CLI_ENDERECO_COMPLETO,                                                       '+
+                    '     CASE                                                                                '+
+                    '         WHEN (C.CLI_CPF IS NULL OR C.CLI_CPF = '''') THEN COALESCE(C.CLI_CNPJ, '''')    '+
+                    '         ELSE COALESCE(C.CLI_CPF, '''')                                                  '+
+                    '     END AS CLI_DOC,                                                                     '+
+                    '                                                                                         '+
+                    '     O.OS_TIPO,                                                                          '+
+                    '     O.OS_DATAABERTURA,                                                                  '+
+                    '     O.OS_SOLICITACAO,                                                                   '+
+                    '     O.OS_OBSINTERNA,                                                                    '+
+                    '     F.FUNC_NOME                                                                         '+
+                    ' FROM                                                                                    '+
+                    '     OS O                                                                                '+
+                    ' LEFT JOIN                                                                               '+
+                    '     CLIENTE C                                                                           '+
+                    ' ON                                                                                      '+
+                    '     O.CLI_CODIGO_LOCAL = C.CLI_CODIGO_LOCAL                                             '+
+                    '                                                                                         '+
+                    ' LEFT JOIN                                                                               '+
+                    '     CIDADE CID                                                                          '+
+                    ' ON                                                                                      '+
+                    '     C.CID_CODIGO = CID.CID_CODIGO                                                       '+
+                    '                                                                                         '+
+                    ' LEFT JOIN                                                                               '+
+                    '     FUNCIONARIO F                                                                       '+
+                    ' ON                                                                                      '+
+                    '     O.FUNC_CODIGO = F.FUNC_CODIGO                                                       '+
+                    '                                                                                         '+
+                    ' WHERE O.OS_CODIGO_LOCAL = :OS_CODIGO_LOCAL                                              ';
+
+  QryOS.ParamByName('OS_CODIGO_LOCAL').AsInteger := pCodPedidoLocal;
+
+  QryOS.Open;
+end;
+
 
 
 end.

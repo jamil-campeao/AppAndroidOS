@@ -119,6 +119,7 @@ type
     procedure lbiLogoutClick(Sender: TObject);
     procedure lbiSincronizarClick(Sender: TObject);
     procedure btnAdicionarOSClick(Sender: TObject);
+    procedure lvOSItemClick(const Sender: TObject; const AItem: TListViewItem);
   private
     vFancy : TFancyDialog;
     vMenuNotificacao: TActionSheet;
@@ -142,6 +143,7 @@ pCidade, pUF, pFone, pIndSincronizar: String; pCodCidade: Integer);
     procedure fClickNotificacaoExcluir(Sender: TObject);
     procedure fClickNotificacaoLida(Sender: TObject);
     procedure fClickNotificacaoNaoLida(Sender: TObject);
+    procedure fRefreshListagemOS;
     { Private declarations }
   public
     { Public declarations }
@@ -184,6 +186,9 @@ begin
   if not Assigned(FrmOSCad) then
     Application.CreateForm(TFrmOSCad, FrmOSCad);
 
+  FrmOSCad.Cod_OS         := 0;
+  frmOSCad.Modo           := 'I';
+  FrmOSCad.ExecuteOnClose := nil;
   FrmOSCad.Show;
 end;
 
@@ -372,6 +377,25 @@ procedure TfrmPrincipal.lvNotificacaoUpdateObjects(const Sender: TObject;
   const AItem: TListViewItem);
 begin
   fLayoutListViewNotificacao(AItem);
+end;
+
+procedure TfrmPrincipal.lvOSItemClick(const Sender: TObject;
+  const AItem: TListViewItem);
+begin
+  if not Assigned(FrmOSCad) then
+    Application.CreateForm(TFrmOSCad, FrmOSCad);
+
+  FrmOSCad.Cod_OS         := AItem.TagString.ToInteger;
+  FrmOSCad.Modo           := 'A';
+  FrmOSCad.ExecuteOnClose := fRefreshListagemOS;
+
+  FrmOSCad.Show;
+
+end;
+
+procedure TfrmPrincipal.fRefreshListagemOS;
+begin
+  fListarOS(1, Trim(edBuscaOS.Text), True);
 end;
 
 procedure TfrmPrincipal.lvOSPaint(Sender: TObject; Canvas: TCanvas;

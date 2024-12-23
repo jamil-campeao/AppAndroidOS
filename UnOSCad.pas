@@ -7,9 +7,10 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, UnPrincipal,
   FMX.Objects, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts,
   FMX.ListBox, FMX.TabControl, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.ListView;
+  FMX.ListView.Adapters.Base, FMX.ListView, uFancyDialog;
 
 type
+  TExecuteOnClose = procedure of object;
   TfrmOSCad = class(TForm)
     rectToolBar: TRectangle;
     lblTitulo: TLabel;
@@ -78,11 +79,20 @@ type
     procedure btInserirItemClick(Sender: TObject);
     procedure ListBox1ItemClick(const Sender: TCustomListBox;
       const Item: TListBoxItem);
+    procedure FormShow(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
+    vFancy : TFancyDialog;
+    FCod_OS: Integer;
+    FModo: String;
+    FExecuteOnClose: TExecuteOnClose;
     procedure fAbrirAba(pRect: TRectangle);
     procedure fSelecionarCliente(pCodClienteLocal: Integer; pNome: String);
     { Private declarations }
   public
+  property Modo: String read FModo write FModo;
+  property Cod_OS: Integer read FCod_OS write FCod_OS;
+  property ExecuteOnClose: TExecuteOnClose read FExecuteOnClose write FExecuteOnClose;
     { Public declarations }
   end;
 
@@ -93,7 +103,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnOSItemCad, UnClienteBusca;
+uses UnOSItemCad, UnClienteBusca, DataModule.OS;
 
 procedure TfrmOSCad.btInserirItemClick(Sender: TObject);
 begin
@@ -118,6 +128,38 @@ end;
 procedure TfrmOSCad.FormCreate(Sender: TObject);
 begin
   TabControl1.ActiveTab := tabOS;
+  vFancy                := TFancyDialog.Create(frmOSCad);
+end;
+
+procedure TfrmOSCad.FormDestroy(Sender: TObject);
+begin
+  vFancy.DisposeOf;
+end;
+
+procedure TfrmOSCad.FormShow(Sender: TObject);
+begin
+  try
+    btExcluir.Visible := Modo = 'A';
+
+    if Modo = 'A' then
+    begin
+      DMOS.fListarOSId(Cod_OS);
+
+      lblCliente.Tag              := DMOS.QryOS.FieldByName('CLI_CODIGO_LOCAL').AsInteger;
+      lblCliente.Text             := DMOS.QryOS.FieldByName('CLI_NOME').AsString;
+      lblEndereco.Text            := DMOS.QryOS.FieldByName('CLI_ENDERECO_COMPLETO').AsString;
+      lblTipoOS.Text              := DMOS.QryOS.FieldByName('OS_TIPO').AsString;
+      lblData.Text                := DMOS.QryOS.FieldByName('OS_DATAABERTURA').AsString;
+      lblSolicitacao.Text         := DMOS.QryOS.FieldByName('OS_SOLICITACAO').AsString;
+      lblOBS.Text                 := DMOS.QryOS.FieldByName('OS_OBSINTERNA').AsString;
+      lblResponsavelVendedor.Text := DMOS.QryOS.FieldByName('FUNC_NOME').AsString;
+
+      lblTitulo.Text := 'Editar OS';
+    end;
+  except on E:Exception do
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados da OS: ' + e.Message, 'OK');
+
+  end;
 end;
 
 procedure TfrmOSCad.ListBox1ItemClick(const Sender: TCustomListBox;
