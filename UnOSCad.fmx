@@ -1083,27 +1083,27 @@ object frmOSCad: TfrmOSCad
           item
             AppearanceObjectName = 'imgMenos'
             AppearanceClassName = 'TImageObjectAppearance'
-            Appearance.Width = 40.000000000000000000
-            Appearance.Height = 40.000000000000000000
+            Appearance.Width = 35.000000000000000000
+            Appearance.Height = 35.000000000000000000
             Appearance.PlaceOffset.X = 72.000000000000000000
-            Appearance.PlaceOffset.Y = 63.000000000000000000
+            Appearance.PlaceOffset.Y = 55.000000000000000000
           end
           item
             AppearanceObjectName = 'imgMais'
             AppearanceClassName = 'TImageObjectAppearance'
-            Appearance.Width = 40.000000000000000000
-            Appearance.Height = 40.000000000000000000
+            Appearance.Width = 35.000000000000000000
+            Appearance.Height = 35.000000000000000000
             Appearance.Align = Trailing
             Appearance.PlaceOffset.X = -139.000000000000000000
-            Appearance.PlaceOffset.Y = 63.000000000000000000
+            Appearance.PlaceOffset.Y = 55.000000000000000000
           end
           item
             AppearanceObjectName = 'imgExcluir'
             AppearanceClassName = 'TImageObjectAppearance'
-            Appearance.Width = 40.000000000000000000
-            Appearance.Height = 40.000000000000000000
+            Appearance.Width = 35.000000000000000000
+            Appearance.Height = 35.000000000000000000
             Appearance.PlaceOffset.X = 285.000000000000000000
-            Appearance.PlaceOffset.Y = 63.000000000000000000
+            Appearance.PlaceOffset.Y = 49.000000000000000000
           end
           item
             AppearanceObjectName = 'txtQuantidade'
@@ -1113,7 +1113,7 @@ object frmOSCad: TfrmOSCad
             Appearance.Width = 34.000000000000000000
             Appearance.Height = 25.000000000000000000
             Appearance.PlaceOffset.X = 115.000000000000000000
-            Appearance.PlaceOffset.Y = 66.000000000000000000
+            Appearance.PlaceOffset.Y = 58.000000000000000000
           end
           item
             AppearanceObjectName = 'txtTotal'
@@ -1123,8 +1123,8 @@ object frmOSCad: TfrmOSCad
             Appearance.Width = 86.000000000000000000
             Appearance.Height = 17.000000000000000000
             Appearance.Align = Trailing
-            Appearance.PlaceOffset.X = -5.000000000000000000
-            Appearance.PlaceOffset.Y = 41.000000000000000000
+            Appearance.PlaceOffset.X = -13.000000000000000000
+            Appearance.PlaceOffset.Y = 29.000000000000000000
           end>
         ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
           item
@@ -1915,7 +1915,7 @@ object frmOSCad: TfrmOSCad
           Text = 'Total da OS'
           TabOrder = 1
         end
-        object Label11: TLabel
+        object lblTotal: TLabel
           StyledSettings = [Family]
           Position.X = 224.000000000000000000
           Position.Y = 24.000000000000000000

@@ -71,7 +71,7 @@ type
     rectTotal: TRectangle;
     btInserirItem: TSpeedButton;
     Label9: TLabel;
-    Label11: TLabel;
+    lblTotal: TLabel;
     imgSemProduto: TImage;
     procedure btVoltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -93,6 +93,7 @@ type
       pDescricao: String; pQuantidade, pValorUnitario, pValorTotal: Double;
       pFoto: TStream);
     procedure fLayoutListViewProduto(pAItem: TListViewItem);
+    procedure fCalcularTotalOS;
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -201,6 +202,7 @@ begin
     imgSemProduto.Visible := DMOS.QryItem.RecordCount = 0;
 
     //Calculo do valor total do Pedido
+    fCalcularTotalOS;
 
   except on E:Exception do
     vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados da OS: ' + e.Message, 'OK');
@@ -274,7 +276,7 @@ begin
 
     //Quantidade + Valor Unitário
     vTxt      := TListItemText(vItem.Objects.FindDrawable('txtUnitario'));
-    vTxt.Text := FormatFloat('R$#,##0.00', pQuantidade) + ' x ' + FormatFloat('R$#,##0.00', pValorUnitario);
+    vTxt.Text := FormatFloat('#,##0.00', pQuantidade) + ' x ' + FormatFloat('R$ #,##0.00', pValorUnitario);
 
     //Valor total
     vTxt      := TListItemText(vItem.Objects.FindDrawable('txtTotal'));
@@ -293,6 +295,12 @@ begin
     vImg          := TListItemImage(vItem.Objects.FindDrawable('imgMais'));
     vImg.Bitmap   := imgIconeMais.Bitmap;
     vImg.TagFloat := pCodProdutoItem;
+
+    //Icone Excluir
+    vImg          := TListItemImage(vItem.Objects.FindDrawable('imgExcluir'));
+    vImg.Bitmap   := imgIconeExcluir.Bitmap;
+    vImg.TagFloat := pCodProdutoItem;
+
 
     //Foto
     vImg        := TListItemImage(vItem.Objects.FindDrawable('imgFoto'));
@@ -337,6 +345,19 @@ begin
   TListItemText(pAItem.Objects.FindDrawable('imgFoto')).PlaceOffset.Y       := vPosicaoY;
   pAItem.Height := Trunc(vPosicaoY + 30);
 
+end;
+
+procedure TfrmOSCad.fCalcularTotalOS;
+var
+  vTotal: Double;
+  i     : Integer;
+begin
+  vTotal := 0;
+
+  for I := 0 to lvItemProduto.Items.Count - 1 do
+      vTotal := vTotal + fStringToFloat(TListItemText(lvItemProduto.Items[i].Objects.FindDrawable('txtTotal')).Text);
+
+  lblTotal.Text := FormatFloat('R$#,##0.00', vTotal);
 end;
 
 

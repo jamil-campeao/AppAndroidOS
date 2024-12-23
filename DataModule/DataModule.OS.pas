@@ -186,9 +186,9 @@ end;
 
 procedure TDMOS.fListarItensOSID(pCodPedidoLocal, pCodItem: Integer);
 begin
-  QryOS.SQL.Clear;
+  QryItem.SQL.Clear;
 
-  QryOS.SQL.Text :=
+  QryItem.SQL.Text :=
                     ' SELECT                                                                                  '+
                     '     OSP.OSP_CODIGO,                                                                     '+
                     '     OSP.OS_CODIGO_LOCAL,                                                                '+
@@ -206,15 +206,15 @@ begin
 
   if pCodItem > 0 then
   begin
-    QryOS.SQL.Add(' AND OSP_CODIGO = :OSP_CODIGO ');
-    QryOS.ParamByName('OSP_CODIGO').AsInteger := pCodItem;
+    QryItem.SQL.Add(' AND OSP_CODIGO = :OSP_CODIGO ');
+    QryItem.ParamByName('OSP_CODIGO').AsInteger := pCodItem;
   end;
 
-  QryOS.SQL.Add('ORDER BY 1 DESC');
+  QryItem.SQL.Add('ORDER BY 1 DESC');
 
-  QryOS.ParamByName('OS_CODIGO_LOCAL').AsInteger := pCodPedidoLocal;
+  QryItem.ParamByName('OS_CODIGO_LOCAL').AsInteger := pCodPedidoLocal;
 
-  QryOS.Open;
+  QryItem.Open;
 end;
 
 procedure TDMOS.fCarregaTabelaTemp(pCodPedidoLocal: Integer);
