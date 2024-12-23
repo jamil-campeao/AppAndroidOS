@@ -31,7 +31,8 @@ uses
   UnPerfilCad in 'UnPerfilCad.pas' {frmPerfilCad},
   UnSenhaCad in 'UnSenhaCad.pas' {frmSenhaCad},
   UnSincronizacao in 'UnSincronizacao.pas' {frmSincronizacao},
-  UnOSCad in 'UnOSCad.pas' {frmOSCad};
+  UnOSCad in 'UnOSCad.pas' {frmOSCad},
+  UnOSItemCad in 'UnOSItemCad.pas' {frmOSItemCad};
 
 {$R *.res}
 

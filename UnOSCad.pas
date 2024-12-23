@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, UnPrincipal,
   FMX.Objects, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts,
-  FMX.ListBox, FMX.TabControl;
+  FMX.ListBox, FMX.TabControl, FMX.ListView.Types, FMX.ListView.Appearances,
+  FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
   TfrmOSCad = class(TForm)
@@ -19,8 +20,8 @@ type
     lytAbas: TLayout;
     rectAbaOS: TRectangle;
     rectAbaItem: TRectangle;
-    Label1: TLabel;
-    Label2: TLabel;
+    lblAbaDadosOS: TLabel;
+    lblAbaItensOS: TLabel;
     TabControl1: TTabControl;
     tabOS: TTabItem;
     tabItem: TTabItem;
@@ -61,9 +62,22 @@ type
     Label7: TLabel;
     lblEndereco: TLabel;
     Line7: TLine;
+    lvItemProduto: TListView;
+    imgIconeMais: TImage;
+    imgIconeSemFoto: TImage;
+    imgIconeMenos: TImage;
+    imgIconeExcluir: TImage;
+    rectTotal: TRectangle;
+    btInserirItem: TSpeedButton;
+    Label9: TLabel;
+    Label11: TLabel;
     procedure btVoltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure rectAbaOSClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btInserirItemClick(Sender: TObject);
   private
+    procedure fAbrirAba(pRect: TRectangle);
     { Private declarations }
   public
     { Public declarations }
@@ -76,6 +90,17 @@ implementation
 
 {$R *.fmx}
 
+uses UnOSItemCad;
+
+procedure TfrmOSCad.btInserirItemClick(Sender: TObject);
+begin
+  if not Assigned(frmOSItemCad) then
+    Application.CreateForm(TfrmOSItemCad, frmOSItemCad);
+
+  frmOSItemCad.Show;
+
+end;
+
 procedure TfrmOSCad.btVoltarClick(Sender: TObject);
 begin
   Close;
@@ -86,5 +111,38 @@ begin
   Action   := TCloseAction.caFree;
   FrmOSCad := nil;
 end;
+
+procedure TfrmOSCad.FormCreate(Sender: TObject);
+begin
+  TabControl1.ActiveTab := tabOS;
+end;
+
+procedure TfrmOSCad.rectAbaOSClick(Sender: TObject);
+begin
+  fAbrirAba(TRectangle(Sender));
+end;
+
+procedure TfrmOSCad.fAbrirAba(pRect: TRectangle);
+begin
+  rectAbaOS.Fill.Color    := $FFFFFFFF;
+  rectAbaItem.Fill.Color  := $FFFFFFFF;
+  lblAbaDadosOS.FontColor := $FF585F5A;
+  lblAbaItensOS.FontColor := $FF585F5A;
+
+  if pRect.Tag = 0 then
+  begin
+    rectAbaOS.Fill.Color    := $FF585F5A;
+    lblAbaDadosOS.FontColor := $FFFFFFFF;
+  end
+  else
+  begin
+    rectAbaItem.Fill.Color    := $FF585F5A;
+    lblAbaItensOS.FontColor   := $FFFFFFFF;
+  end;
+
+  TabControl1.GotoVisibleTab(pRect.Tag);
+
+end;
+
 
 end.

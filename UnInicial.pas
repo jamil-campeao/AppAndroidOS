@@ -84,10 +84,9 @@ begin
   frmLogin.TabControl.ActiveTab := frmLogin.TabLogin;
 
   Application.MainForm := frmLogin;
+  frmInicial.Destroy;
 
   frmLogin.Show;
-
-  frmInicial.Release; // Libera o formulário inicial
 end;
 
 
@@ -125,7 +124,6 @@ end;
 
 procedure TfrmInicial.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  Action     := TCloseAction.caFree;
   FrmInicial := nil;
 end;
 

@@ -362,6 +362,10 @@
             <Form>frmOSCad</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="UnOSItemCad.pas">
+            <Form>frmOSItemCad</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
