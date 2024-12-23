@@ -98,6 +98,7 @@ type
     procedure fLayoutListViewProduto(pAItem: TListViewItem);
     procedure fCalcularTotalOS;
     procedure fCalcularQuantidadeListView(pItem: TListViewItem; pQtd: Integer);
+    procedure fListarItens;
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -120,9 +121,57 @@ begin
   if not Assigned(frmOSItemCad) then
     Application.CreateForm(TfrmOSItemCad, frmOSItemCad);
 
+  frmOSItemCad.Modo := 'I';
+  frmOSItemCad.Cod_Item := 0;
+  frmOSItemCad.ExecuteOnClose := fListarItens;
   frmOSItemCad.Show;
 
 end;
+
+procedure TfrmOSCad.fListarItens;
+var
+  vFoto: TStream;
+begin
+  try
+    //Dados dos itens
+    lvItemProduto.BeginUpdate;
+    lvItemProduto.Items.Clear;
+
+    DMOS.fListarItensOSID(0);
+
+    while not DMOS.QryItem.Eof do
+    begin
+      if DMOS.QryItem.FieldByName('FOTO').AsString <> '' then
+        vFoto := DMOS.QryItem.CreateBlobStream(DMOS.QryItem.FieldByName('FOTO'), TBlobStreamMode.bmRead)
+      else
+        vFoto := nil;
+
+
+
+      fAdicionaProdutoListView(DMOS.QryItem.FieldByName('OSP_CODIGO').AsInteger,
+                               DMOS.QryItem.FieldByName('PROD_DESCRICAO').AsString,
+                               DMOS.QryItem.FieldByName('OSP_QUANTIDADE').AsFloat,
+                               DMOS.QryItem.FieldByName('OSP_VALOR').AsFloat,
+                               DMOS.QryItem.FieldByName('OSP_TOTAL').AsFloat,
+                               vFoto
+                               );
+
+      DMOS.QryItem.Next;
+    end;
+
+    lvItemProduto.EndUpdate;
+
+    imgSemProduto.Visible := DMOS.QryItem.RecordCount = 0;
+
+    //Calculo do valor total do Pedido
+    fCalcularTotalOS;
+
+  except on e:Exception do
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados da OS: ' + e.Message, 'OK');
+  end;
+
+end;
+
 
 procedure TfrmOSCad.btVoltarClick(Sender: TObject);
 begin
@@ -147,8 +196,6 @@ begin
 end;
 
 procedure TfrmOSCad.FormShow(Sender: TObject);
-var
-  vFoto : TStream;
 begin
 
   //Carregar tabela temp dos itens
@@ -173,45 +220,11 @@ begin
 
       lblTitulo.Text := 'Editar OS';
     end;
-
-    //Dados dos itens
-    lvItemProduto.BeginUpdate;
-    lvItemProduto.Items.Clear;
-
-    DMOS.fListarItensOSID(Cod_OS, 0);
-
-    while not DMOS.QryItem.Eof do
-    begin
-      if DMOS.QryItem.FieldByName('FOTO').AsString <> '' then
-        vFoto := DMOS.QryItem.CreateBlobStream(DMOS.QryItem.FieldByName('FOTO'), TBlobStreamMode.bmRead)
-      else
-        vFoto := nil;
-
-
-
-      fAdicionaProdutoListView(DMOS.QryItem.FieldByName('OSP_CODIGO').AsInteger,
-                               DMOS.QryItem.FieldByName('PROD_DESCRICAO').AsString,
-                               DMOS.QryItem.FieldByName('OSP_QUANTIDADE').AsFloat,
-                               DMOS.QryItem.FieldByName('OSP_VALOR').AsFloat,
-                               DMOS.QryItem.FieldByName('OSP_TOTAL').AsFloat,
-                               vFoto
-                               );
-
-     DMOS.QryItem.Next;
-    end;
-
-
-    lvItemProduto.EndUpdate;
-
-    imgSemProduto.Visible := DMOS.QryItem.RecordCount = 0;
-
-    //Calculo do valor total do Pedido
-    fCalcularTotalOS;
-
   except on E:Exception do
     vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados da OS: ' + e.Message, 'OK');
-
   end;
+
+  fListarItens;
 end;
 
 procedure TfrmOSCad.ListBox1ItemClick(const Sender: TCustomListBox;
@@ -233,26 +246,42 @@ procedure TfrmOSCad.lvItemProdutoItemClickEx(const Sender: TObject;
 begin
   if Assigned(ItemObject) then
   begin
-    if ItemObject.Name = 'imgMenos' then
-    begin
-      fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], -1);
-      DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), -1);
-    end
-    else
-    if ItemObject.Name = 'imgMais' then
-    begin
-      fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], 1);
-      DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), 1);
-    end
-    else
-    if ItemObject.Name = 'imgExcluir' then
-    begin
-      DMOS.fExcluirItem(Trunc(ItemObject.TagFloat));  //Deleto do BD
-      lvItemProduto.Items.Delete(ItemIndex);          //Deleto da ListView
-    end;
+    try
+      if ItemObject.Name = 'imgMenos' then
+      begin
+        fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], -1);
+        DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), -1);
+        Exit;
+      end
+      else
+      if ItemObject.Name = 'imgMais' then
+      begin
+        fCalcularQuantidadeListView(lvItemProduto.Items[ItemIndex], 1);
+        DMOS.fAtualizarQuantidadeItem(Trunc(ItemObject.TagFloat), 1);
+        Exit;
+      end
+      else
+      if ItemObject.Name = 'imgExcluir' then
+      begin
+        DMOS.fExcluirItem(Trunc(ItemObject.TagFloat));  //Deleto do BD
+        lvItemProduto.Items.Delete(ItemIndex);          //Deleto da ListView
+        Exit;
+      end;
 
-    fCalcularTotalOS;
+    finally
+      fCalcularTotalOS;
+
+    end;
   end;
+
+  //Abre a edição do Item
+  if not Assigned(frmOSItemCad) then
+    Application.CreateForm(TfrmOSItemCad, frmOSItemCad);
+
+  frmOSItemCad.Modo := 'A';
+  frmOSItemCad.Cod_Item := lvItemProduto.Items[ItemIndex].Tag;
+  frmOSItemCad.ExecuteOnClose := fListarItens;
+  frmOSItemCad.Show;
 
 end;
 

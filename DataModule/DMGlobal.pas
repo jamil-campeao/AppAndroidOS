@@ -350,8 +350,7 @@ begin
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OSPRODUTO_TEMP (                                                                           '+
-          '     OSP_CODIGO         INTEGER NOT NULL PRIMARY KEY,                                                                  '+
-          '     OS_CODIGO_LOCAL    INTEGER NOT NULL,                                                                              '+
+          '     OSP_CODIGO         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,                                                                  '+
           '     PROD_CODIGO_LOCAL  INTEGER,                                                                                       '+
           '     OSP_QUANTIDADE     INTEGER,                                                                                       '+
           '     OSP_VALOR          DECIMAL (12, 2),                                                                               '+
@@ -360,7 +359,7 @@ begin
           ');                                                                                                                     '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OSSERVICO_TEMP (                                                                           '+
-          '     OSS_CODIGO       INTEGER NOT NULL PRIMARY KEY,                                                                    '+
+          '     OSS_CODIGO       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,                                                                    '+
           '     OS_CODIGO_LOCAL  INTEGER NOT NULL,                                                                                '+
           '     SE_CODIGO_LOCAL  INTEGER,                                                                                         '+
           '     OSS_QUANTIDADE   INTEGER,                                                                                         '+
@@ -369,7 +368,7 @@ begin
           ');                                                                                                                     '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OSSERVICOTERCEIROS_TEMP (                                                                  '+
-          '     OSST_CODIGO      INTEGER NOT NULL PRIMARY KEY,                                                                    '+
+          '     OSST_CODIGO      INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,                                                                    '+
           '     OS_CODIGO_LOCAL  INTEGER NOT NULL,                                                                                '+
           '     SE_CODIGO_LOCAL  INTEGER,                                                                                         '+
           '     OSST_QUANTIDADE  INTEGER,                                                                                         '+

@@ -20,10 +20,14 @@ type
   public
     procedure fListarOS(pPagina: Integer; pBusca: String);
     procedure fListarOSID(pCodPedidoLocal: Integer);
-    procedure fListarItensOSID(pCodPedidoLocal, pCodItem: Integer);
+    procedure fListarItensOSID(pCodItem: Integer);
     procedure fCarregaTabelaTemp(pCodPedidoLocal: Integer);
     procedure fAtualizarQuantidadeItem(pCodItem: Integer; pQtd: Double);
     procedure fExcluirItem(pCodItem: Integer);
+    procedure fEditarItemProduto(pCodItem, pCodProdutoLocal: Integer;
+pQuantidade, pValorUnitario, pValortotal: Double);
+    procedure fInserirItemProduto(pCodProdutoLocal: Integer;
+pQuantidade, pValorUnitario, pValortotal: Double);
 
     { Public declarations }
   end;
@@ -186,14 +190,13 @@ begin
   QryOS.Open;
 end;
 
-procedure TDMOS.fListarItensOSID(pCodPedidoLocal, pCodItem: Integer);
+procedure TDMOS.fListarItensOSID(pCodItem: Integer);
 begin
   QryItem.SQL.Clear;
 
   QryItem.SQL.Text :=
                     ' SELECT                                                                                  '+
                     '     OSP.OSP_CODIGO,                                                                     '+
-                    '     OSP.OS_CODIGO_LOCAL,                                                                '+
                     '     OSP.PROD_CODIGO_LOCAL,                                                              '+
                     '     P.PROD_DESCRICAO,                                                                   '+
                     '     OSP.OSP_QUANTIDADE,                                                                 '+
@@ -204,7 +207,7 @@ begin
                     '     OSPRODUTO_TEMP OSP                                                                  '+
                     '  INNER JOIN PRODUTO P                                                                   '+
                     '     ON P.PROD_CODIGO_LOCAL = OSP.PROD_CODIGO_LOCAL                                      '+
-                    ' WHERE OSP.OS_CODIGO_LOCAL = :OS_CODIGO_LOCAL                                            ';
+                    ' WHERE OSP.OSP_CODIGO > 0                                                                ';
 
   if pCodItem > 0 then
   begin
@@ -213,8 +216,6 @@ begin
   end;
 
   QryItem.SQL.Add('ORDER BY 1 DESC');
-
-  QryItem.ParamByName('OS_CODIGO_LOCAL').AsInteger := pCodPedidoLocal;
 
   QryItem.Open;
 end;
@@ -231,14 +232,12 @@ begin
 
   QryItem.SQL.Text := ' INSERT INTO OSPRODUTO_TEMP               '+
                       ' (OSP_CODIGO,                             '+
-                      ' OS_CODIGO_LOCAL,                         '+
                       ' PROD_CODIGO_LOCAL,                       '+
                       ' OSP_QUANTIDADE,                          '+
                       ' OSP_VALOR,                               '+
                       ' OSP_TOTAL)                               '+
                       ' SELECT                                   '+
                       ' OSP_CODIGO,                              '+
-                      ' OS_CODIGO_LOCAL,                         '+
                       ' PROD_CODIGO_LOCAL,                       '+
                       ' OSP_QUANTIDADE,                          '+
                       ' OSP_VALOR,                               '+
@@ -274,6 +273,49 @@ begin
                       ' WHERE OSP_CODIGO = :OSP_CODIGO ';
 
   QryItem.ParamByName('OSP_CODIGO').AsInteger    := pCodItem;
+
+  QryItem.ExecSQL;
+end;
+
+
+procedure TDMOS.fInserirItemProduto(pCodProdutoLocal: Integer;
+pQuantidade, pValorUnitario, pValortotal: Double);
+begin
+  QryItem.SQL.Clear;
+
+  QryItem.SQL.Text := ' INSERT INTO OSPRODUTO_TEMP                          '+
+                      ' (PROD_CODIGO_LOCAL, OSP_QUANTIDADE,                 '+
+                      ' OSP_VALOR, OSP_TOTAL)                               '+
+                      ' VALUES                                              '+
+                      ' (:PROD_CODIGO_LOCAL, :OSP_QUANTIDADE,               '+
+                      ' :OSP_VALOR, :OSP_TOTAL)                             ';
+
+  QryItem.ParamByName('PROD_CODIGO_LOCAL').AsInteger  := pCodProdutoLocal;
+  QryItem.ParamByName('OSP_QUANTIDADE').AsFloat       := pQuantidade;
+  QryItem.ParamByName('OSP_VALOR').AsFloat            := pValorUnitario;
+  QryItem.ParamByName('OSP_TOTAL').AsFloat            := pValortotal;
+
+
+  QryItem.ExecSQL;
+end;
+
+procedure TDMOS.fEditarItemProduto(pCodItem, pCodProdutoLocal: Integer;
+pQuantidade, pValorUnitario, pValortotal: Double);
+begin
+  QryItem.SQL.Clear;
+
+  QryItem.SQL.Text := ' UPDATE OSPRODUTO_TEMP SET                      '+
+                      ' PROD_CODIGO_LOCAL = :PROD_CODIGO_LOCAL,        '+
+                      ' OSP_QUANTIDADE = :OSP_QUANTIDADE,              '+
+                      ' OSP_VALOR = :OSP_VALOR, OSP_TOTAL = :OSP_TOTAL '+
+                      ' WHERE OSP_CODIGO = :OSP_CODIGO                 ';
+
+  QryItem.ParamByName('OSP_CODIGO').AsInteger         := pCodItem;
+  QryItem.ParamByName('PROD_CODIGO_LOCAL').AsInteger  := pCodProdutoLocal;
+  QryItem.ParamByName('OSP_QUANTIDADE').AsFloat       := pQuantidade;
+  QryItem.ParamByName('OSP_VALOR').AsFloat            := pValorUnitario;
+  QryItem.ParamByName('OSP_TOTAL').AsFloat            := pValortotal;
+
 
   QryItem.ExecSQL;
 end;
