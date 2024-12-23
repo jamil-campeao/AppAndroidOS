@@ -12,6 +12,7 @@ type
   TDMOS = class(TDataModule)
     QryConsOS: TFDQuery;
     QryOS: TFDQuery;
+    QryItem: TFDQuery;
   private
     function fFiltros(pBusca: String) : String;
 
@@ -19,6 +20,8 @@ type
   public
     procedure fListarOS(pPagina: Integer; pBusca: String);
     procedure fListarOSID(pCodPedidoLocal: Integer);
+    procedure fListarItensOSID(pCodPedidoLocal, pCodItem: Integer);
+    procedure fCarregaTabelaTemp(pCodPedidoLocal: Integer);
 
     { Public declarations }
   end;
@@ -181,6 +184,70 @@ begin
   QryOS.Open;
 end;
 
+procedure TDMOS.fListarItensOSID(pCodPedidoLocal, pCodItem: Integer);
+begin
+  QryOS.SQL.Clear;
+
+  QryOS.SQL.Text :=
+                    ' SELECT                                                                                  '+
+                    '     OSP.OSP_CODIGO,                                                                     '+
+                    '     OSP.OS_CODIGO_LOCAL,                                                                '+
+                    '     OSP.PROD_CODIGO_LOCAL,                                                              '+
+                    '     P.PROD_DESCRICAO,                                                                   '+
+                    '     OSP.OSP_QUANTIDADE,                                                                 '+
+                    '     OSP.OSP_VALOR,                                                                      '+
+                    '     OSP.OSP_TOTAL,                                                                      '+
+                    '     P.FOTO                                                                              '+
+                    ' FROM                                                                                    '+
+                    '     OSPRODUTO_TEMP OSP                                                                  '+
+                    '  INNER JOIN PRODUTO P                                                                   '+
+                    '     ON P.PROD_CODIGO_LOCAL = OSP.PROD_CODIGO_LOCAL                                      '+
+                    ' WHERE OSP.OS_CODIGO_LOCAL = :OS_CODIGO_LOCAL                                            ';
+
+  if pCodItem > 0 then
+  begin
+    QryOS.SQL.Add(' AND OSP_CODIGO = :OSP_CODIGO ');
+    QryOS.ParamByName('OSP_CODIGO').AsInteger := pCodItem;
+  end;
+
+  QryOS.SQL.Add('ORDER BY 1 DESC');
+
+  QryOS.ParamByName('OS_CODIGO_LOCAL').AsInteger := pCodPedidoLocal;
+
+  QryOS.Open;
+end;
+
+procedure TDMOS.fCarregaTabelaTemp(pCodPedidoLocal: Integer);
+begin
+  QryItem.SQL.Clear;
+
+  QryItem.SQL.Text := ' DELETE FROM OSPRODUTO_TEMP ';
+
+  QryItem.ExecSQL;
+
+  QryItem.SQL.Clear;
+
+  QryItem.SQL.Text := ' INSERT INTO OSPRODUTO_TEMP               '+
+                      ' (OSP_CODIGO,                             '+
+                      ' OS_CODIGO_LOCAL,                         '+
+                      ' PROD_CODIGO_LOCAL,                       '+
+                      ' OSP_QUANTIDADE,                          '+
+                      ' OSP_VALOR,                               '+
+                      ' OSP_TOTAL)                               '+
+                      ' SELECT                                   '+
+                      ' OSP_CODIGO,                              '+
+                      ' OS_CODIGO_LOCAL,                         '+
+                      ' PROD_CODIGO_LOCAL,                       '+
+                      ' OSP_QUANTIDADE,                          '+
+                      ' OSP_VALOR,                               '+
+                      ' OSP_TOTAL                                '+
+                      ' FROM OSPRODUTO                           '+
+                      ' WHERE OS_CODIGO_LOCAL = :OS_CODIGO_LOCAL ';
+
+  QryItem.ParamByName('OS_CODIGO_LOCAL').AsInteger := pCodPedidoLocal;
+
+  QryItem.ExecSQL;
+end;
 
 
 end.

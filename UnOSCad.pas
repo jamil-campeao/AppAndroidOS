@@ -7,7 +7,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, UnPrincipal,
   FMX.Objects, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts,
   FMX.ListBox, FMX.TabControl, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.ListView, uFancyDialog;
+  FMX.ListView.Adapters.Base, FMX.ListView, uFancyDialog, uFunctions, Data.DB;
 
 type
   TExecuteOnClose = procedure of object;
@@ -72,6 +72,7 @@ type
     btInserirItem: TSpeedButton;
     Label9: TLabel;
     Label11: TLabel;
+    imgSemProduto: TImage;
     procedure btVoltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure rectAbaOSClick(Sender: TObject);
@@ -88,6 +89,10 @@ type
     FExecuteOnClose: TExecuteOnClose;
     procedure fAbrirAba(pRect: TRectangle);
     procedure fSelecionarCliente(pCodClienteLocal: Integer; pNome: String);
+    procedure fAdicionaProdutoListView(pCodProdutoItem: Integer;
+      pDescricao: String; pQuantidade, pValorUnitario, pValorTotal: Double;
+      pFoto: TStream);
+    procedure fLayoutListViewProduto(pAItem: TListViewItem);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -137,7 +142,14 @@ begin
 end;
 
 procedure TfrmOSCad.FormShow(Sender: TObject);
+var
+  vFoto : TStream;
 begin
+
+  //Carregar tabela temp dos itens
+  DMOS.fCarregaTabelaTemp(Cod_OS);
+
+  //Dados do pedido
   try
     btExcluir.Visible := Modo = 'A';
 
@@ -156,6 +168,40 @@ begin
 
       lblTitulo.Text := 'Editar OS';
     end;
+
+    //Dados dos itens
+    lvItemProduto.BeginUpdate;
+    lvItemProduto.Items.Clear;
+
+    DMOS.fListarItensOSID(Cod_OS, 0);
+
+    while not DMOS.QryItem.Eof do
+    begin
+      if DMOS.QryItem.FieldByName('FOTO').AsString <> '' then
+        vFoto := DMOS.QryItem.CreateBlobStream(DMOS.QryItem.FieldByName('FOTO'), TBlobStreamMode.bmRead)
+      else
+        vFoto := nil;
+
+
+
+      fAdicionaProdutoListView(DMOS.QryItem.FieldByName('OSP_CODIGO').AsInteger,
+                               DMOS.QryItem.FieldByName('PROD_DESCRICAO').AsString,
+                               DMOS.QryItem.FieldByName('OSP_QUANTIDADE').AsFloat,
+                               DMOS.QryItem.FieldByName('OSP_VALOR').AsFloat,
+                               DMOS.QryItem.FieldByName('OSP_TOTAL').AsFloat,
+                               vFoto
+                               );
+
+     DMOS.QryItem.Next;
+    end;
+
+
+    lvItemProduto.EndUpdate;
+
+    imgSemProduto.Visible := DMOS.QryItem.RecordCount = 0;
+
+    //Calculo do valor total do Pedido
+
   except on E:Exception do
     vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao carregar dados da OS: ' + e.Message, 'OK');
 
@@ -207,6 +253,93 @@ begin
   TabControl1.GotoVisibleTab(pRect.Tag);
 
 end;
+
+procedure TfrmOSCad.fAdicionaProdutoListView(pCodProdutoItem: Integer; pDescricao: String;
+pQuantidade, pValorUnitario, pValorTotal: Double; pFoto: TStream);
+var
+  vItem: TListViewItem;
+  vTxt : TListItemText;
+  vImg : TListItemImage;
+  vBmp : TBitmap;
+begin
+  try
+    vItem := lvItemProduto.Items.Add;
+    vItem.Height := 105;
+
+    vItem.Tag := pCodProdutoItem;
+
+    //Descrição
+    vTxt      := TListItemText(vItem.Objects.FindDrawable('txtDescricao'));
+    vTxt.Text := pDescricao;
+
+    //Quantidade + Valor Unitário
+    vTxt      := TListItemText(vItem.Objects.FindDrawable('txtUnitario'));
+    vTxt.Text := FormatFloat('R$#,##0.00', pQuantidade) + ' x ' + FormatFloat('R$#,##0.00', pValorUnitario);
+
+    //Valor total
+    vTxt      := TListItemText(vItem.Objects.FindDrawable('txtTotal'));
+    vTxt.Text := FormatFloat('#,##0.00', pValorTotal);
+
+    //Quantidade
+    vTxt      := TListItemText(vItem.Objects.FindDrawable('txtQuantidade'));
+    vTxt.Text := pQuantidade.ToString;
+
+    //Icone Menos
+    vImg          := TListItemImage(vItem.Objects.FindDrawable('imgMenos'));
+    vImg.Bitmap   := imgIconeMenos.Bitmap;
+    vImg.TagFloat := pCodProdutoItem;
+
+    //Icone Mais
+    vImg          := TListItemImage(vItem.Objects.FindDrawable('imgMais'));
+    vImg.Bitmap   := imgIconeMais.Bitmap;
+    vImg.TagFloat := pCodProdutoItem;
+
+    //Foto
+    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgFoto'));
+    if pFoto <> nil then
+    begin
+      vBmp := TBitMap.Create;
+      vBmp.LoadFromStream(pFoto);
+
+      vImg.OwnsBitmap := True;
+      vImg.Bitmap     := vBmp;
+    end
+    else
+      vImg.Bitmap := imgIconeSemFoto.Bitmap;
+
+    fLayoutListViewProduto(vItem);
+
+  except on e:Exception do
+    vFancy.fShow(TIconDialog.Error, 'Erro', 'Erro ao inserir item na lista: ' + e.Message, 'OK');
+
+  end;
+
+end;
+
+procedure TfrmOSCad.fLayoutListViewProduto(pAItem: TListViewItem);
+var
+  vTxt      : TListItemText;
+  vImg      : TListItemImage;
+  vPosicaoY : Extended;
+begin
+  vTxt         := TListItemText(pAItem.Objects.FindDrawable('txtDescricao'));
+  vTxt.Width   := lvItemProduto.Width - 84;
+  vTxt.Height  := fGetTextHeight(vTxt, vTxt.Width, vTxt.Text) + 3;
+
+  vPosicaoY    := vTxt.PlaceOffset.Y + vTxt.Height;
+
+  TListItemText(pAItem.Objects.FindDrawable('txtUnitario')).PlaceOffset.Y   := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('txtTotal')).PlaceOffset.Y      := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('txtQuantidade')).PlaceOffset.Y := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('txtTotal')).PlaceOffset.Y      := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('imgMenos')).PlaceOffset.Y      := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('imgMais')).PlaceOffset.Y       := vPosicaoY;
+  TListItemText(pAItem.Objects.FindDrawable('imgFoto')).PlaceOffset.Y       := vPosicaoY;
+  pAItem.Height := Trunc(vPosicaoY + 30);
+
+end;
+
+
 
 
 end.

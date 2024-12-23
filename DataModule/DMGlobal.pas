@@ -341,7 +341,7 @@ begin
           '     NOT_DATA      TIMESTAMP,                                                                                          '+
           '     NOT_TITULO    VARCHAR(100),                                                                                       '+
           '     NOT_TEXTO     VARCHAR(500),                                                                                       '+
-          '     NOT_IND_LIDO  CHAR(1)                                                                                            '+
+          '     NOT_IND_LIDO  CHAR(1)                                                                                             '+
           ' );                                                                                                                    '+
           '                                                                                                                       '+
           '     CREATE TABLE IF NOT EXISTS TAB_CONFIG (                                                                           '+
@@ -355,7 +355,8 @@ begin
           '     PROD_CODIGO_LOCAL  INTEGER,                                                                                       '+
           '     OSP_QUANTIDADE     INTEGER,                                                                                       '+
           '     OSP_VALOR          DECIMAL (12, 2),                                                                               '+
-          '     OSP_TOTAL          DECIMAL (12, 2)                                                                                '+
+          '     OSP_TOTAL          DECIMAL (12, 2),                                                                               '+
+          ' FOREIGN KEY (PROD_CODIGO_LOCAL) REFERENCES PRODUTO (PROD_CODIGO_LOCAL)                                                '+
           ');                                                                                                                     '+
           '                                                                                                                       '+
           ' CREATE TABLE IF NOT EXISTS OSSERVICO_TEMP (                                                                           '+

@@ -11,4 +11,9 @@ object DMOS: TDMOS
     Left = 128
     Top = 32
   end
+  object QryItem: TFDQuery
+    Connection = DM.Conn
+    Left = 24
+    Top = 88
+  end
 end
