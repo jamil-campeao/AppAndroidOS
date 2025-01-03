@@ -46,12 +46,18 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure btSalvarClick(Sender: TObject);
     procedure rectProdutoClick(Sender: TObject);
+    procedure btMaisClick(Sender: TObject);
   private
     vFancy : TFancyDialog;
     FCod_Item: Integer;
     FModo: String;
     FExecuteOnClose: TExecuteOnClose;
-    procedure fSelecionaProduto(pCodProdutoLocal: Integer; pDescricao: String);
+    procedure fSelecionaProduto(pCodProdutoLocal: Integer; pDescricao: String; pValor: Double);
+    procedure fCalcularQtd(pQtd: Integer);
+    procedure fCalcularTotalItem;
+    procedure fCalcularUnitarioItem;
+    procedure fClickTotalItem(Sender: TObject);
+    procedure fClickUnitarioItem(Sender: TObject);
     { Private declarations }
   public
   property Modo: String read FModo write FModo;
@@ -69,6 +75,11 @@ implementation
 {$R *.fmx}
 
 uses UnEdicaoPadrao, DataModule.OS, UnProdutoBusca;
+
+procedure TfrmOSItemCad.btMaisClick(Sender: TObject);
+begin
+  fCalcularQtd(TSpeedButton(Sender).Tag);
+end;
 
 procedure TfrmOSItemCad.btSalvarClick(Sender: TObject);
 begin
@@ -167,10 +178,12 @@ begin
 
 end;
 
-procedure TfrmOSItemCad.fSelecionaProduto(pCodProdutoLocal: Integer; pDescricao: String);
+procedure TfrmOSItemCad.fSelecionaProduto(pCodProdutoLocal: Integer; pDescricao: String; pValor: Double);
 begin
-  lblDescricao.Text := pDescricao;
-  lblDescricao.Tag  := pCodProdutoLocal;
+  lblDescricao.Text     := pDescricao;
+  lblDescricao.Tag      := pCodProdutoLocal;
+  lblValorUnitario.Text := FormatFloat('#,##0.00', pValor);
+  fCalcularTotalItem;
 end;
 
 procedure TfrmOSItemCad.rectQuantidadeClick(Sender: TObject);
@@ -199,7 +212,8 @@ begin
                           'Informe o valor total do item',
                           lblValorTotal.Text,
                           True,
-                          0
+                          0,
+                          fClickTotalItem
                           );
 end;
 
@@ -214,8 +228,75 @@ begin
                           'Informe o valor unitário do item',
                           lblValorUnitario.Text,
                           True,
-                          0
+                          0,
+                          fClickUnitarioItem
                           );
 end;
+
+procedure TfrmOSItemCad.fCalcularQtd(pQtd: Integer);
+var
+  vAux : Integer;
+begin
+  try
+    vAux := lblQuantidade.Text.ToInteger + pQtd;
+
+    if vAux < 1 then
+      vAux := 1;
+
+  except
+    vAux := 1;
+
+  end;
+
+  lblQuantidade.Text := vAux.ToString;
+
+  fCalcularTotalItem;
+end;
+
+procedure TfrmOSItemCad.fCalcularTotalItem;
+var
+  vQtd, vUnitario : Double;
+begin
+  try
+    vQtd      := lblQuantidade.Text.ToDouble;
+    vUnitario := fStringToFloat(lblValorUnitario.Text);
+  except
+    vQtd      := 0;
+    vUnitario := 0;
+  end;
+
+  lblValorTotal.Text := FormatFloat('#,#0.00', vQtd * vUnitario);
+
+end;
+
+procedure TfrmOSItemCad.fCalcularUnitarioItem;
+var
+  vQtd, vTotal : Double;
+begin
+  try
+    vQtd      := lblQuantidade.Text.ToDouble;
+    vTotal := fStringToFloat(lblValorTotal.Text);
+  except
+    vQtd   := 0;
+    vTotal := 0;
+  end;
+
+  if vQtd > 0 then
+    lblValorUnitario.Text := FormatFloat('#,#0.00', vTotal / vQtd)
+  else
+    lblValorUnitario.Text := FormatFloat('#,#0.00', 0);
+
+end;
+
+procedure TfrmOSItemCad.fClickTotalItem(Sender: TObject);
+begin
+  fCalcularUnitarioItem;
+end;
+
+procedure TfrmOSItemCad.fClickUnitarioItem(Sender: TObject);
+begin
+  fCalcularTotalItem;
+end;
+
 
 end.

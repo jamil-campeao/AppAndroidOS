@@ -188,6 +188,10 @@ procedure TfrmOSCad.FormCreate(Sender: TObject);
 begin
   TabControl1.ActiveTab := tabOS;
   vFancy                := TFancyDialog.Create(frmOSCad);
+
+  // Monto a lista de forma de pagamento
+  DmOS.fListarFormaPgto;
+
 end;
 
 procedure TfrmOSCad.FormDestroy(Sender: TObject);

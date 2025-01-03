@@ -13,6 +13,7 @@ type
     QryConsOS: TFDQuery;
     QryOS: TFDQuery;
     QryItem: TFDQuery;
+    QryConsFormaPgto: TFDQuery;
   private
     function fFiltros(pBusca: String) : String;
 
@@ -28,6 +29,7 @@ type
 pQuantidade, pValorUnitario, pValortotal: Double);
     procedure fInserirItemProduto(pCodProdutoLocal: Integer;
 pQuantidade, pValorUnitario, pValortotal: Double);
+    procedure fListarFormaPgto;
 
     { Public declarations }
   end;
@@ -318,6 +320,19 @@ begin
 
 
   QryItem.ExecSQL;
+end;
+
+procedure TDMOS.fListarFormaPgto;
+begin
+  QryConsFormaPgto.SQL.Clear;
+
+  QryConsFormaPgto.SQL.Text := ' SELECT                         '+
+                               ' FPG_CODIGO,                    '+
+                               ' FPG_DESCRICAO                  '+
+                               ' FROM FORMAPAGAMENTO            '+
+                               ' ORDER BY 1                     ';
+
+  QryConsFormaPgto.Open;
 end;
 
 end.

@@ -16,4 +16,9 @@ object DMOS: TDMOS
     Left = 24
     Top = 88
   end
+  object QryConsFormaPgto: TFDQuery
+    Connection = DM.Conn
+    Left = 112
+    Top = 88
+  end
 end

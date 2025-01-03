@@ -10,7 +10,7 @@ uses
   FMX.ListView, uFancyDialog, uFunctions, uConstantes, Data.DB;
 
 type
-  TExecuteOnClick = procedure(pCodProdutoLocal: Integer; pDescricao: String) of Object;
+  TExecuteOnClick = procedure(pCodProdutoLocal: Integer; pDescricao: String; pValor: Double) of Object;
 
   TfrmProdutoBusca = class(TForm)
     rectToolBar: TRectangle;
@@ -36,6 +36,8 @@ type
     procedure lvProdutoItemClick(const Sender: TObject;
       const AItem: TListViewItem);
     procedure btBuscaProdutoClick(Sender: TObject);
+    procedure btVoltarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     vFancy : TFancyDialog;
     FExecuteOnClick: TExecuteOnClick;
@@ -66,6 +68,11 @@ begin
   fListarProdutos(1, Trim(edBuscaProduto.text), True);
 end;
 
+procedure TfrmProdutoBusca.btVoltarClick(Sender: TObject);
+begin
+  Close;
+end;
+
 procedure TfrmProdutoBusca.fAdicionaProdutoListView(pCodProdutoLocal, pDescricao: String;
 pValor, pEstoque: Double;
 pFoto: TStream);
@@ -87,11 +94,12 @@ begin
     vTxt.Text := pDescricao;
 
     //Valor
-    vTxt := TListItemText(vItem.Objects.FindDrawable('txtValor'));
-    vTxt.Text := FormatFloat('R$#,##0.00', pValor);
+    vTxt          := TListItemText(vItem.Objects.FindDrawable('txtValor'));
+    vTxt.Text     := FormatFloat('R$#,##0.00', pValor);
+    vTxt.TagFloat := pValor;
 
     //Estoque
-    vTxt := TListItemText(vItem.Objects.FindDrawable('txtEstoque'));
+    vTxt      := TListItemText(vItem.Objects.FindDrawable('txtEstoque'));
     vTxt.Text := FormatFloat('#,##0.00', pEstoque);
 
     //Icone Valor
@@ -103,7 +111,7 @@ begin
     vImg.Bitmap := imgIconeEstoque.Bitmap;
 
     //Foto
-    vImg        := TListItemImage(vItem.Objects.FindDrawable('imgFoto'));
+    vImg := TListItemImage(vItem.Objects.FindDrawable('imgFoto'));
     if pFoto <> nil then
     begin
       vBmp := TBitMap.Create;
@@ -147,6 +155,12 @@ end;
 
 
 
+procedure TfrmProdutoBusca.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action := TCloseAction.caFree;
+  FrmProdutoBusca := nil;
+end;
+
 procedure TfrmProdutoBusca.FormCreate(Sender: TObject);
 begin
   vFancy := TFancyDialog(frmProdutoBusca);
@@ -161,7 +175,7 @@ procedure TfrmProdutoBusca.lvProdutoItemClick(const Sender: TObject;
   const AItem: TListViewItem);
 begin
   if Assigned(ExecuteOnClick) then
-    ExecuteOnClick(AItem.Tag, AItem.TagString);
+    ExecuteOnClick(AItem.Tag, AItem.TagString, TListItemText(AItem.Objects.FindDrawable('txtValor')).TagFloat);
 
   Close;
 end;

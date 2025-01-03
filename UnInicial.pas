@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.TabControl,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.Layouts,
-  uFancyDialog;
+  uFancyDialog, UnLogin, UnPrincipal, DataModule.Usuario;
 
 type
   TfrmInicial = class(TForm)
@@ -67,8 +67,6 @@ implementation
 
 {$R *.fmx}
 
-uses UnLogin, DataModule.Usuario, UnPrincipal;
-
 procedure TfrmInicial.btAcessarClick(Sender: TObject);
 begin
   try
@@ -83,8 +81,7 @@ begin
 
   frmLogin.TabControl.ActiveTab := frmLogin.TabLogin;
 
-  Application.MainForm := frmLogin;
-  frmInicial.Destroy;
+  frmInicial.Hide;
 
   frmLogin.Show;
 end;
@@ -124,7 +121,7 @@ end;
 
 procedure TfrmInicial.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  FrmInicial := nil;
+//  FrmInicial := nil;
 end;
 
 procedure TfrmInicial.FormCreate(Sender: TObject);
